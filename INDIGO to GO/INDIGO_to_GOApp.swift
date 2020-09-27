@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct INDIGO_StatusApp: App {
+struct INDIGO_to_GOApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
