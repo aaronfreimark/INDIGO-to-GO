@@ -492,3 +492,9 @@ class IndigoProperties: ObservableObject, Hashable {
 enum ImagerState: String {
     case Stopped, Sequencing, Paused
 }
+
+struct IndigoProperties_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+    }
+}
