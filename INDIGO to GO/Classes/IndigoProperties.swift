@@ -300,8 +300,8 @@ class IndigoProperties: ObservableObject, Hashable {
                 }
             }
         } else {
-            self.mountMeridian = "Mount not tracking"
-            self.mountHALimit = "Mount not tracking"
+            self.mountMeridian = "Not tracking"
+            self.mountHALimit = "Not tracking"
         }
         /*
 

@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "931AF6322509B96F00EE6300"
-               BuildableName = "INDIGO To Go.app"
-               BlueprintName = "INDIGO To Go"
+               BuildableName = "INDIGO to GO.app"
+               BlueprintName = "INDIGO to GO"
                ReferencedContainer = "container:INDIGO to GO.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -65,8 +65,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "931AF6322509B96F00EE6300"
-            BuildableName = "INDIGO To Go.app"
-            BlueprintName = "INDIGO To Go"
+            BuildableName = "INDIGO to GO.app"
+            BlueprintName = "INDIGO to GO"
             ReferencedContainer = "container:INDIGO to GO.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -82,8 +82,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "931AF6322509B96F00EE6300"
-            BuildableName = "INDIGO To Go.app"
-            BlueprintName = "INDIGO To Go"
+            BuildableName = "INDIGO to GO.app"
+            BlueprintName = "INDIGO to GO"
             ReferencedContainer = "container:INDIGO to GO.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
