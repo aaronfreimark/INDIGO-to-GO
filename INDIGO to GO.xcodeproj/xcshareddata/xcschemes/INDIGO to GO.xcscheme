@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "931AF6322509B96F00EE6300"
-               BuildableName = "INDIGO To Go.app"
-               BlueprintName = "INDIGO To Go"
+               BuildableName = "INDIGO to GO.app"
+               BlueprintName = "INDIGO to GO"
                ReferencedContainer = "container:INDIGO to GO.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "931AF6432509B97000EE6300"
-               BuildableName = "INDIGO To GoTests.xctest"
-               BlueprintName = "INDIGO To GoTests"
+               BuildableName = "INDIGO to GOTests.xctest"
+               BlueprintName = "INDIGO to GOTests"
                ReferencedContainer = "container:INDIGO to GO.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -43,8 +43,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "931AF64E2509B97000EE6300"
-               BuildableName = "INDIGO To GoUITests.xctest"
-               BlueprintName = "INDIGO To GoUITests"
+               BuildableName = "INDIGO to GOUITests.xctest"
+               BlueprintName = "INDIGO to GOUITests"
                ReferencedContainer = "container:INDIGO to GO.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -65,8 +65,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "931AF6322509B96F00EE6300"
-            BuildableName = "INDIGO To Go.app"
-            BlueprintName = "INDIGO To Go"
+            BuildableName = "INDIGO to GO.app"
+            BlueprintName = "INDIGO to GO"
             ReferencedContainer = "container:INDIGO to GO.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -82,8 +82,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "931AF6322509B96F00EE6300"
-            BuildableName = "INDIGO To Go.app"
-            BlueprintName = "INDIGO To Go"
+            BuildableName = "INDIGO to GO.app"
+            BlueprintName = "INDIGO to GO"
             ReferencedContainer = "container:INDIGO to GO.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

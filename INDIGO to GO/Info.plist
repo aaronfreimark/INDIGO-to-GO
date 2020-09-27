@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>INDIGO to GO</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -32,7 +34,7 @@
 		<string>_indigo._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>INDIGO Status uses Bonjour to discover your INDIGO server(s).</string>
+	<string>INDIGO to GO uses Bonjour to discover your INDIGO server(s).</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
