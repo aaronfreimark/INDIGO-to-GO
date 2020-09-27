@@ -26,7 +26,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     
     var anyCancellable: AnyCancellable? = nil
 
-
+ 
     
     init() {
         
