@@ -153,10 +153,10 @@ struct ContentView: View {
         .listStyle(GroupedListStyle())
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                
-                // This won't work on first run, because it is missing the bonjour network bits!
-                // client.reinit(servers: userSettings.servers)
-                
+                if userSettings.servers == [] {
+                    // Show the settings sheet on first run
+                    isSettingsSheetShowing = true
+                }
             })
         })
         .onReceive(timer) { input in

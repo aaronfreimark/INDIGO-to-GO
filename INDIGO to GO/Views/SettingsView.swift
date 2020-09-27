@@ -26,7 +26,8 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Select Agents")) {
+                Section(header: Text("Connect to INDIGO Agents"), footer: Text("Select either (a) your INDIGO server if you are running one, or (b) one or more INDIGO agents such as AstroTelescope, AstroImager, and AstroGuider. More information: http://indigo-astronomy.org and http://www.cloudmakers.eu.")
+) {
                     /*
                      Picker(selection: $userSettings.servers[0], label: Text("Imager Agent")) {
                      ForEach(client.bonjourBrowser.discovered, id: \.name) { endpoint in
@@ -61,7 +62,7 @@ struct SettingsView: View {
                 }
             }
             .listStyle(GroupedListStyle())
-            .navigationBarTitle("Settings")
+            .navigationBarTitle("Servers")
             .navigationBarItems(trailing: Button("Save", action: {
 
                 var servers: [String] = []
