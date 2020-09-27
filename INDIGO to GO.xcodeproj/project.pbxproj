@@ -12,8 +12,6 @@
 		931AF6392509B96F00EE6300 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6382509B96F00EE6300 /* ContentView.swift */; };
 		931AF63B2509B97000EE6300 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931AF63A2509B97000EE6300 /* Assets.xcassets */; };
 		931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931AF63D2509B97000EE6300 /* Preview Assets.xcassets */; };
-		931AF6492509B97000EE6300 /* INDIGO_to_GOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6482509B97000EE6300 /* INDIGO_to_GOTests.swift */; };
-		931AF6542509B97000EE6300 /* INDIGO_to_GOUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6532509B97000EE6300 /* INDIGO_to_GOUITests.swift */; };
 		931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF663250A564900EE6300 /* BonjourBrowser.swift */; };
 		931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 931D1E0C250C01AF00BFFA6B /* SwiftyJSON */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
@@ -45,18 +43,14 @@
 
 /* Begin PBXFileReference section */
 		9311AC9125129C2200725CB9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		931AF6332509B96F00EE6300 /* INDIGO to GO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "INDIGO to GO.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		931AF6332509B96F00EE6300 /* INDIGO To Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "INDIGO To Go.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOApp.swift; sourceTree = "<group>"; };
 		931AF6382509B96F00EE6300 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		931AF63A2509B97000EE6300 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		931AF63D2509B97000EE6300 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		931AF63F2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		931AF6442509B97000EE6300 /* INDIGO to GOTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "INDIGO to GOTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		931AF6482509B97000EE6300 /* INDIGO_to_GOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOTests.swift; sourceTree = "<group>"; };
-		931AF64A2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		931AF64F2509B97000EE6300 /* INDIGO to GOUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "INDIGO to GOUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		931AF6532509B97000EE6300 /* INDIGO_to_GOUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOUITests.swift; sourceTree = "<group>"; };
-		931AF6552509B97000EE6300 /* Info2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info2.plist; sourceTree = "<group>"; };
+		931AF6442509B97000EE6300 /* INDIGO To GoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "INDIGO To GoTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		931AF64F2509B97000EE6300 /* INDIGO To GoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "INDIGO To GoUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		931AF663250A564900EE6300 /* BonjourBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourBrowser.swift; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
 		938917C3251E4B4700D9B3F3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
@@ -100,8 +94,6 @@
 			children = (
 				938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */,
 				931AF6352509B96F00EE6300 /* INDIGO to GO */,
-				931AF6472509B97000EE6300 /* INDIGO to GOTests */,
-				931AF6522509B97000EE6300 /* INDIGO to GOUITests */,
 				931AF6342509B96F00EE6300 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -109,9 +101,9 @@
 		931AF6342509B96F00EE6300 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				931AF6332509B96F00EE6300 /* INDIGO to GO.app */,
-				931AF6442509B97000EE6300 /* INDIGO to GOTests.xctest */,
-				931AF64F2509B97000EE6300 /* INDIGO to GOUITests.xctest */,
+				931AF6332509B96F00EE6300 /* INDIGO To Go.app */,
+				931AF6442509B97000EE6300 /* INDIGO To GoTests.xctest */,
+				931AF64F2509B97000EE6300 /* INDIGO To GoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,24 +129,6 @@
 				931AF63D2509B97000EE6300 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		931AF6472509B97000EE6300 /* INDIGO to GOTests */ = {
-			isa = PBXGroup;
-			children = (
-				931AF6482509B97000EE6300 /* INDIGO_to_GOTests.swift */,
-				931AF64A2509B97000EE6300 /* Info.plist */,
-			);
-			path = "INDIGO to GOTests";
-			sourceTree = "<group>";
-		};
-		931AF6522509B97000EE6300 /* INDIGO to GOUITests */ = {
-			isa = PBXGroup;
-			children = (
-				931AF6532509B97000EE6300 /* INDIGO_to_GOUITests.swift */,
-				931AF6552509B97000EE6300 /* Info2.plist */,
-			);
-			path = "INDIGO to GOUITests";
 			sourceTree = "<group>";
 		};
 		93BF080B2513EA160018DEC0 /* Views */ = {
@@ -183,9 +157,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		931AF6322509B96F00EE6300 /* INDIGO to GO */ = {
+		931AF6322509B96F00EE6300 /* INDIGO To Go */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 931AF6582509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO to GO" */;
+			buildConfigurationList = 931AF6582509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO To Go" */;
 			buildPhases = (
 				931AF62F2509B96F00EE6300 /* Sources */,
 				931AF6302509B96F00EE6300 /* Frameworks */,
@@ -195,17 +169,17 @@
 			);
 			dependencies = (
 			);
-			name = "INDIGO to GO";
+			name = "INDIGO To Go";
 			packageProductDependencies = (
 				931D1E0C250C01AF00BFFA6B /* SwiftyJSON */,
 			);
 			productName = "INDIGO Status";
-			productReference = 931AF6332509B96F00EE6300 /* INDIGO to GO.app */;
+			productReference = 931AF6332509B96F00EE6300 /* INDIGO To Go.app */;
 			productType = "com.apple.product-type.application";
 		};
-		931AF6432509B97000EE6300 /* INDIGO to GOTests */ = {
+		931AF6432509B97000EE6300 /* INDIGO To GoTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 931AF65B2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO to GOTests" */;
+			buildConfigurationList = 931AF65B2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO To GoTests" */;
 			buildPhases = (
 				931AF6402509B97000EE6300 /* Sources */,
 				931AF6412509B97000EE6300 /* Frameworks */,
@@ -216,14 +190,14 @@
 			dependencies = (
 				931AF6462509B97000EE6300 /* PBXTargetDependency */,
 			);
-			name = "INDIGO to GOTests";
+			name = "INDIGO To GoTests";
 			productName = "INDIGO StatusTests";
-			productReference = 931AF6442509B97000EE6300 /* INDIGO to GOTests.xctest */;
+			productReference = 931AF6442509B97000EE6300 /* INDIGO To GoTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		931AF64E2509B97000EE6300 /* INDIGO to GOUITests */ = {
+		931AF64E2509B97000EE6300 /* INDIGO To GoUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 931AF65E2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO to GOUITests" */;
+			buildConfigurationList = 931AF65E2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO To GoUITests" */;
 			buildPhases = (
 				931AF64B2509B97000EE6300 /* Sources */,
 				931AF64C2509B97000EE6300 /* Frameworks */,
@@ -234,9 +208,9 @@
 			dependencies = (
 				931AF6512509B97000EE6300 /* PBXTargetDependency */,
 			);
-			name = "INDIGO to GOUITests";
+			name = "INDIGO To GoUITests";
 			productName = "INDIGO StatusUITests";
-			productReference = 931AF64F2509B97000EE6300 /* INDIGO to GOUITests.xctest */;
+			productReference = 931AF64F2509B97000EE6300 /* INDIGO To GoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -277,9 +251,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				931AF6322509B96F00EE6300 /* INDIGO to GO */,
-				931AF6432509B97000EE6300 /* INDIGO to GOTests */,
-				931AF64E2509B97000EE6300 /* INDIGO to GOUITests */,
+				931AF6322509B96F00EE6300 /* INDIGO To Go */,
+				931AF6432509B97000EE6300 /* INDIGO To GoTests */,
+				931AF64E2509B97000EE6300 /* INDIGO To GoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -334,7 +308,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				931AF6492509B97000EE6300 /* INDIGO_to_GOTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,7 +315,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				931AF6542509B97000EE6300 /* INDIGO_to_GOUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,12 +323,12 @@
 /* Begin PBXTargetDependency section */
 		931AF6462509B97000EE6300 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 931AF6322509B96F00EE6300 /* INDIGO to GO */;
+			target = 931AF6322509B96F00EE6300 /* INDIGO To Go */;
 			targetProxy = 931AF6452509B97000EE6300 /* PBXContainerItemProxy */;
 		};
 		931AF6512509B97000EE6300 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 931AF6322509B96F00EE6300 /* INDIGO to GO */;
+			target = 931AF6322509B96F00EE6300 /* INDIGO To Go */;
 			targetProxy = 931AF6502509B97000EE6300 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -471,7 +443,6 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -484,19 +455,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "INDIGO to GO/INDIGO to GO.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "INDIGO To Go/INDIGO To Go.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"INDIGO to GO/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"INDIGO To Go/Preview Content\"";
 				DEVELOPMENT_TEAM = QLSSS38HN8;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "INDIGO to GO/Info.plist";
+				INFOPLIST_FILE = "INDIGO To Go/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.abfconsulting.indigo-to-go";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abfconsulting.INDIGO-To-Go";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -510,19 +481,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "INDIGO to GO/INDIGO to GO.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "INDIGO To Go/INDIGO To Go.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"INDIGO to GO/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"INDIGO To Go/Preview Content\"";
 				DEVELOPMENT_TEAM = QLSSS38HN8;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "INDIGO to GO/Info.plist";
+				INFOPLIST_FILE = "INDIGO To Go/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.abfconsulting.indigo-to-go";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.abfconsulting.INDIGO-To-Go";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -627,7 +598,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		931AF6582509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO to GO" */ = {
+		931AF6582509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO To Go" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				931AF6592509B97000EE6300 /* Debug */,
@@ -636,7 +607,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		931AF65B2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO to GOTests" */ = {
+		931AF65B2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO To GoTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				931AF65C2509B97000EE6300 /* Debug */,
@@ -645,7 +616,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		931AF65E2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO to GOUITests" */ = {
+		931AF65E2509B97000EE6300 /* Build configuration list for PBXNativeTarget "INDIGO To GoUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				931AF65F2509B97000EE6300 /* Debug */,
