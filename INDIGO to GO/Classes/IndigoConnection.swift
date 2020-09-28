@@ -102,7 +102,9 @@ class IndigoConnection {
         }
     }
     
-
+    func isConnected() -> Bool {
+        return self.connection!.state == .ready
+    }
     
     
 }

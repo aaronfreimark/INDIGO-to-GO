@@ -76,7 +76,13 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     }
 
-
+    func connectedServers() -> [String] {
+        var connectedServers: [String] = []
+        for (name,connection) in self.connections {
+            if connection.isConnected() { connectedServers.append(name) }
+        }
+        return connectedServers
+    }
 
     
     
@@ -123,6 +129,8 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             print("Unknown connection from delegate: \(name)")
             return
         }
+        
+        // TODO if a connected is removed (.failed, .cancelled) we need to clean up properties! 
         
         switch state {
         case .ready:

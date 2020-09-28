@@ -36,7 +36,7 @@ struct ContentView: View {
                                 GeometryReader { metrics in
                                     HStack(alignment: .center, spacing: 0) {
                                         ForEach(client.properties.sequences, id: \.self) { sequence in
-                                            sequence.progressView(imagerTotalTime: client.properties.imagerTotalTime, width: metrics.size.width)
+                                            sequence.progressView(imagerTotalTime: client.properties.imagerTotalTime, enclosingWidth: metrics.size.width)
                                         }
                                     }
                                     .frame(height: 2.0)
@@ -135,10 +135,12 @@ struct ContentView: View {
             
             Section(footer:
                         VStack(alignment: .leading) {
-                            Text("Server Version: \(client.properties.serverVersion)")
-                            Text("Imager Version: \(client.properties.imagerVersion)")
-                            Text("Guider Version: \(client.properties.guiderVersion)")
-                            Text("Mount Version: \(client.properties.mountVersion)")
+                            ForEach(self.client.connectedServers(), id: \.self ) { name in
+                                HStack {
+                                    Image(systemName: "checkmark.circle")
+                                    Text(name)
+                                }
+                            }
                         }) {
                 //Button(action: { client.printProperties() } ) { Text("Properties") }
                 Button(action: { self.isSettingsSheetShowing = true }) {
@@ -153,9 +155,11 @@ struct ContentView: View {
         .listStyle(GroupedListStyle())
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                if userSettings.servers == [] {
-                    // Show the settings sheet on first run
-                    isSettingsSheetShowing = true
+                // Show the settings sheet if after 2 seconds there are no connected servers...
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    if self.client.connectedServers().count == 0 {
+                        self.isSettingsSheetShowing = true
+                    }
                 }
             })
         })
