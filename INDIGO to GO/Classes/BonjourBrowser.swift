@@ -11,7 +11,7 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     
     var browser: NWBrowser!
     
-    var discovered: [BonjourEndpoint] = [] {
+    var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
         willSet {
             objectWillChange.send()
         }
@@ -25,7 +25,8 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     }
 
     func foundNone() -> Bool {
-        return self.discovered.isEmpty
+        return self.discovered.count == 1 && self.discovered[0].name == "None"
+        //return self.discovered.isEmpty
     }
     
     func seek() {
@@ -45,8 +46,8 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
             }
             
             browser.browseResultsChangedHandler = { ( results, changes ) in
-                self.discovered.removeAll()
-                // self.discovered = [BonjourEndpoint()]
+//                self.discovered.removeAll()
+                self.discovered = [BonjourEndpoint()]
                 for result in results {
                     let endpoint = result.endpoint
                     let endpointObject = BonjourEndpoint(endpoint: endpoint)
@@ -86,7 +87,6 @@ class BonjourEndpoint: Hashable, ObservableObject {
     static func == (lhs: BonjourEndpoint, rhs: BonjourEndpoint) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
-
 }
 
 

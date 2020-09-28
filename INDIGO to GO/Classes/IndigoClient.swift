@@ -45,23 +45,14 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
         // after 1 second search for whatever is in serverSettings.servers to try to reconnect
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.reinit(servers: self.userSettings.servers)
+            self.reinit(servers: [self.userSettings.imager, self.userSettings.guider, self.userSettings.mount])
         }
     }
     
     func reinit(servers: [String]) {
-                       
-        var didSomething = false
-        // Loop again, disconnecting servers that aren't in the new list
-        for (name, connection) in connections {
-            if !servers.contains(name) {
-                print("\(name): Stopping Client...")
-                connection.stop()
-                didSomething = true
-            }
-        }
 
-        if didSomething { self.properties.removeAll() }
+        self.disconnectAll()
+        self.properties.removeAll()
         
         for server in servers {
             // Make sure each agent is unique. We don't need multiple connections to an endpoint!
@@ -73,9 +64,9 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
                 }
             }
         }
-
     }
 
+    
     func connectedServers() -> [String] {
         var connectedServers: [String] = []
         for (name,connection) in self.connections {

@@ -148,8 +148,6 @@ struct ContentView: View {
                 }
                 .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView(client: self.client) })
             }
-
-            
             
         }
         .listStyle(GroupedListStyle())
