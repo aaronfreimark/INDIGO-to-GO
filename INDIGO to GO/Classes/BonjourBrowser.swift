@@ -24,6 +24,14 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
         return nil
     }
 
+    func names() -> [String] {
+        var names: [String] = []
+        for endpoint in discovered {
+            names.append(endpoint.name)
+        }
+        return names
+    }
+    
     func foundNone() -> Bool {
         return self.discovered.count == 1 && self.discovered[0].name == "None"
         //return self.discovered.isEmpty

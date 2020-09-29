@@ -46,7 +46,7 @@ class IndigoConnection {
                 self.connectionDidFail(error: error)
                 return
             }
-            print("\(self.name): Connection did send, data: \(String(describing: String(data: data, encoding: .utf8)))")
+//            print("\(self.name): Connection did send, data: \(String(describing: String(data: data, encoding: .utf8)))")
             
         }))
     }
@@ -90,6 +90,7 @@ class IndigoConnection {
     
     func connectionDidEnd() {
         print("\(self.name): Connection did end")
+        self.delegate?.connectionStateHasChanged(self.name, .cancelled)
         self.stop(error: nil)
     }
     

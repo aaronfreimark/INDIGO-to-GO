@@ -17,11 +17,11 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     @ObservedObject var bonjourBrowser: BonjourBrowser = BonjourBrowser()
     @Published var properties: IndigoProperties
-    
+    var connections: [String: IndigoConnection] = [:]
     var userSettings = UserSettings()
 
-    var connections: [String: IndigoConnection] = [:]
-    
+    var serversToDisconnect: [String] = []
+    var serversToConnect: [String] = []
     var receivedRemainder = "" // partial text while receiving INDI
     
     var anyCancellable: AnyCancellable? = nil
@@ -50,23 +50,33 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     }
     
     func reinit(servers: [String]) {
-
-        self.disconnectAll()
-        self.properties.removeAll()
+        print("ReInit with servers \(servers)")
         
-        for server in servers {
-            // Make sure each agent is unique. We don't need multiple connections to an endpoint!
-            if server != "None" && !self.connections.keys.contains(server)  {
-                if let endpoint = self.bonjourBrowser.endpoint(name: server) {
-                    self.connections[server] = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue)
-                    self.connections[server]!.delegate = self
-                    self.connect(connection: self.connections[server]!)
-                }
-            }
+        // 1. Disconnect all servers
+        // 2. Once disconnected, remove all properties
+        // 3. Connect to all servers
+        // 4. Profit
+        
+        self.serversToConnect = servers
+        
+        // clear out all properties!
+        self.properties.removeAll()
+
+        self.serversToDisconnect = self.allServers()
+        
+        if self.serversToDisconnect.count > 0 {
+            self.disconnectAll()
+            // Connect will happen after all servers are disconnected
+        }
+        else {
+            self.connectAll()
         }
     }
 
-    
+    func allServers() -> [String] {
+            return Array(self.connections.keys)
+    }
+
     func connectedServers() -> [String] {
         var connectedServers: [String] = []
         for (name,connection) in self.connections {
@@ -103,8 +113,10 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     }
     
     func enableAllPreviews() {
-        for (_, connection) in self.connections {
-            self.enablePreviews(connection: connection)
+        self.queue.async {
+            for (_, connection) in self.connections {
+                self.enablePreviews(connection: connection)
+            }
         }
     }
 
@@ -133,13 +145,25 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             break
         case .preparing:
             break
-        case .failed:
+        case .failed, .cancelled:
             self.connections.removeValue(forKey: name)
-            print("\(name): State failed & removed connection.")
+            print("\(name): State cancelled/failed & removed connection.")
+            
+            if self.serversToDisconnect.contains(name) {
+                print("==== Expected disconnection ====")
+                self.serversToDisconnect.removeAll(where: { $0 == name } )
+                if self.serversToDisconnect.isEmpty {
+                    print("=== Beginning reconnections ===")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.connectAll()
+                    }
+                }
+
+            } else {
+                print("==== Unexpected disconnection ====")
+                reinit(servers: self.connectedServers())
+            }
             break
-        case .cancelled:
-            self.connections.removeValue(forKey: name)
-            print("\(name): State canceled & removed connection.")
         default:
             break
         }
@@ -148,10 +172,10 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     func connect(connection: IndigoConnection) {
         if connection.endpoint != nil {
             connection.connection = NWConnection(to: connection.endpoint!, using: NWParameters.tcp)
-            print("Starting Client...")
+            print("\(connection.name): Starting Client...")
             self.start(connection: connection)
         } else {
-            print("IndigoClient not ready to start.")
+            print("\(connection.name): IndigoClient not ready to start.")
         }
     }
 
@@ -163,19 +187,36 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     
     func connectAll() {
-        for (_, connection) in self.connections {
-            self.connect(connection: connection)
+        print("Connecting to servers: \(self.serversToConnect)")
+        for server in self.serversToConnect {
+            // Make sure each agent is unique. We don't need multiple connections to an endpoint!
+            if server != "None" && !self.connectedServers().contains(server)  {
+                if let endpoint = self.bonjourBrowser.endpoint(name: server) {
+                    self.queue.async {
+                        self.connections[server] = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue)
+                        self.connections[server]!.delegate = self
+                        self.connect(connection: self.connections[server]!)
+                    }
+                }
+            }
         }
+
+        self.serversToConnect = []
     }
     
     func disconnect(connection: IndigoConnection) {
-        print("\(connection.name): Stopping Client...")
+        print("\(connection.name): Disconnecting client...")
         connection.stop()
     }
     
     func disconnectAll() {
-        for (_, connection) in self.connections {
-            self.disconnect(connection: connection)
+        print("Disconnecting \(self.serversToDisconnect)...")
+        for name in self.serversToDisconnect {
+            self.queue.async {
+                if let connection = self.connections[name] {
+                    self.disconnect(connection: connection)
+                }
+            }
         }
     }
 

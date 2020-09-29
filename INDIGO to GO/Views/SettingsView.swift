@@ -33,7 +33,7 @@ struct SettingsView: View {
         NavigationView {
             Form {
 
-                Text("Please select your INDIGO server or INDIGO agents.")
+                Text("Please select your INDIGO server or INDIGO agents. Agents are discovered on your local network using Bonjour.")
                     .font(.callout)
                     .padding(.vertical, 30.0)
 
@@ -120,6 +120,9 @@ struct SettingsView: View {
             .navigationBarTitle("Servers")
             .onAppear(perform: {
                 print("client.bonjourBrowser.discovered: \(client.bonjourBrowser.discovered)")
+                if !client.bonjourBrowser.names().contains(self.imager) { self.imager = "None" }
+                if !client.bonjourBrowser.names().contains(self.guider) { self.guider = "None" }
+                if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
             })
         }
     }

@@ -24,7 +24,13 @@ struct ContentView: View {
         
         
         List {
-            
+            if !client.properties.imagerConnected && !client.properties.mountConnected && !client.properties.guiderConnected {
+                Section {
+                    Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
+                        .padding(30)
+                }
+            }
+
             // =================================================================== SEQUENCE
             
             if client.properties.imagerConnected || client.properties.mountConnected {
