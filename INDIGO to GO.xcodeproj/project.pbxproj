@@ -21,6 +21,7 @@
 		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
 		93A6047B250D361600E93EA4 /* indigo-response.json in Resources */ = {isa = PBXBuildFile; fileRef = 93A6047A250D361600E93EA4 /* indigo-response.json */; };
 		93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BF08042513E9E90018DEC0 /* IndigoProperties.swift */; };
+		93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRow.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		939F157D250AAB63004A09D7 /* IndigoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClient.swift; sourceTree = "<group>"; };
 		93A6047A250D361600E93EA4 /* indigo-response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "indigo-response.json"; sourceTree = "<group>"; };
 		93BF08042513E9E90018DEC0 /* IndigoProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoProperties.swift; sourceTree = "<group>"; };
+		93BFF7D72524F3C300B733CE /* StatusRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRow.swift; sourceTree = "<group>"; };
 		93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "INDIGO to GO.entitlements"; sourceTree = "<group>"; };
 		93E4107D2514E5050027A62D /* IndigoConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoConnection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,6 +104,7 @@
 				931AF6382509B96F00EE6300 /* ContentView.swift */,
 				9311AC9125129C2200725CB9 /* SettingsView.swift */,
 				938917C3251E4B4700D9B3F3 /* WebView.swift */,
+				93BFF7D72524F3C300B733CE /* StatusRow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -199,6 +202,7 @@
 				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
 				938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */,
 				93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */,
+				93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */,
 				9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */,
 				939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */,
 				93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */,

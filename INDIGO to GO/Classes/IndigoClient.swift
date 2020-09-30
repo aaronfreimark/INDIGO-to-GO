@@ -117,7 +117,25 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         let json: JSON = [ "getProperties": [ "version": 512 ] ]
         connection.send(data: json.rawString()!.data(using: .ascii)!)
     }
-    
+
+    func mountPark(connection: IndigoConnection) {
+        let json: JSON = [ "newSwitchVector": [ "device": "Mount Agent", "name": "MOUNT_PARK", "items": [ [ "name": "PARKED", "value": true ] ] ] ]
+        connection.send(data: json.rawString()!.data(using: .ascii)!)
+    }
+    func imagerDisableCooler(connection: IndigoConnection) {
+        let json: JSON = [ "newSwitchVector": [ "device": "Imager Agent", "name": "CCD_COOLER", "items": [ [ "name": "OFF", "value": true ] ] ] ]
+        connection.send(data: json.rawString()!.data(using: .ascii)!)
+    }
+
+    func emergencyStopAll() {
+        self.queue.async {
+            for (_, connection) in self.connections {
+                self.mountPark(connection: connection)
+                self.imagerDisableCooler(connection: connection)
+            }
+        }
+    }
+
     func enableAllPreviews() {
         self.queue.async {
             for (_, connection) in self.connections {

@@ -19,6 +19,7 @@ struct ContentView: View {
     // Keep track of whether a sheet is showing or not. This works much better as two booleans vs an enum
     @State private var isWebViewSheetShowing: Bool = false
     @State private var isSettingsSheetShowing: Bool = false
+    @State private var isAlertShowing: Bool = false
 
     // URL of preview image; Probably doesn't need to be its own variable like this. I think we're trying to make sure it doesn't reload every 1 second.
     @State var imgURL: String?
@@ -26,7 +27,7 @@ struct ContentView: View {
     var body: some View {
         
         List {
-            if !client.properties.imagerConnected && !client.properties.mountConnected && !client.properties.guiderConnected {
+            if !client.properties.isAnythingConnected {
                 Section {
                     Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
                         .padding(30)
@@ -35,10 +36,11 @@ struct ContentView: View {
 
             // =================================================================== SEQUENCE
             
-            if client.properties.imagerConnected || client.properties.mountConnected {
+            if client.properties.isImagerConnected || client.properties.isMountConnected {
                 Section(header: Text("Sequence")) {
-                    if client.properties.imagerConnected {
+                    if client.properties.isImagerConnected {
                         StatusRow(description: client.properties.imagerSequenceText, subtext: "\(client.properties.imagerImagesTaken) / \(client.properties.imagerImagesTotal)", status: client.properties.imagerSequenceStatus)
+                        
                         ZStack {
                             VStack {
                                 GeometryReader { metrics in
@@ -52,7 +54,7 @@ struct ContentView: View {
                                 ProgressView(value: Float(client.properties.imagerImageTime), total: Float(client.properties.imagerTotalTime))
                             }.padding()
                             
-                            if client.properties.mountConnected && client.properties.mountIsTracking {
+                            if client.properties.isMountConnected && client.properties.mountIsTracking {
                                 
                                 let proportionHa = CGFloat(client.properties.mountSecondsUntilHALimit) / CGFloat(client.properties.imagerTotalTime)
                                 let proportionMeridian = CGFloat(client.properties.mountSecondsUntilMeridian) / CGFloat(client.properties.imagerTotalTime)
@@ -89,17 +91,17 @@ struct ContentView: View {
                         }
                     }
                     
-                    if client.properties.imagerConnected {
+                    if client.properties.isImagerConnected {
                         StatusRow(description: "Estimated Completion", subtext: client.properties.imagerExpectedFinish, status: "clock")
                     }
-                    if client.properties.mountConnected  {
+                    if client.properties.isMountConnected  {
                         StatusRow(description: "HA Limit", subtext: client.properties.mountHALimit, status: "exclamationmark.arrow.circlepath")
                         StatusRow(description: "Meridian Transit", subtext: client.properties.mountMeridian, status: "ellipsis.circle")
                     }
                 }
             }
             
-            if client.properties.imagerConnected {
+            if client.properties.isImagerConnected {
                 if let url = client.properties.imagerLatestImageURL {
                     Section(header: Text("Latest Image")){
                         Button(action: {
@@ -118,7 +120,7 @@ struct ContentView: View {
             
             // =================================================================== GUIDER
             
-            if client.properties.guiderConnected {
+            if client.properties.isGuiderConnected {
                 Section(header: Text("Guider")) {
                     StatusRow(description: client.properties.guiderTrackingText, subtext: "\(client.properties.guiderDriftMax)", status: client.properties.guiderTrackingStatus)
                     StatusRow(description: "RA Error (RSME)", subtext: "\(client.properties.guiderRSMERA)", status: client.properties.guiderRSMERAStatus)
@@ -130,14 +132,30 @@ struct ContentView: View {
             
             // =================================================================== HARDWARE
             
-            if client.properties.mountConnected || client.properties.imagerConnected {
+            if client.properties.isMountConnected || client.properties.isImagerConnected {
                 Section(header: Text("Hardware")) {
-                    if client.properties.mountConnected {
+                    if client.properties.isMountConnected {
                         StatusRow(description: client.properties.mountTrackingText, status: client.properties.mountTrackingStatus)
                     }
-                    if client.properties.imagerConnected {
+                    if client.properties.isImagerConnected {
                         StatusRow(description: client.properties.imagerCoolingText, subtext: "\(client.properties.imagerCameraTemperature) °C", status: client.properties.imagerCoolingStatus)
                     }
+                    Button(action: { self.isAlertShowing = true }) {
+                        Text("Emergency Stop").foregroundColor(.red)
+                    }
+                    .alert(isPresented: $isAlertShowing, content: {
+                        Alert(
+                            title: Text("Emergency Stop"),
+                            message: Text("Immediately park the mount and disable cooling, if possible."),
+                            primaryButton: .destructive(Text("Emergency Stop"), action: {
+                                isAlertShowing = false
+                                client.emergencyStopAll()
+                            }),
+                            secondaryButton: .cancel(Text("Cancel"), action: {
+                                isAlertShowing = false
+                            })
+                        )
+                    })
                 }
             }
             
@@ -180,52 +198,6 @@ struct ContentView: View {
     
 }
 
-
-
-struct StatusRow: View {
-    var description: String
-    var subtext: String?
-    var status: String?
-    let width: CGFloat = 20
-    
-    private var iconView: some View {
-        switch status {
-        case "ok":
-            return AnyView(Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green).frame(width: width, alignment: .leading))
-        case "warn":
-            return AnyView(Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundColor(.yellow).frame(width: width, alignment: .leading))
-        case "alert":
-            return AnyView(Image(systemName: "stop.fill")
-                .foregroundColor(.red).frame(width: width, alignment: .leading))
-        case "unknown":
-            return AnyView(Image(systemName:"questionmark.circle")
-                .foregroundColor(.gray).frame(width: width, alignment: .leading))
-        case "", nil:
-            return AnyView(EmptyView().frame(width: width))
-        default: return
-            AnyView(Image(systemName:status!)
-            .foregroundColor(.gray).frame(width: width, height: nil, alignment: .leading))
-        }
-    }
-    
-    private var subtextView: some View {
-        if subtext != nil {
-            return Text(subtext!).font(.callout).foregroundColor(.gray)
-        }
-        return Text("")
-    }
-    
-    var body: some View {
-        HStack {
-            iconView
-            Text(description)
-            Spacer()
-            subtextView
-        }
-    }
-}
 
 
 

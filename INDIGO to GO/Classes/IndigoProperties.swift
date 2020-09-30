@@ -54,9 +54,10 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var guiderVersion: String = ""
     @Published var mountVersion: String = ""
 
-    @Published var imagerConnected = false
-    @Published var guiderConnected = false
-    @Published var mountConnected = false
+    @Published var isImagerConnected = false
+    @Published var isGuiderConnected = false
+    @Published var isMountConnected = false
+    @Published var isAnythingConnected = false
 
     init(queue: DispatchQueue, isPreview: Bool = false) {
         self.queue = queue
@@ -72,9 +73,11 @@ class IndigoProperties: ObservableObject, Hashable {
         self.mountVersion = getValue("Mount Agent | INFO | DEVICE_VERSION") ?? "Unknown"
 
         let keys = self.getKeys()
-        self.imagerConnected = keys.contains { $0.hasPrefix("Imager Agent") }
-        self.guiderConnected = keys.contains { $0.hasPrefix("Guider Agent") }
-        self.mountConnected = keys.contains { $0.hasPrefix("Mount Agent") }
+        self.isImagerConnected = keys.contains { $0.hasPrefix("Imager Agent") }
+        self.isGuiderConnected = keys.contains { $0.hasPrefix("Guider Agent") }
+        self.isMountConnected = keys.contains { $0.hasPrefix("Mount Agent") }
+        self.isAnythingConnected = self.isImagerConnected || self.isGuiderConnected || self.isMountConnected
+
 
         // =================================================================== IMAGER
         
