@@ -186,18 +186,18 @@ struct StatusRow: View {
         switch status {
         case "ok":
             return AnyView(Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green).frame(width: width, height: nil, alignment: .leading))
+                .foregroundColor(.green).frame(width: width, alignment: .leading))
         case "warn":
             return AnyView(Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundColor(.yellow).frame(width: width, height: nil, alignment: .leading))
+                .foregroundColor(.yellow).frame(width: width, alignment: .leading))
         case "alert":
             return AnyView(Image(systemName: "stop.fill")
-                .foregroundColor(.red).frame(width: width, height: nil, alignment: .leading))
+                .foregroundColor(.red).frame(width: width, alignment: .leading))
         case "unknown":
             return AnyView(Image(systemName:"questionmark.circle")
-                .foregroundColor(.gray).frame(width: width, height: nil, alignment: .leading))
+                .foregroundColor(.gray).frame(width: width, alignment: .leading))
         case "", nil:
-            return AnyView(EmptyView().frame(width: width, height: nil, alignment: .leading))
+            return AnyView(EmptyView().frame(width: width))
         default: return
             AnyView(Image(systemName:status!)
             .foregroundColor(.gray).frame(width: width, height: nil, alignment: .leading))
