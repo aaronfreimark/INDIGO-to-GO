@@ -13,7 +13,7 @@
 		931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931AF63D2509B97000EE6300 /* Preview Assets.xcassets */; };
 		931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF663250A564900EE6300 /* BonjourBrowser.swift */; };
 		931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 931D1E0C250C01AF00BFFA6B /* SwiftyJSON */; };
-		9323432B25213A4E000CF465 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9323432A25213A4E000CF465 /* Assets.xcassets */; };
+		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938917C3251E4B4700D9B3F3 /* WebView.swift */; };
 		938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */; };
@@ -32,7 +32,7 @@
 		931AF63D2509B97000EE6300 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		931AF63F2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		931AF663250A564900EE6300 /* BonjourBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourBrowser.swift; sourceTree = "<group>"; };
-		9323432A25213A4E000CF465 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "../../Indigo Status App/AppIcons-2/Assets.xcassets"; sourceTree = "<group>"; };
+		931E89D5252472B800FCFAB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
 		938917C3251E4B4700D9B3F3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -80,9 +80,9 @@
 				93BF080F2513EA320018DEC0 /* Classes */,
 				931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */,
 				93BF080B2513EA160018DEC0 /* Views */,
-				9323432A25213A4E000CF465 /* Assets.xcassets */,
 				931AF63F2509B97000EE6300 /* Info.plist */,
 				93A6047A250D361600E93EA4 /* indigo-response.json */,
+				931E89D5252472B800FCFAB7 /* Assets.xcassets */,
 				931AF63C2509B97000EE6300 /* Preview Content */,
 			);
 			path = "INDIGO to GO";
@@ -184,8 +184,8 @@
 			files = (
 				931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */,
 				938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */,
+				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
 				93A6047B250D361600E93EA4 /* indigo-response.json in Resources */,
-				9323432B25213A4E000CF465 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
