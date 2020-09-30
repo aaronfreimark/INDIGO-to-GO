@@ -13,6 +13,9 @@ class IndigoProperties: ObservableObject, Hashable {
     private var properties: [String: IndigoItem] = [:]
     var queue: DispatchQueue
 
+    private var lastUpdate = Date()
+    private let tooLongSinceLastUpdate = TimeInterval(-10) // seconds
+    
     var serverVersion: String = "Unknown"
     
     @Published var guiderTrackingStatus: String = ""
@@ -44,7 +47,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var imagerImagesTotal: Int = 0
     @Published var imagerImagesTaken: Int = 0
     
-    var imagerLatestImageURL: String = ""
+    @Published var imagerLatestImageURL: String = ""
     @Published var imagerImageLatest: String = ""
     @Published var sequences: [IndigoSequence] = []
     @Published var imagerTotalTime: Float = 0
@@ -62,6 +65,11 @@ class IndigoProperties: ObservableObject, Hashable {
     init(queue: DispatchQueue, isPreview: Bool = false) {
         self.queue = queue
         if isPreview { self.setUpPreview() }
+    }
+    
+    func isTooLongSinceLastUpdate() -> Bool {
+        // timeIntervalSinceNow will be negative
+        return self.lastUpdate.timeIntervalSinceNow < self.tooLongSinceLastUpdate
     }
     
     func updateUI() {
@@ -452,6 +460,7 @@ class IndigoProperties: ObservableObject, Hashable {
                             }
                         }
                     }
+                    self.lastUpdate = Date()
                 }
             }
         }

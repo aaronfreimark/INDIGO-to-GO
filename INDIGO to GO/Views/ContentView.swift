@@ -102,19 +102,18 @@ struct ContentView: View {
             }
             
             if client.properties.isImagerConnected {
-                if let url = client.properties.imagerLatestImageURL {
-                    Section(header: Text("Latest Image")){
-                        Button(action: {
-                            self.imgURL = url
-                            self.isWebViewSheetShowing = true
-                        } ) {
-                            Text(client.properties.imagerImageLatest)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .truncationMode(.head)
-                        }
-                        .sheet(isPresented: $isWebViewSheetShowing, content: { WebViewView(url: self.imgURL) })
+                Section(header: Text("Latest Image")){
+                    Button(action: {
+                        self.isWebViewSheetShowing = true
+                    } ) {
+                        Text(client.properties.imagerImageLatest)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .truncationMode(.head)
                     }
+                    .sheet(isPresented: $isWebViewSheetShowing, content: {
+                        WebViewView(url: client.properties.imagerLatestImageURL)
+                    })
                 }
             }
             
