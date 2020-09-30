@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 struct ContentView: View {
-    var userSettings = UserSettings()
     @ObservedObject var client = IndigoClient()
         
     @State var currentDate = Date()
@@ -180,7 +179,7 @@ struct StatusRow: View {
     var description: String
     var subtext: String?
     var status: String?
-    let width:CGFloat = 20
+    let width: CGFloat = 20
     
     private var iconView: some View {
         switch status {
