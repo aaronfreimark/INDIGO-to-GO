@@ -63,7 +63,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         // 3. Connect to all servers
         // 4. Profit
         
-        self.serversToConnect = servers
+        self.serversToConnect = servers.removingDuplicates()
         
         // clear out all properties!
         self.properties.removeAll()
@@ -322,5 +322,19 @@ struct IndigoClient_Previews: PreviewProvider {
     static var previews: some View {
         let client = IndigoClient(isPreview: true)
         ContentView(client: client)
+    }
+}
+
+extension Array where Element: Hashable {
+    func removingDuplicates() -> [Element] {
+        var addedDict = [Element: Bool]()
+
+        return filter {
+            addedDict.updateValue(true, forKey: $0) == nil
+        }
+    }
+
+    mutating func removeDuplicates() {
+        self = self.removingDuplicates()
     }
 }
