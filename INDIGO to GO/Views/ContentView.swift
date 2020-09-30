@@ -9,18 +9,21 @@ import SwiftUI
 import Combine
 
 struct ContentView: View {
+    // The interesting stuff is in this object!
     @ObservedObject var client = IndigoClient()
         
+    // Set up a timer for periodic refresh
     @State var currentDate = Date()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
+    // Keep track of whether a sheet is showing or not. This works much better as two booleans vs an enum
     @State private var isWebViewSheetShowing: Bool = false
     @State private var isSettingsSheetShowing: Bool = false
 
+    // URL of preview image; Probably doesn't need to be its own variable like this. I think we're trying to make sure it doesn't reload every 1 second.
     @State var imgURL: String?
     
     var body: some View {
-        
         
         List {
             if !client.properties.imagerConnected && !client.properties.mountConnected && !client.properties.guiderConnected {
@@ -158,12 +161,16 @@ struct ContentView: View {
         .listStyle(GroupedListStyle())
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                
+                
                 // Show the settings sheet if after 2 seconds there are no connected servers...
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     if self.client.connectedServers().count == 0 {
                         self.isSettingsSheetShowing = true
                     }
                 }
+                
+                
             })
         })
         .onReceive(timer) { input in
@@ -224,7 +231,8 @@ struct StatusRow: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let client = IndigoClient(isPreview: true)
+        ContentView(client: client)
     }
 }
 

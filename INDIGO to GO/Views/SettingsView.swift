@@ -12,7 +12,7 @@ struct SettingsView: View {
 
     var client: IndigoClient
     var userSettings = UserSettings()
-    //@State var endpointsSelected: [String]
+
     @State var imager: String
     @State var guider: String
     @State var mount: String
@@ -21,7 +21,6 @@ struct SettingsView: View {
     var presentationMode: Binding<PresentationMode>
 
     init(client: IndigoClient) {
-        //_endpointsSelected = State(initialValue: Array(client.connections.keys))
         _imager = State(initialValue: userSettings.imager)
         _guider = State(initialValue: userSettings.guider)
         _mount = State(initialValue: userSettings.mount)
@@ -89,32 +88,6 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 30.0)
 
-                /*
-                    ForEach(client.bonjourBrowser.discovered, id: \.name) { endpoint in
-                        HStack {
-                            Button(action: {
-                                if endpointsSelected.contains(endpoint.name) {
-                                    endpointsSelected = endpointsSelected.filter { $0 != endpoint.name }
-                                } else {
-                                    endpointsSelected.append(endpoint.name)
-                                }
-                            }) {
-                                HStack{
-                                    if endpointsSelected.contains(endpoint.name) {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.purple)
-                                            .animation(.easeIn)
-                                    } else {
-                                        Image(systemName: "circle")
-                                            .foregroundColor(.primary)
-                                            .animation(.easeOut)
-                                    }
-                                    Text(endpoint.name)
-                                }
-                            }.buttonStyle(BorderlessButtonStyle())
-                        }
-                    }
-*/
             }
             //.listStyle(GroupedListStyle())
             .navigationBarTitle("Servers")
@@ -141,7 +114,8 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+        let client = IndigoClient(isPreview: true)
+        SettingsView(client: client)
     }
 }
 

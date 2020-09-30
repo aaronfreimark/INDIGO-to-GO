@@ -28,27 +28,33 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
  
     
-    init() {
+    init(isPreview: Bool = false) {
         
-        self.properties = IndigoProperties(queue: self.queue)
-
+        self.properties = IndigoProperties(queue: self.queue, isPreview: isPreview)
+        
+        
         // Combine publishers into the main thread.
         // https://stackoverflow.com/questions/58437861/
         anyCancellable = Publishers.CombineLatest(bonjourBrowser.objectWillChange, properties.objectWillChange).sink { [weak self] (_) in
             self?.objectWillChange.send()
         }
 
-        // Start up Bonjour, let stuff populate
-        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-            self.bonjourBrowser.seek()
-        })
+        if !isPreview {
+            // Start up Bonjour, let stuff populate
+            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                self.bonjourBrowser.seek()
+            })
 
-        // after 1 second search for whatever is in serverSettings.servers to try to reconnect
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.reinit(servers: [self.userSettings.imager, self.userSettings.guider, self.userSettings.mount])
+            // after 1 second search for whatever is in serverSettings.servers to try to reconnect
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.reinit(servers: [self.userSettings.imager, self.userSettings.guider, self.userSettings.mount])
+            }
+        } else {
+            self.updateUI()
         }
+
     }
-    
+        
     func reinit(servers: [String]) {
         print("ReInit with servers \(servers)")
         
@@ -296,6 +302,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
 struct IndigoClient_Previews: PreviewProvider {
     static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+        let client = IndigoClient(isPreview: true)
+        ContentView(client: client)
     }
 }

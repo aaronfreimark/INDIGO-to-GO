@@ -58,8 +58,9 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var guiderConnected = false
     @Published var mountConnected = false
 
-    init(queue: DispatchQueue) {
+    init(queue: DispatchQueue, isPreview: Bool = false) {
         self.queue = queue
+        if isPreview { self.setUpPreview() }
     }
     
     func updateUI() {
@@ -303,28 +304,9 @@ class IndigoProperties: ObservableObject, Hashable {
             self.mountMeridian = "Not tracking"
             self.mountHALimit = "Not tracking"
         }
+
         /*
 
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 01": "exposure=600.0;count=20.0;_name=Eagle;mode=RAW 16 4656x3520;filter=Ha;name=Eagle_Light_Ha_-20_600s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 02": "focus=5.0;exposure=120.0;filter=OIII;name=Eagle_Light_OIII_-20_120s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 03": "focus=5.0;filter=SII;name=Eagle_Light_SII_-20_120s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 04": "focus=10.0;exposure=600.0;count=30.0;filter=Ha;name=Eagle_Light_Ha_-20_600s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 05": "exposure=2.0;count=40.0;_name=20200823;filter=Ha;name=20200823_Light_Ha_-20_2s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 06": "exposure=0.5;filter=OIII;name=20200823_Light_OIII_-20_0.5000s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 07": "exposure=2.0;filter=SII;name=20200823_Light_SII_-20_2s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 08": "exposure=0.02;filter=R;name=20200823_Light_R_-20_0.0200s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 09": "exposure=0.01;filter=G;name=20200823_Light_G_-20_0.0100s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 10": "exposure=0.02;filter=B;name=20200823_Light_B_-20_0.0200s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 11": "exposure=0.01;filter=L;name=20200823_Light_L_-20_0.0100s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 12": "exposure=300.0;count=30.0;name=20200823_Light_L_-20_300s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 13": "exposure=60.0;name=20200823_Light_L_-20_60s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 14": "exposure=10.0;count=20.0;_name=Cave;filter=R;name=Cave_Light_R_-20_10s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 15": "filter=G;name=Cave_Light_G_-20_10s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | 16": "filter=B;name=Cave_Light_B_-20_10s_XXX;" --- Ok
-         "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE": "1;1;1;cooler=off;park;" --- Ok
-
-         "Imager Agent | AGENT_IMAGER_DITHERING | AGGRESSIVITY": "1.5" --- Ok
-         "Imager Agent | AGENT_IMAGER_DITHERING | DELAY": "50" --- Ok
 
          "Imager Agent | AGENT_IMAGER_STATS | BATCH": "1" --- Busy
          "Imager Agent | AGENT_IMAGER_STATS | BATCHES": "3" --- Busy
@@ -344,15 +326,35 @@ class IndigoProperties: ObservableObject, Hashable {
          "Mount Agent | AGENT_LIMITS | LOCAL_TIME": "21.1617" --- Ok
 
          "Mount Agent | MOUNT_LST_TIME | TIME": "19.9318" --- Ok
-
-         "Mount Agent | MOUNT_RAW_COORDINATES | DEC": "-13.0815" --- Ok
-         "Mount Agent | MOUNT_RAW_COORDINATES | RA": "18.2552" --- Ok
-
-         
          */
         
     }
-    
+
+    func setUpPreview() {
+        setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
+        setValue(key: "Mount Agent | MOUNT_TRACKING | ON", toValue: "true", toState: "Ok")
+        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "22.0", toState: "Ok", toTarget: "23.75")
+        
+        
+        setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Busy")
+
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", toValue: "exposure=600.0;count=6.0;filter=R;", toState: "Ok")
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", toValue: "filter=B;", toState: "Ok")
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", toValue: "filter=G;", toState: "Ok")
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "1;2;3;", toState: "Ok")
+        setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCH", toValue: "1", toState: "Busy")
+        setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCHES", toValue: "3", toState: "Busy")
+        setValue(key: "Imager Agent | AGENT_IMAGER_STATS | FRAME", toValue: "3", toState: "Busy")
+
+        setValue(key: "Imager Agent | CCD_COOLER | ON", toValue: "true", toState: "Ok")
+        setValue(key: "Imager Agent | CCD_TEMPERATURE | TEMPERATURE", toValue: "-20", toState: "Ok")
+
+        setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
+
+        
+    }
+
+
     func getKeys() -> [String] {
         return self.queue.sync {
             return Array(self.properties.keys)
@@ -388,7 +390,7 @@ class IndigoProperties: ObservableObject, Hashable {
         }
     }
 
-    func setValue(key:String, toValue value:String, toState state:String, toTarget target:String?) {
+    func setValue(key:String, toValue value:String, toState state:String, toTarget target:String? = nil) {
         let newItem = IndigoItem(theValue: value, theState: state, theTarget: target)
         self.queue.async {
             self.properties[key] = newItem
@@ -485,7 +487,8 @@ class IndigoProperties: ObservableObject, Hashable {
         let time = timeFormat.string(from: date)
         return time
     }
-
+    
+    
 }
 
 
@@ -495,6 +498,7 @@ enum ImagerState: String {
 
 struct IndigoProperties_Previews: PreviewProvider {
     static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+        let client = IndigoClient(isPreview: true)
+        ContentView(client: client)
     }
 }
