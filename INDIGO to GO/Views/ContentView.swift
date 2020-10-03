@@ -101,21 +101,21 @@ struct ContentView: View {
                 }
             }
             
-            if client.properties.isImagerConnected {
-                Section(header: Text("Latest Image")){
-                    Button(action: {
-                        self.isWebViewSheetShowing = true
-                    } ) {
-                        Text(client.properties.imagerImageLatest)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .truncationMode(.head)
-                    }
-                    .sheet(isPresented: $isWebViewSheetShowing, content: {
-                        WebViewView(url: client.properties.imagerLatestImageURL)
-                    })
-                }
-            }
+//            if client.properties.isImagerConnected {
+//                Section(header: Text("Latest Image")){
+//                    Button(action: {
+//                        self.isWebViewSheetShowing = true
+//                    } ) {
+//                        Text(client.properties.imagerImageLatest)
+//                            .lineLimit(1)
+//                            .minimumScaleFactor(0.5)
+//                            .truncationMode(.head)
+//                    }
+//                    .sheet(isPresented: $isWebViewSheetShowing, content: {
+//                        WebViewView(url: client.properties.imagerLatestImageURL)
+//                    })
+//                }
+//            }
             
             // =================================================================== GUIDER
             
@@ -139,22 +139,6 @@ struct ContentView: View {
                     if client.properties.isImagerConnected {
                         StatusRow(description: client.properties.imagerCoolingText, subtext: "\(client.properties.imagerCameraTemperature) °C", status: client.properties.imagerCoolingStatus)
                     }
-                    Button(action: { self.isAlertShowing = true }) {
-                        Text("Park and Warm").foregroundColor(.red)
-                    }
-                    .alert(isPresented: $isAlertShowing, content: {
-                        Alert(
-                            title: Text("Park and Warm"),
-                            message: Text("Immediately park the mount and disable cooling, if possible."),
-                            primaryButton: .destructive(Text("Park"), action: {
-                                isAlertShowing = false
-                                client.emergencyStopAll()
-                            }),
-                            secondaryButton: .cancel(Text("Cancel"), action: {
-                                isAlertShowing = false
-                            })
-                        )
-                    })
                 }
             }
             
@@ -168,6 +152,25 @@ struct ContentView: View {
                             }
                         }) {
                 //Button(action: { client.printProperties() } ) { Text("Properties") }
+
+                if client.properties.isMountConnected || client.properties.isImagerConnected {
+                    Button(action: { self.isAlertShowing = true }) {
+                        Text(client.properties.ParkandWarmButtonTitle)
+                    }
+                    .alert(isPresented: $isAlertShowing, content: {
+                        Alert(
+                            title: Text(client.properties.ParkandWarmButtonTitle),
+                            message: Text(client.properties.ParkandWarmButtonDescription),
+                            primaryButton: .destructive(Text(client.properties.ParkandWarmButtonOK), action: {
+                                isAlertShowing = false
+                                client.emergencyStopAll()
+                            }),
+                            secondaryButton: .cancel(Text("Cancel"), action: {
+                                isAlertShowing = false
+                            })
+                        )
+                    })
+                }
                 Button(action: { self.isSettingsSheetShowing = true }) {
                     Text("Servers")
                 }

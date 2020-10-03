@@ -61,6 +61,10 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var isGuiderConnected = false
     @Published var isMountConnected = false
     @Published var isAnythingConnected = false
+    
+    @Published var ParkandWarmButtonTitle = "Park and Warm"
+    @Published var ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+    @Published var ParkandWarmButtonOK = "Park"
 
     init(queue: DispatchQueue, isPreview: Bool = false) {
         self.queue = queue
@@ -316,6 +320,26 @@ class IndigoProperties: ObservableObject, Hashable {
             self.mountHALimit = "Not tracking"
         }
 
+        
+        if self.isMountConnected && self.isImagerConnected {
+            self.ParkandWarmButtonTitle = "Park and Warm"
+            self.ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+            self.ParkandWarmButtonOK = "Park"
+        } else if self.isMountConnected && !self.isImagerConnected {
+            self.ParkandWarmButtonTitle = "Park Mount"
+            self.ParkandWarmButtonDescription = "Immediately park the mount, if possible."
+            self.ParkandWarmButtonOK = "Park"
+        } else if !self.isMountConnected && self.isImagerConnected {
+            self.ParkandWarmButtonTitle = "Warm Cooler"
+            self.ParkandWarmButtonDescription = "Immediately turn off imager cooling, if possible."
+            self.ParkandWarmButtonOK = "Warm"
+        } else {
+            self.ParkandWarmButtonTitle = "Park and Warm"
+            self.ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+            self.ParkandWarmButtonOK = "Park"
+        }
+
+        
         /*
 
 
