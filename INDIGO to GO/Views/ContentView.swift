@@ -140,13 +140,13 @@ struct ContentView: View {
                         StatusRow(description: client.properties.imagerCoolingText, subtext: "\(client.properties.imagerCameraTemperature) °C", status: client.properties.imagerCoolingStatus)
                     }
                     Button(action: { self.isAlertShowing = true }) {
-                        Text("Emergency Stop").foregroundColor(.red)
+                        Text("Park and Warm").foregroundColor(.red)
                     }
                     .alert(isPresented: $isAlertShowing, content: {
                         Alert(
-                            title: Text("Emergency Stop"),
+                            title: Text("Park and Warm"),
                             message: Text("Immediately park the mount and disable cooling, if possible."),
-                            primaryButton: .destructive(Text("Emergency Stop"), action: {
+                            primaryButton: .destructive(Text("Park"), action: {
                                 isAlertShowing = false
                                 client.emergencyStopAll()
                             }),
