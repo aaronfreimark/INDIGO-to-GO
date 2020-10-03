@@ -42,7 +42,7 @@ struct SettingsView: View {
                     }.pickerStyle(SegmentedPickerStyle())
                 }
 
-                Section(header: Text("Mount: \(imager)")) {
+                Section(header: Text("Mount: \(mount)")) {
                     Picker(selection: $mount, label: Text("Mount Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
                                     $0.name != "AstroGuider" && $0.name != "AstroImager"
@@ -52,7 +52,7 @@ struct SettingsView: View {
                     }.pickerStyle(SegmentedPickerStyle())
                 }
 
-                Section(header: Text("Guider: \(imager)")) {
+                Section(header: Text("Guider: \(guider)")) {
                     Picker(selection: $guider, label: Text("Guider Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
                                     $0.name != "AstroTelescope" && $0.name != "AstroImager"
