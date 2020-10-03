@@ -32,12 +32,7 @@ struct SettingsView: View {
         NavigationView {
             Form {
 
-                Text("Please select your INDIGO server or INDIGO agents. Agents are discovered on your local network using Bonjour.")
-                    .font(.callout)
-                    .padding(.vertical, 30.0)
-
-                HStack {
-                    Text("Imager:").font(.callout).frame(width: 60, alignment: .leading)
+                Section(header: Text("Imager: \(imager)")) {
                     Picker(selection: $imager, label: Text("Imager Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
                             $0.name != "AstroTelescope" && $0.name != "AstroGuider"
@@ -47,8 +42,7 @@ struct SettingsView: View {
                     }.pickerStyle(SegmentedPickerStyle())
                 }
 
-                HStack {
-                    Text("Mount:").font(.callout).frame(width: 60, alignment: .leading)
+                Section(header: Text("Mount: \(imager)")) {
                     Picker(selection: $mount, label: Text("Mount Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
                                     $0.name != "AstroGuider" && $0.name != "AstroImager"
@@ -58,8 +52,7 @@ struct SettingsView: View {
                     }.pickerStyle(SegmentedPickerStyle())
                 }
 
-                HStack {
-                    Text("Guider:").font(.callout).frame(width: 60, alignment: .leading)
+                Section(header: Text("Guider: \(imager)")) {
                     Picker(selection: $guider, label: Text("Guider Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
                                     $0.name != "AstroTelescope" && $0.name != "AstroImager"
@@ -68,6 +61,7 @@ struct SettingsView: View {
                         }
                     }.pickerStyle(SegmentedPickerStyle())
                 }
+
                 HStack() {
                     Spacer()
                     Button(action: saveServers) { Text("Save") }
@@ -81,10 +75,13 @@ struct SettingsView: View {
                 .padding(.vertical, 30.0)
 
                 VStack {
-                    Link("http://indigo-astronomy.org", destination: URL(string: "http://indigo-astronomy.org")!)
+                    Text("Please select your INDIGO server or agents. Agents are discovered on your local network using Bonjour.")
                         .font(.callout)
-                    Link("http://www.cloudmakers.eu", destination: URL(string: "http://www.cloudmakers.eu")!)
-                        .font(.callout)
+
+//                    Link("http://indigo-astronomy.org", destination: URL(string: "http://indigo-astronomy.org")!)
+//                        .font(.callout)
+//                    Link("http://www.cloudmakers.eu", destination: URL(string: "http://www.cloudmakers.eu")!)
+//                        .font(.callout)
                 }
                 .padding(.vertical, 30.0)
 
