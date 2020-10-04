@@ -32,7 +32,6 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         
         self.properties = IndigoProperties(queue: self.queue, isPreview: isPreview)
         
-        
         // Combine publishers into the main thread.
         // https://stackoverflow.com/questions/58437861/
         anyCancellable = Publishers.CombineLatest(bonjourBrowser.objectWillChange, properties.objectWillChange).sink { [weak self] (_) in
@@ -79,6 +78,8 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         }
     }
 
+    // =============================================================================================
+
     func allServers() -> [String] {
             return Array(self.connections.keys)
     }
@@ -91,8 +92,6 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         return connectedServers
     }
 
-    
-    
     func updateUI() {
         self.properties.updateUI()
     }
@@ -113,25 +112,12 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     
     // =============================================================================================
 
-    func hello(connection: IndigoConnection) {
-        let json: JSON = [ "getProperties": [ "version": 512 ] ]
-        connection.send(data: json.rawString()!.data(using: .ascii)!)
-    }
-
-    func mountPark(connection: IndigoConnection) {
-        let json: JSON = [ "newSwitchVector": [ "device": "Mount Agent", "name": "MOUNT_PARK", "items": [ [ "name": "PARKED", "value": true ] ] ] ]
-        connection.send(data: json.rawString()!.data(using: .ascii)!)
-    }
-    func imagerDisableCooler(connection: IndigoConnection) {
-        let json: JSON = [ "newSwitchVector": [ "device": "Imager Agent", "name": "CCD_COOLER", "items": [ [ "name": "OFF", "value": true ] ] ] ]
-        connection.send(data: json.rawString()!.data(using: .ascii)!)
-    }
 
     func emergencyStopAll() {
         self.queue.async {
             for (_, connection) in self.connections {
-                self.mountPark(connection: connection)
-                self.imagerDisableCooler(connection: connection)
+                connection.mountPark()
+                connection.imagerDisableCooler()
             }
         }
     }
@@ -139,17 +125,59 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     func enableAllPreviews() {
         self.queue.async {
             for (_, connection) in self.connections {
-                self.enablePreviews(connection: connection)
+                connection.enablePreviews()
             }
         }
     }
 
-    func enablePreviews(connection: IndigoConnection) {
-        let json: JSON = [ "newSwitchVector": [ "device": "Imager Agent", "name": "CCD_PREVIEW", "items": [ [ "name": "ENABLED", "value": true ]  ]  ] ]
-        connection.send(data: json.rawString()!.data(using: .ascii)!)
+    // =============================================================================================
+
+    
+    func connectAll() {
+        print("Connecting to servers: \(self.serversToConnect)")
+        for server in self.serversToConnect {
+            // Make sure each agent is unique. We don't need multiple connections to an endpoint!
+            if server != "None" && !self.connectedServers().contains(server)  {
+                if let endpoint = self.bonjourBrowser.endpoint(name: server) {
+                    self.queue.async {
+                        self.connections[server] = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue, delegate: self)
+                        if self.connections[server]!.endpoint != nil {
+                            print("\(self.connections[server]!.name): Setting Up...")
+                            self.connections[server]!.start()
+
+                        } else {
+                            print("\(self.connections[server]!.name): IndigoClient not ready to start.")
+                        }
+                    }
+                }
+            }
+        }
+
+        self.serversToConnect = []
     }
 
-        
+    // =============================================================================================
+
+    func receiveMessage(data: Data?, context: NWConnection.ContentContext?, isComplete: Bool, error: NWError?) {
+        if let data = data, !data.isEmpty {
+            if let message = String(data: data, encoding: .utf8) {
+                // print ("Received: \(message ?? "-" )")
+                // print ("Received \(message.count) bytes")
+                
+                if let dataFromString = message.data(using: .ascii, allowLossyConversion: false) {
+                    do {
+                        let json = try JSON(data: dataFromString)
+                        self.properties.injest(json: json)
+                    } catch {
+                        print ("Really bad JSON error.")
+                    }
+                }
+            }
+        }
+    }
+
+    // =============================================================================================
+
 
     func connectionStateHasChanged(_ name: String, _ state: NWConnection.State) {
         guard let connection = self.connections[name] else {
@@ -157,12 +185,17 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             return
         }
         
-        // TODO if a connected is removed (.failed, .cancelled) we need to clean up properties! 
+        // TODO if a connected is removed (.failed, .cancelled) we need to clean up properties!
         
         switch state {
         case .ready:
-            hello(connection: connection)
-            enablePreviews(connection: connection)
+            // Upgrade to a websocket if it isn't one now.
+            
+            var path = connection.connection?.currentPath?.remoteEndpoint
+            print("Path: \(path)")
+            
+            connection.hello()
+            connection.enablePreviews()
         case .setup:
             break
         case .waiting:
@@ -170,11 +203,12 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         case .preparing:
             break
         case .failed, .cancelled:
-            self.connections.removeValue(forKey: name)
-            print("\(name): State cancelled/failed & removed connection.")
+            print("\(name): State cancelled or failed.")
+            // expected or unexpected? If unexpected, try to reconnect.
             
             if self.serversToDisconnect.contains(name) {
                 print("==== Expected disconnection ====")
+                self.connections.removeValue(forKey: name)
                 self.serversToDisconnect.removeAll(where: { $0 == name } )
                 if self.serversToDisconnect.isEmpty {
                     print("=== Beginning reconnections ===")
@@ -185,6 +219,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
             } else {
                 print("==== Unexpected disconnection ====")
+                self.connections.removeValue(forKey: name)
                 reinit(servers: self.connectedServers())
             }
             break
@@ -192,42 +227,9 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             break
         }
     }
-    
-    func connect(connection: IndigoConnection) {
-        if connection.endpoint != nil {
-            connection.connection = NWConnection(to: connection.endpoint!, using: NWParameters.tcp)
-            print("\(connection.name): Starting Client...")
-            self.start(connection: connection)
-        } else {
-            print("\(connection.name): IndigoClient not ready to start.")
-        }
-    }
 
-    func start(connection: IndigoConnection) {
-        connection.setup()
-        setupReceive(connection: connection)
-        connection.start()
-    }
+    // =============================================================================================
 
-    
-    func connectAll() {
-        print("Connecting to servers: \(self.serversToConnect)")
-        for server in self.serversToConnect {
-            // Make sure each agent is unique. We don't need multiple connections to an endpoint!
-            if server != "None" && !self.connectedServers().contains(server)  {
-                if let endpoint = self.bonjourBrowser.endpoint(name: server) {
-                    self.queue.async {
-                        self.connections[server] = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue)
-                        self.connections[server]!.delegate = self
-                        self.connect(connection: self.connections[server]!)
-                    }
-                }
-            }
-        }
-
-        self.serversToConnect = []
-    }
-    
     func disconnect(connection: IndigoConnection) {
         print("\(connection.name): Disconnecting client...")
         connection.stop()
@@ -243,79 +245,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             }
         }
     }
-
-
-
-    // =============================================================================================
-
-
-
-    
-    
-    private func setupReceive(connection: IndigoConnection) {
-        connection.connection!.receive(minimumIncompleteLength: 1, maximumLength: 60*1024) { (data, _, isComplete, error) in
-            //nwConnection.receiveMessage() { (data, _, isComplete, error) in
-            if let data = data, !data.isEmpty {
-                let message = String(data: data, encoding: .utf8)
-                // print ("Received: \(message ?? "-" )")
-                if let unwrapped = message {
-                     // print ("Received \(unwrapped.count) bytes")
-                    // Data from server may receive multiple JSON objects, or partial objects. Let's make sure we process only complete {..} objects.
-                    var textToParse = self.receivedRemainder + unwrapped
-                    
-                    while textToParse != "" {
-                        guard let extracted = self.extractFullJsonObject(s: textToParse) else { break }
-                        
-                        // was there no complete JSON object? save the remainder for next time.
-                        if extracted.object == "" { textToParse = extracted.remainder; break }
-                        
-                        let completeJson = extracted.object
-                        
-                        if let dataFromString = completeJson.data(using: .ascii, allowLossyConversion: false) {
-                            do {
-                                let json = try JSON(data: dataFromString)
-                                self.properties.injest(json: json, connection: connection)
-                            } catch {
-                                print ("Really bad JSON error.")
-                            }
-                        }
-                        textToParse = extracted.remainder
-                    }
-                    
-                    // save whatever remainder until next time.
-                    self.receivedRemainder = textToParse
-                    
-                }
-            }
-            if isComplete {
-                connection.connectionDidEnd()
-            } else if let error = error {
-                connection.connectionDidFail(error: error)
-            } else {
-                self.setupReceive(connection: connection)
-            }
-        }
-    }
-    
-    
-    func extractFullJsonObject(s: String) -> (object: String, remainder: String)? {
-        
-        if s[s.startIndex] != "{" { return nil }
-        var braces = 0
-
-        for i in s.indices {
-            if s[i] == "{" { braces += 1 }
-            if s[i] == "}" { braces -= 1 }
-            if braces == 0 { return (object: String(s[...i]), remainder: String(s[s.index(after: i)..<s.endIndex]))}
-        }
-        return nil
-    }
-    
-
-    
-    
-    
-    
+     
 }
 
 struct IndigoClient_Previews: PreviewProvider {

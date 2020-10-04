@@ -18,8 +18,10 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     }
         
     func endpoint(name: String) -> NWEndpoint? {
-        for endpoint in discovered {
-            if endpoint.name == name { return endpoint.endpoint }
+        for endpoint in self.discovered {
+            if endpoint.name == name {
+                return endpoint.endpoint
+            }
         }
         return nil
     }
@@ -54,13 +56,11 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
             }
             
             browser.browseResultsChangedHandler = { ( results, changes ) in
-//                self.discovered.removeAll()
                 self.discovered = [BonjourEndpoint()]
                 for result in results {
-                    let endpoint = result.endpoint
-                    let endpointObject = BonjourEndpoint(endpoint: endpoint)
-                    self.discovered.append(endpointObject)
-                    print("New Bonjour Endpoint: \(endpointObject.name)")
+                    let endpoint = BonjourEndpoint(endpoint: result.endpoint)
+                    print("New Bonjour Endpoint: \(endpoint.name)")
+                    self.discovered.append(endpoint)
                 }
             }
             
@@ -68,33 +68,4 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
         }
     }
 }
-
-
-class BonjourEndpoint: Hashable, ObservableObject {
-    var endpoint: NWEndpoint?
-    var name: String
-    
-    init(endpoint: NWEndpoint) {
-        self.endpoint = endpoint
-        if case let NWEndpoint.service(name: name, type: _, domain: _, interface: _) = endpoint {
-            self.name = name
-        } else {
-            self.name = "Unknown"
-        }
-    }
-
-    init() {
-        self.name = "None"
-        self.endpoint = nil
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(endpoint)
-    }
-
-    static func == (lhs: BonjourEndpoint, rhs: BonjourEndpoint) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
-}
-
 

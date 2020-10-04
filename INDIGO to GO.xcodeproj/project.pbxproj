@@ -14,6 +14,7 @@
 		931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF663250A564900EE6300 /* BonjourBrowser.swift */; };
 		931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 931D1E0C250C01AF00BFFA6B /* SwiftyJSON */; };
 		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
+		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938917C3251E4B4700D9B3F3 /* WebView.swift */; };
 		938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */; };
@@ -34,6 +35,7 @@
 		931AF63F2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		931AF663250A564900EE6300 /* BonjourBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourBrowser.swift; sourceTree = "<group>"; };
 		931E89D5252472B800FCFAB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93577355252A526E005670B3 /* BonjourEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourEndpoint.swift; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
 		938917C3251E4B4700D9B3F3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				93BF08042513E9E90018DEC0 /* IndigoProperties.swift */,
 				938F010625114B2D00599096 /* IndigoItem.swift */,
 				931AF663250A564900EE6300 /* BonjourBrowser.swift */,
+				93577355252A526E005670B3 /* BonjourEndpoint.swift */,
 				93E4107D2514E5050027A62D /* IndigoConnection.swift */,
 				937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */,
 			);
@@ -199,6 +202,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */,
 				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
 				938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */,
 				93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */,
