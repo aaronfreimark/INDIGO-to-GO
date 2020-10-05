@@ -390,7 +390,6 @@ class IndigoProperties: ObservableObject, Hashable {
         setValue(key: "Imager Agent | CCD_TEMPERATURE | TEMPERATURE", toValue: "-20", toState: "Ok")
 
         setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
-
         
     }
 
