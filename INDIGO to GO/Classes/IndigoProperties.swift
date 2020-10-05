@@ -443,7 +443,7 @@ class IndigoProperties: ObservableObject, Hashable {
         }
     }
     
-    func injest(json: JSON) {
+    func injest(json: JSON, source: IndigoConnection) {
         // loop through the INDIGO structure and parse into a more usable struct
         // if json.rawString()!.contains("HA_TRACKING") { print(json.rawString()) }
 
@@ -474,10 +474,12 @@ class IndigoProperties: ObservableObject, Hashable {
                                 }
                                 
                                 // handle special cases
-                                if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" {
-//                                    let url = "http://" + connection.name + ".local:7624" + itemValue
-//                                    self.imagerLatestImageURL = url
-//                                    print("imagerLatestImageURL: \(url))")
+                                if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
+                                    if let urlprefix = source.url {
+                                        let url = urlprefix + itemValue
+                                        self.imagerLatestImageURL = url
+                                        print("imagerLatestImageURL: \(url)")
+                                    }
                                 }
                                 
                                 break

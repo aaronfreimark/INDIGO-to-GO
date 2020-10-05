@@ -12,6 +12,8 @@ import SwiftyJSON
 class IndigoConnection {
     
     var name = ""
+    var url: String? = nil
+    var isSecure = false
     private var endpoint: NWEndpoint?
     private var serviceConnection: NWConnection?
     private var websocketConnection: NWConnection?
@@ -46,7 +48,7 @@ class IndigoConnection {
     private func setupReceive() {
         self.websocketConnection!.receiveMessage { [weak self] (data, context, isComplete, error) in
             if let data = data, !data.isEmpty {
-                self!.delegate!.receiveMessage(data: data, context: context, isComplete: isComplete, error: error)
+                self!.delegate!.receiveMessage(data: data, context: context, isComplete: isComplete, error: error, source: self!)
             }
             if let error = error {
                 self!.connectionDidFail(error: error)
@@ -139,7 +141,8 @@ class IndigoConnection {
             return nil
         }
 
-        let websocketURLString = "ws://\(wsHost!):\(wsPort!)/"
+        self.url = "\(self.isSecure ? "https" : "http")://\(wsHost!):\(wsPort!)"
+        let websocketURLString = "\(self.isSecure ? "wss" : "ws")://\(wsHost!):\(wsPort!)/"
         print("\(self.name): websocketURLString: \(websocketURLString)")
 
         if let websocketURL = URL(string: websocketURLString) {
@@ -239,6 +242,6 @@ class IndigoConnection {
 
 protocol IndigoConnectionDelegate {
     func connectionStateHasChanged(_ name: String, _ state: NWConnection.State)
-    func receiveMessage(data: Data?, context: NWConnection.ContentContext?, isComplete: Bool, error: NWError?)
+    func receiveMessage(data: Data?, context: NWConnection.ContentContext?, isComplete: Bool, error: NWError?, source: IndigoConnection)
 }
 

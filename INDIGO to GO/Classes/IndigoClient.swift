@@ -154,7 +154,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     // =============================================================================================
 
-    func receiveMessage(data: Data?, context: NWConnection.ContentContext?, isComplete: Bool, error: NWError?) {
+    func receiveMessage(data: Data?, context: NWConnection.ContentContext?, isComplete: Bool, error: NWError?, source: IndigoConnection) {
         if let data = data, !data.isEmpty {
             if let message = String(data: data, encoding: .utf8) {
                 // print ("Received: \(message ?? "-" )")
@@ -163,7 +163,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
                 if let dataFromString = message.data(using: .ascii, allowLossyConversion: false) {
                     do {
                         let json = try JSON(data: dataFromString)
-                        self.properties.injest(json: json)
+                        self.properties.injest(json: json, source: source)
                     } catch {
                         print ("Really bad JSON error.")
                     }
