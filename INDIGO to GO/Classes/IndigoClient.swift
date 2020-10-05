@@ -140,14 +140,10 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             if server != "None" && !self.connectedServers().contains(server)  {
                 if let endpoint = self.bonjourBrowser.endpoint(name: server) {
                     self.queue.async {
-                        self.connections[server] = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue, delegate: self)
-                        if self.connections[server]!.endpoint != nil {
-                            print("\(self.connections[server]!.name): Setting Up...")
-                            self.connections[server]!.start()
-
-                        } else {
-                            print("\(self.connections[server]!.name): IndigoClient not ready to start.")
-                        }
+                        let connection = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue, delegate: self)
+                        print("\(connection.name): Setting Up...")
+                        self.connections[server] = connection
+                        connection.start()
                     }
                 }
             }
@@ -185,15 +181,8 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             return
         }
         
-        // TODO if a connected is removed (.failed, .cancelled) we need to clean up properties!
-        
         switch state {
         case .ready:
-            // Upgrade to a websocket if it isn't one now.
-            
-            var path = connection.connection?.currentPath?.remoteEndpoint
-            print("Path: \(path)")
-            
             connection.hello()
             connection.enablePreviews()
         case .setup:

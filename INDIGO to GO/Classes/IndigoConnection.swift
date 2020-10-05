@@ -12,15 +12,19 @@ import SwiftyJSON
 class IndigoConnection {
     
     var name = ""
-    var endpoint: NWEndpoint?
-    var connection: NWConnection?
-    var parameters: NWParameters?
+    private var endpoint: NWEndpoint?
+    private var serviceConnection: NWConnection?
+    private var websocketConnection: NWConnection?
+    private var parameters: NWParameters?
 
     var didStopCallback: ((Error?) -> Void)? = nil
 
     var delegate: IndigoConnectionDelegate?
     var queue: DispatchQueue
+    
+    var isUpgradedtoWebSockets = false
 
+    
     init(name: String, endpoint: NWEndpoint, queue: DispatchQueue, delegate: IndigoConnectionDelegate) {
         self.name = name
         self.endpoint = endpoint
@@ -30,30 +34,17 @@ class IndigoConnection {
     
     func start() {
 
+        // first start with service endpoint, then check path for real endpoint, then connect with websocket endpoint
         self.parameters = NWParameters.tcp
-        self.parameters!.allowLocalEndpointReuse = true
-        self.parameters!.includePeerToPeer = true
-        let websocketOptions = NWProtocolWebSocket.Options()
-        websocketOptions.autoReplyPing = true
-        self.parameters!.defaultProtocolStack.applicationProtocols.insert(websocketOptions, at: 0)
-        
-        //        self.connection = NWConnection(to: self.endpoint!, using: self.parameters!)
-        let endpoint: NWEndpoint = .url(URL(string: "ws://Mr-T.local.:59469/")!)
-        self.connection = NWConnection(to: endpoint, using: self.parameters!)
-        
-        self.didStopCallback = didStopCallback(error:)
-        self.connection!.stateUpdateHandler = stateDidChange(to:)
+        self.serviceConnection = NWConnection(to: self.endpoint!, using: self.parameters!)
+        self.serviceConnection!.stateUpdateHandler = self.serviceConnectionStateDidChange(to:)
+        self.serviceConnection!.start(queue: self.queue)
 
-        // setupReceive
-        self.setupReceive()
-
-        print("\(self.name): Client starting... ")
-        self.connection!.start(queue: self.queue)
     }
 
     
     private func setupReceive() {
-        self.connection!.receiveMessage { [weak self] (data, context, isComplete, error) in
+        self.websocketConnection!.receiveMessage { [weak self] (data, context, isComplete, error) in
             if let data = data, !data.isEmpty {
                 self!.delegate!.receiveMessage(data: data, context: context, isComplete: isComplete, error: error)
             }
@@ -67,6 +58,95 @@ class IndigoConnection {
 
     // =================================================
 
+    func serviceConnectionStateDidChange(to state: NWConnection.State) {
+        switch state {
+        case .ready:
+            print("\(self.name): Service connected. Resolving endpoint and upgrading to websockets.")
+            
+            guard let websocketEndpoint = self.websocketEndpoint() else { return }
+            self.endpoint = websocketEndpoint
+                        
+//            self.serviceConnection!.stateUpdateHandler = nil
+            self.serviceConnection!.cancel()
+
+            self.parameters!.allowLocalEndpointReuse = true
+            self.parameters!.includePeerToPeer = true
+            let websocketOptions = NWProtocolWebSocket.Options()
+            websocketOptions.autoReplyPing = true
+            self.parameters!.defaultProtocolStack.applicationProtocols.insert(websocketOptions, at: 0)
+            
+            print("\(self.name): Creating websocket connection.")
+            self.websocketConnection = NWConnection(to: websocketEndpoint, using: self.parameters!)
+
+            self.didStopCallback = didStopCallback(error:)
+            self.websocketConnection!.stateUpdateHandler = stateDidChange(to:)
+
+            // setupReceive
+            self.setupReceive()
+
+            print("\(self.name): Websocket connection starting... ")
+            self.websocketConnection!.start(queue: self.queue)
+            
+        case .failed:
+            print("\(name): Service connection failed.")
+            break
+        case .cancelled:
+            print("\(name): Service connection cancelled.")
+            break
+        case .setup, .waiting, .preparing:
+            break
+        @unknown default:
+            break
+        }
+    }
+
+
+
+    // =================================================
+
+    func websocketEndpoint() -> NWEndpoint? {
+
+        var wsHost: String? = nil
+        var wsPort: String? = nil
+        
+        let remoteEndpoint = self.serviceConnection?.currentPath?.remoteEndpoint
+        
+        if case let .hostPort(host: host, port: port) = remoteEndpoint {
+            if case let .name(hostName, _) = host {
+                print("\(self.name): Resolved to hostname \(hostName):\(port).")
+                wsHost = hostName
+                wsPort = String(port.rawValue)
+            }
+            if case let .ipv4(ipWithInterface) = host {
+                // 192.168.7.248%en0
+                let str: String = ipWithInterface.debugDescription
+                let ip = str.components(separatedBy: "%")[0]
+                print("\(self.name): Resolved to IP \(ip):\(port).")
+
+                wsHost = ip
+                wsPort = String(port.rawValue)
+            }
+
+        } else {
+            print("\(self.name): Failed to resolve.")
+            return nil
+        }
+
+        let websocketURLString = "ws://\(wsHost!):\(wsPort!)/"
+        print("\(self.name): websocketURLString: \(websocketURLString)")
+
+        if let websocketURL = URL(string: websocketURLString) {
+            return NWEndpoint.url(websocketURL)
+        }
+        else {
+            print("\(self.name): Failed to create URL from \(websocketURLString)")
+            return nil
+        }
+
+    }
+    // =================================================
+
+    
     func stop() {
         print("\(self.name): Client stopping...")
         stop(error: nil)
@@ -78,7 +158,7 @@ class IndigoConnection {
         let metadata = NWProtocolWebSocket.Metadata(opcode: .text)
         let context = NWConnection.ContentContext(identifier: "textContext", metadata: [metadata])
 
-        self.connection!.send(content: data, contentContext: context, completion: .contentProcessed( { error in
+        self.websocketConnection!.send(content: data, contentContext: context, completion: .contentProcessed( { error in
             if let error = error {
                 self.connectionDidFail(error: error)
                 return
@@ -112,8 +192,8 @@ class IndigoConnection {
     }
     
     private func stop(error: Error?) {
-        self.connection!.stateUpdateHandler = nil
-        self.connection!.cancel()
+        self.websocketConnection!.stateUpdateHandler = nil
+        self.websocketConnection!.cancel()
         if let didStopCallback = self.didStopCallback {
             self.didStopCallback = nil
             didStopCallback(error)
@@ -121,8 +201,8 @@ class IndigoConnection {
     }
     
     func isConnected() -> Bool {
-        if self.connection == nil { return false }
-        return self.connection!.state == .ready
+        if self.websocketConnection == nil { return false }
+        return self.websocketConnection!.state == .ready
     }
     
     
@@ -148,7 +228,6 @@ class IndigoConnection {
         self.send(data: json.rawString()!.data(using: .ascii)!)
     }
 
-    
 }
 
 protocol IndigoConnectionDelegate {
