@@ -34,6 +34,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var mountSecondsUntilMeridian: Float = 0
     @Published var mountSecondsUntilHALimit: Float = 0
     @Published var mountHALimit: String = ""
+    @Published var isMountHALimitEnabled = false
 
     var imagerState: ImagerState = .Stopped
     @Published var imagerSequenceText: String = ""
@@ -304,6 +305,10 @@ class IndigoProperties: ObservableObject, Hashable {
                 self.mountMeridian = timeString(date: mountMeridianTime)
                 
                 if let HALimit = Float(getTarget("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0") {
+
+                    self.isMountHALimitEnabled = HALimit != 24.0
+                    
+
                     var timeUntilHALimitSeconds = 3600 * (HALimit - hourAngle)
                     while timeUntilHALimitSeconds >= secondsInDay {
                         timeUntilHALimitSeconds = timeUntilHALimitSeconds - secondsInDay

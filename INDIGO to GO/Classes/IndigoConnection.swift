@@ -65,34 +65,41 @@ class IndigoConnection {
             
             guard let websocketEndpoint = self.websocketEndpoint() else { return }
             self.endpoint = websocketEndpoint
+            self.isUpgradedtoWebSockets = true
                         
-//            self.serviceConnection!.stateUpdateHandler = nil
             self.serviceConnection!.cancel()
+            // continues with .cancelled below...
+            break
 
-            self.parameters!.allowLocalEndpointReuse = true
-            self.parameters!.includePeerToPeer = true
-            let websocketOptions = NWProtocolWebSocket.Options()
-            websocketOptions.autoReplyPing = true
-            self.parameters!.defaultProtocolStack.applicationProtocols.insert(websocketOptions, at: 0)
+        case .cancelled:
+            print("\(name): Service connection cancelled.")
+
+            if self.isUpgradedtoWebSockets {
+                self.parameters!.allowLocalEndpointReuse = true
+                self.parameters!.includePeerToPeer = true
+                let websocketOptions = NWProtocolWebSocket.Options()
+                websocketOptions.autoReplyPing = true
+                self.parameters!.defaultProtocolStack.applicationProtocols.insert(websocketOptions, at: 0)
+                
+                print("\(self.name): Upgrading to websocket connection.")
+                self.websocketConnection = NWConnection(to: self.endpoint!, using: self.parameters!)
+                
+                self.didStopCallback = didStopCallback(error:)
+                self.websocketConnection!.stateUpdateHandler = stateDidChange(to:)
+                
+                // setupReceive
+                self.setupReceive()
+                
+                print("\(self.name): Websocket connection starting... ")
+                self.websocketConnection!.start(queue: self.queue)
+            }
             
-            print("\(self.name): Creating websocket connection.")
-            self.websocketConnection = NWConnection(to: websocketEndpoint, using: self.parameters!)
+            break
 
-            self.didStopCallback = didStopCallback(error:)
-            self.websocketConnection!.stateUpdateHandler = stateDidChange(to:)
-
-            // setupReceive
-            self.setupReceive()
-
-            print("\(self.name): Websocket connection starting... ")
-            self.websocketConnection!.start(queue: self.queue)
-            
         case .failed:
             print("\(name): Service connection failed.")
             break
-        case .cancelled:
-            print("\(name): Service connection cancelled.")
-            break
+
         case .setup, .waiting, .preparing:
             break
         @unknown default:

@@ -94,8 +94,10 @@ struct ContentView: View {
                     if client.properties.isImagerConnected {
                         StatusRow(description: "Estimated Completion", subtext: client.properties.imagerExpectedFinish, status: "clock")
                     }
-                    if client.properties.isMountConnected  {
+                    if client.properties.isMountHALimitEnabled {
                         StatusRow(description: "HA Limit", subtext: client.properties.mountHALimit, status: "exclamationmark.arrow.circlepath")
+                    }
+                    if client.properties.isMountConnected  {
                         StatusRow(description: "Meridian Transit", subtext: client.properties.mountMeridian, status: "ellipsis.circle")
                     }
                 }
@@ -133,11 +135,11 @@ struct ContentView: View {
             
             if client.properties.isMountConnected || client.properties.isImagerConnected {
                 Section(header: Text("Hardware")) {
-                    if client.properties.isMountConnected {
-                        StatusRow(description: client.properties.mountTrackingText, status: client.properties.mountTrackingStatus)
-                    }
                     if client.properties.isImagerConnected {
                         StatusRow(description: client.properties.imagerCoolingText, subtext: "\(client.properties.imagerCameraTemperature) °C", status: client.properties.imagerCoolingStatus)
+                    }
+                    if client.properties.isMountConnected {
+                        StatusRow(description: client.properties.mountTrackingText, status: client.properties.mountTrackingStatus)
                     }
                 }
             }
