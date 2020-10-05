@@ -40,7 +40,9 @@ struct ContentView: View {
                 Section(header: Text("Sequence")) {
                     if client.properties.isImagerConnected {
                         StatusRow(description: client.properties.imagerSequenceText, subtext: "\(client.properties.imagerImagesTaken) / \(client.properties.imagerImagesTotal)", status: client.properties.imagerSequenceStatus)
-                        
+
+            // =================================================================== PROGRESS
+
                         ZStack {
                             VStack {
                                 GeometryReader { metrics in
@@ -49,10 +51,12 @@ struct ContentView: View {
                                             sequence.progressView(imagerTotalTime: client.properties.imagerTotalTime, enclosingWidth: metrics.size.width)
                                         }
                                     }
-                                    .frame(height: 2.0)
+                                    .frame(height: 5.0)
                                 }
                                 ProgressView(value: Float(client.properties.imagerImageTime), total: Float(client.properties.imagerTotalTime))
-                            }.padding()
+                                    .frame(height: 15.0)
+                            }
+                            .padding()
                             
                             if client.properties.isMountConnected && client.properties.mountIsTracking {
                                 
@@ -60,19 +64,22 @@ struct ContentView: View {
                                 let proportionMeridian = CGFloat(client.properties.mountSecondsUntilMeridian) / CGFloat(client.properties.imagerTotalTime)
                                 
                                 
-                                GeometryReader { metrics in
-                                    HStack(alignment: .center, spacing: 0) {
-                                        let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionHa
-                                        
-                                        Spacer()
-                                            .frame(width: spacerWidth)
-                                        Rectangle()
-                                            .fill(Color.orange)
-                                            .opacity(0.3)
-                                            .frame(width: CGFloat(metrics.size.width) * (proportionMeridian - proportionHa))
-                                        Spacer()
+                                if client.properties.isMountHALimitEnabled {
+                                    GeometryReader { metrics in
+                                        HStack(alignment: .center, spacing: 0) {
+                                            let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionHa
+                                            
+                                            Spacer()
+                                                .frame(width: spacerWidth)
+                                            Rectangle()
+                                                .fill(Color.orange)
+                                                .opacity(0.3)
+                                                .frame(width: CGFloat(metrics.size.width) * (proportionMeridian - proportionHa))
+                                            Spacer()
+                                        }
                                     }
                                 }
+
                                 GeometryReader { metrics in
                                     HStack(alignment: .center, spacing: 0) {
                                         let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionMeridian
@@ -81,7 +88,7 @@ struct ContentView: View {
                                             .frame(width: spacerWidth)
                                         Rectangle()
                                             .fill(Color.orange)
-                                            .frame(width: 1)
+                                            .frame(width: 2)
                                         Spacer()
                                     }
                                 }
@@ -90,7 +97,9 @@ struct ContentView: View {
                             }
                         }
                     }
-                    
+
+                    // =================================================================== COMPLETION
+
                     if client.properties.isImagerConnected {
                         StatusRow(description: "Estimated Completion", subtext: client.properties.imagerExpectedFinish, status: "clock")
                     }
