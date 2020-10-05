@@ -78,6 +78,7 @@ struct ContentView: View {
                                             Spacer()
                                         }
                                     }
+                                    .padding(.horizontal)
                                 }
 
                                 GeometryReader { metrics in
@@ -92,6 +93,8 @@ struct ContentView: View {
                                         Spacer()
                                     }
                                 }
+                                .padding(.horizontal)
+
                             } else {
                                 EmptyView()
                             }
