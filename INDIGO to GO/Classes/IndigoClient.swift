@@ -18,8 +18,16 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     @ObservedObject var bonjourBrowser: BonjourBrowser = BonjourBrowser()
     @Published var properties: IndigoProperties
     var connections: [String: IndigoConnection] = [:]
-    var userSettings = UserSettings()
-
+    var defaultImager: String {
+        didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") }
+    }
+    var defaultGuider: String {
+        didSet { UserDefaults.standard.set(defaultGuider, forKey: "guider") }
+    }
+    var defaultMount: String {
+        didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") }
+    }
+    
     var serversToDisconnect: [String] = []
     var serversToConnect: [String] = []
     var maxReconnectAttempts = 3
@@ -32,7 +40,11 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     init(isPreview: Bool = false) {
         
         self.properties = IndigoProperties(queue: self.queue, isPreview: isPreview)
-        
+
+        self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
+        self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
+        self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
+
         // Combine publishers into the main thread.
         // https://stackoverflow.com/questions/58437861/
         anyCancellable = Publishers.CombineLatest(bonjourBrowser.objectWillChange, properties.objectWillChange).sink { [weak self] (_) in
@@ -51,7 +63,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     }
     
     func reinitSavedServers() {
-        self.reinit(servers: [self.userSettings.imager, self.userSettings.guider, self.userSettings.mount])
+        self.reinit(servers: [self.defaultImager, self.defaultGuider, self.defaultMount])
     }
     
     func reinit(servers: [String]) {
