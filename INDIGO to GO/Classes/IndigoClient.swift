@@ -22,6 +22,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     var serversToDisconnect: [String] = []
     var serversToConnect: [String] = []
+    var maxReconnectAttempts = 3
     var receivedRemainder = "" // partial text while receiving INDI
     
     var anyCancellable: AnyCancellable? = nil
@@ -208,8 +209,16 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
             } else {
                 print("==== Unexpected disconnection ====")
-                self.connections.removeValue(forKey: name)
-                reinit(servers: self.connectedServers())
+                
+                if self.connections[name] != nil && self.connections[name]!.reconnectAttempts < self.maxReconnectAttempts {
+                    self.connections[name]!.reconnectAttempts += 1
+                    print("\(name): Attempting reconnection attempt \(self.connections[name]!.reconnectAttempts)...")
+                    self.connections[name]!.start()
+                } else {
+                    print("\(name): Removing connection :(")
+                    self.connections.removeValue(forKey: name)
+                    reinit(servers: self.connectedServers())
+                }
             }
             break
         default:
