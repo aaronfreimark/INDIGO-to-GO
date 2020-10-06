@@ -39,22 +39,21 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             self?.objectWillChange.send()
         }
 
-        if !isPreview {
-            // Start up Bonjour, let stuff populate
-            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                self.bonjourBrowser.seek()
-            })
-
+        if isPreview {
+            self.updateUI()
+        } else {
             // after 1 second search for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.reinit(servers: [self.userSettings.imager, self.userSettings.guider, self.userSettings.mount])
+                self.reinitSavedServers()
             }
-        } else {
-            self.updateUI()
         }
 
     }
-        
+    
+    func reinitSavedServers() {
+        self.reinit(servers: [self.userSettings.imager, self.userSettings.guider, self.userSettings.mount])
+    }
+    
     func reinit(servers: [String]) {
         print("ReInit with servers \(servers)")
         
@@ -206,19 +205,12 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
                         self.connectAll()
                     }
                 }
-
+                
             } else {
                 print("==== Unexpected disconnection ====")
-                
-                if self.connections[name] != nil && self.connections[name]!.reconnectAttempts < self.maxReconnectAttempts {
-                    self.connections[name]!.reconnectAttempts += 1
-                    print("\(name): Attempting reconnection attempt \(self.connections[name]!.reconnectAttempts)...")
-                    self.connections[name]!.start()
-                } else {
-                    print("\(name): Removing connection :(")
-                    self.connections.removeValue(forKey: name)
-                    reinit(servers: self.connectedServers())
-                }
+                print("\(name): Removing connection :(")
+                self.connections.removeValue(forKey: name)
+                reinit(servers: self.connectedServers())
             }
             break
         default:

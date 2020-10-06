@@ -98,6 +98,10 @@ struct SettingsView: View {
     }
     
     func saveServers() {
+        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+            client.bonjourBrowser.cancel()
+        })
+
         userSettings.imager = imager
         userSettings.guider = guider
         userSettings.mount = mount

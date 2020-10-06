@@ -185,7 +185,7 @@ struct ContentView: View {
                         )
                     })
                 }
-                Button(action: { self.isSettingsSheetShowing = true }) {
+                Button(action: serversButton) {
                     Text("Servers")
                 }
                 .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView(client: self.client) })
@@ -194,23 +194,39 @@ struct ContentView: View {
         }
         .listStyle(GroupedListStyle())
         .onAppear(perform: {
-            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                
-                
-                // Show the settings sheet if after 2 seconds there are no connected servers...
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    if self.client.connectedServers().count == 0 {
-                        self.isSettingsSheetShowing = true
-                    }
+            // Show the settings sheet if after 2 seconds there are no connected servers...
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if self.client.connectedServers().count == 0 {
+                    // Start up Bonjour, let stuff populate
+                    DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                        client.bonjourBrowser.seek()
+                    })
+                    self.isSettingsSheetShowing = true
                 }
-                
-                
-            })
+            }
         })
         .onReceive(timer) { input in
-            if !isSettingsSheetShowing && !isWebViewSheetShowing { client.updateUI() }
+            if !isSettingsSheetShowing && !isWebViewSheetShowing {
+                client.updateUI()
+            }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                // after 1 second search for whatever is in serverSettings.servers to try to reconnect
+                client.reinitSavedServers()
+            }
+        }
+
     }
+    
+    private func serversButton() {
+        // Start up Bonjour, let stuff populate
+        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+            client.bonjourBrowser.seek()
+        })
+        self.isSettingsSheetShowing = true
+    }
+    
     
 }
 

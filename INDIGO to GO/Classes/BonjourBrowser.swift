@@ -39,33 +39,39 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
         //return self.discovered.isEmpty
     }
     
+    func cancel() {
+        print("BonjourBrowser: Canceling...")
+        self.browser.cancel()
+    }
+    
     func seek() {
-        if self.foundNone() {
-            let bonjourTCP = NWBrowser.Descriptor.bonjour(type: "_indigo._tcp" , domain: nil)
-            let bonjourParms = NWParameters.init()
-            browser = NWBrowser(for: bonjourTCP, using: bonjourParms)
-            browser.stateUpdateHandler = { newState in
-                switch newState {
-                case .ready:
-                    print("Bonjour new connection")
-                case .cancelled:
-                    print("Bonjour canceled.")
-                default:
-                    break
-                }
+        self.discovered = [BonjourEndpoint()]
+        
+        let bonjourTCP = NWBrowser.Descriptor.bonjour(type: "_indigo._tcp" , domain: nil)
+        let bonjourParms = NWParameters.init()
+        browser = NWBrowser(for: bonjourTCP, using: bonjourParms)
+        browser.stateUpdateHandler = { newState in
+            switch newState {
+            case .ready:
+                print("Bonjour new connection")
+            case .cancelled:
+                print("Bonjour canceled.")
+            default:
+                break
             }
-            
-            browser.browseResultsChangedHandler = { ( results, changes ) in
-                self.discovered = [BonjourEndpoint()]
-                for result in results {
-                    let endpoint = BonjourEndpoint(endpoint: result.endpoint)
-                    print("New Bonjour Endpoint: \(endpoint.name)")
-                    self.discovered.append(endpoint)
-                }
-            }
-            
-            self.browser.start(queue: DispatchQueue.main)
         }
+        
+        browser.browseResultsChangedHandler = { ( results, changes ) in
+            self.discovered = [BonjourEndpoint()]
+            for result in results {
+                let endpoint = BonjourEndpoint(endpoint: result.endpoint)
+                print("New Bonjour Endpoint: \(endpoint.name)")
+                self.discovered.append(endpoint)
+            }
+        }
+        
+        print("BonjourBrowser: Starting...")
+        self.browser.start(queue: DispatchQueue.main)
     }
 }
 

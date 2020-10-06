@@ -12,7 +12,6 @@ import SwiftyJSON
 class IndigoConnection {
     
     var name = ""
-    var reconnectAttempts = 0
     private var endpoint: NWEndpoint?
     private var serviceConnection: NWConnection?
     private var websocketConnection: NWConnection?
