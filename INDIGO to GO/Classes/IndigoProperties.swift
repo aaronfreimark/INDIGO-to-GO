@@ -229,10 +229,17 @@ class IndigoProperties: ObservableObject, Hashable {
 
         // =================================================================== GUIDER
         
-        if getValue("Guider Agent | AGENT_START_PROCESS | GUIDING") == "true" {
-            self.guiderTrackingText = "Guiding"
+        let isGuiding = getValue("Guider Agent | AGENT_START_PROCESS | GUIDING") == "true"
+        let isDithering = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DITHERING") ?? "0") ?? 0 > 0
+        let isCalibrating = getValue("Guider Agent | AGENT_START_PROCESS | CALIBRATION") == "true"
+        
+        if isGuiding && isDithering {
+            self.guiderTrackingText = "Dithering"
             self.guiderTrackingStatus = "ok"
-        } else if getValue("Guider Agent | AGENT_START_PROCESS | CALIBRATION") == "true" {
+        } else if isGuiding {
+                self.guiderTrackingText = "Guiding"
+                self.guiderTrackingStatus = "ok"
+        } else if isCalibrating {
             self.guiderTrackingText = "Calibrating"
             self.guiderTrackingStatus = "warn"
         } else {
@@ -444,7 +451,7 @@ class IndigoProperties: ObservableObject, Hashable {
     
     func injest(json: JSON) {
         // loop through the INDIGO structure and parse into a more usable struct
-        // if json.rawString()!.contains("HA_TRACKING") { print(json.rawString()) }
+        // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
 
         for (type, subJson):(String, JSON) in json {
             
