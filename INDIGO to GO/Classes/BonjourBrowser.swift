@@ -11,7 +11,7 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     
     var browser: NWBrowser!
     
-    var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
+    @Published var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
         willSet {
             objectWillChange.send()
         }
@@ -61,12 +61,24 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
             }
         }
         
-        browser.browseResultsChangedHandler = { ( results, changes ) in
-            self.discovered = [BonjourEndpoint()]
-            for result in results {
-                let endpoint = BonjourEndpoint(endpoint: result.endpoint)
-                print("New Bonjour Endpoint: \(endpoint.name)")
-                self.discovered.append(endpoint)
+        browser.browseResultsChangedHandler = { ( _, changes ) in
+            for change in changes {
+                switch change {
+                case let .added(result):
+                    let endpoint = BonjourEndpoint(endpoint: result.endpoint)
+                    print("New Bonjour Endpoint: \(endpoint.name)")
+                    self.discovered.append(endpoint)
+                    break
+                case let .removed(result):
+                    let endpoint = BonjourEndpoint(endpoint: result.endpoint)
+                    print("Removing Bonjour Endpoint: \(endpoint.name)")
+                    self.discovered.removeAll(where: { $0.name == endpoint.name } )
+                    break
+                case .identical, .changed:
+                    break
+                @unknown default:
+                    break
+                }
             }
         }
         

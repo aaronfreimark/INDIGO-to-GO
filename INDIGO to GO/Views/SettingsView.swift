@@ -10,7 +10,7 @@ import Combine
 
 struct SettingsView: View {
 
-    var client: IndigoClient
+    @ObservedObject var client: IndigoClient
 
     @State var imager: String
     @State var guider: String
