@@ -52,7 +52,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var imagerImageLatest: String = ""
     @Published var sequences: [IndigoSequence] = []
     @Published var imagerTotalTime: Float = 0
-    @Published var imagerImageTime: Float = 0
+    @Published var imagerElapsedTime: Float = 0
 
     @Published var imagerVersion: String = ""
     @Published var guiderVersion: String = ""
@@ -214,7 +214,7 @@ class IndigoProperties: ObservableObject, Hashable {
 
         let timeRemaining = totalTime - elapsedTime
         
-        self.imagerImageTime = elapsedTime
+        self.imagerElapsedTime = elapsedTime
         self.imagerImagesTaken = imagesTaken
         self.imagerImagesTotal = imagesTotal
 
@@ -303,10 +303,15 @@ class IndigoProperties: ObservableObject, Hashable {
             if let hourAngle = Float(getValue("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0") {
                 var timeUntilMeridianSeconds = 3600 * (24.0 - hourAngle)
                 while timeUntilMeridianSeconds >= secondsInDay {
-                    timeUntilMeridianSeconds = timeUntilMeridianSeconds - secondsInDay
+                    timeUntilMeridianSeconds -= secondsInDay
                 }
 
                 let mountMeridianTime = Date().addingTimeInterval(TimeInterval(timeUntilMeridianSeconds))
+
+                // Take elapsed time into account!
+                if self.imagerState != .Stopped {
+                    timeUntilMeridianSeconds += elapsedTime // effectively counds from start time of sequence
+                }
                 
                 self.mountSecondsUntilMeridian = timeUntilMeridianSeconds
                 self.mountMeridian = timeString(date: mountMeridianTime)
@@ -318,10 +323,15 @@ class IndigoProperties: ObservableObject, Hashable {
 
                     var timeUntilHALimitSeconds = 3600 * (HALimit - hourAngle)
                     while timeUntilHALimitSeconds >= secondsInDay {
-                        timeUntilHALimitSeconds = timeUntilHALimitSeconds - secondsInDay
+                        timeUntilHALimitSeconds -= secondsInDay
                     }
                     
                     let mountHALimitTime = Date().addingTimeInterval(TimeInterval(timeUntilHALimitSeconds))
+
+                    // Take elapsed time into account!
+                    if self.imagerState != .Stopped {
+                        timeUntilHALimitSeconds += elapsedTime // effectively counds from start time of sequence
+                    }
 
                     self.mountSecondsUntilHALimit = timeUntilHALimitSeconds
                     self.mountHALimit = timeString(date: mountHALimitTime)
@@ -378,13 +388,44 @@ class IndigoProperties: ObservableObject, Hashable {
     }
 
     func setUpPreview() {
+        
+        /*
+         *  Preview has HA = 22:00, HA_LIMIT = 23:40
+         *  Sequence has dots every 10 minutes, 1 hour per filter, 3 hours total
+         *
+         *  If start time is midnight:
+         *      meridian = 2AM
+         *      HA Limit = 1:45AM
+         *      End Time = 3AM
+         *
+         *  Stopped: Count time from Date() i.e. NOW
+         *  Sequencing: Count time from Date() - Elapsed Time = sequence start time
+         *  Paused: Same as sequencing! Date() will increase with each second, but Elapsed Time will NOT
+         *
+         */
+        
+        self.imagerState = .Sequencing
+
+        
         setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
         setValue(key: "Mount Agent | MOUNT_TRACKING | ON", toValue: "true", toState: "Ok")
-        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "22.0", toState: "Ok", toTarget: "23.75")
+        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "22.0", toState: "Ok", toTarget: "23.66666666")
         
-        
-        setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Busy")
-
+        switch self.imagerState {
+        case .Sequencing:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "true", toState: "Busy")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Ok")
+            break
+        case .Paused:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "false", toState: "Ok")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Busy")
+            break
+        case .Stopped:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "false", toState: "Ok")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Ok")
+            break
+        }
+            
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", toValue: "exposure=600.0;count=6.0;filter=R;", toState: "Ok")
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", toValue: "filter=B;", toState: "Ok")
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", toValue: "filter=G;", toState: "Ok")
@@ -397,7 +438,6 @@ class IndigoProperties: ObservableObject, Hashable {
         setValue(key: "Imager Agent | CCD_TEMPERATURE | TEMPERATURE", toValue: "-20", toState: "Ok")
 
         setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
-        
     }
 
 

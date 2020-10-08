@@ -53,7 +53,7 @@ struct ContentView: View {
                                     }
                                     .frame(height: 5.0)
                                 }
-                                ProgressView(value: Float(client.properties.imagerImageTime), total: Float(client.properties.imagerTotalTime))
+                                ProgressView(value: Float(client.properties.imagerElapsedTime), total: Float(client.properties.imagerTotalTime))
                                     .frame(height: 15.0)
                             }
                             .padding()
