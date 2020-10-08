@@ -210,7 +210,7 @@ class IndigoProperties: ObservableObject, Hashable {
         }
         
         self.sequences = imageTimes
-        self.imagerTotalTime = totalTime
+        self.imagerTotalTime = totalTime > 0 ? totalTime : 1.0
 
         let timeRemaining = totalTime - elapsedTime
         
@@ -218,11 +218,13 @@ class IndigoProperties: ObservableObject, Hashable {
         self.imagerImagesTaken = imagesTaken
         self.imagerImagesTotal = imagesTotal
 
-        switch self.imagerState {
-        case .Stopped:
+        self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(timeRemaining)))
+        
+        if totalTime == 0 {
+            self.imagerExpectedFinish = "—"
+        } else if self.imagerState == .Stopped {
             self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(totalTime)))
-            break
-        case .Paused, .Sequencing:
+        } else {
             self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(timeRemaining)))
         }
 
@@ -429,7 +431,10 @@ class IndigoProperties: ObservableObject, Hashable {
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", toValue: "exposure=600.0;count=6.0;filter=R;", toState: "Ok")
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", toValue: "filter=B;", toState: "Ok")
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", toValue: "filter=G;", toState: "Ok")
+        
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "1;2;3;", toState: "Ok")
+//        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "", toState: "Ok")
+        
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCH", toValue: "1", toState: "Busy")
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCHES", toValue: "3", toState: "Busy")
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | FRAME", toValue: "3", toState: "Busy")
