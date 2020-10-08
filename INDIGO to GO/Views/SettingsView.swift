@@ -93,6 +93,12 @@ struct SettingsView: View {
                 if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
             })
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                client.bonjourBrowser.seek()
+            }
+        }
+
     }
     
     func saveServers() {
