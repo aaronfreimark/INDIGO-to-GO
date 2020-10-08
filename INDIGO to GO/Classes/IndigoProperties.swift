@@ -28,6 +28,7 @@ class IndigoProperties: ObservableObject, Hashable {
 
     
     @Published var mountIsTracking = false
+    var mountIsParked = false
     @Published var mountTrackingStatus: String = ""
     @Published var mountTrackingText: String = ""
     @Published var mountMeridian: String = ""
@@ -43,6 +44,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var imagerCameraTemperature: String = ""
     @Published var imagerCoolingStatus: String = ""
     @Published var imagerCoolingText: String = ""
+    var imagerIsCoolerOn = false
 
     @Published var imagerExpectedFinish: String = ""
     @Published var imagerImagesTotal: Int = 0
@@ -66,7 +68,8 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var ParkandWarmButtonTitle = "Park and Warm"
     @Published var ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
     @Published var ParkandWarmButtonOK = "Park"
-
+    @Published var isPartAndWarmButtonEnabled = false
+    
     init(queue: DispatchQueue, isPreview: Bool = false) {
         self.queue = queue
         if isPreview { self.setUpPreview() }
@@ -123,9 +126,9 @@ class IndigoProperties: ObservableObject, Hashable {
         self.imagerImageLatest = getValue("Imager Agent | CCD_IMAGE_FILE | FILE") ?? ""
 
         self.imagerCameraTemperature = getValue("Imager Agent | CCD_TEMPERATURE | TEMPERATURE") ?? ""
-        let imagerIsCoolerOn = getValue("Imager Agent | CCD_COOLER | ON") == "true"
+        self.imagerIsCoolerOn = getValue("Imager Agent | CCD_COOLER | ON") == "true"
         
-        if !imagerIsCoolerOn {
+        if !self.imagerIsCoolerOn {
             self.imagerCoolingText = "Cooling Off"
             self.imagerCoolingStatus = "alert"
         } else if getState("Imager Agent | CCD_TEMPERATURE | TEMPERATURE") == .Ok {
@@ -285,18 +288,22 @@ class IndigoProperties: ObservableObject, Hashable {
             self.mountTrackingStatus = "alert"
             self.mountTrackingText = "Mount Parked"
             self.mountIsTracking = false
+            self.mountIsParked = true
         } else if getValue("Mount Agent | MOUNT_TRACKING | ON") == "true" {
             self.mountTrackingStatus = "ok"
             self.mountTrackingText = "Mount Tracking"
             self.mountIsTracking = true
+            self.mountIsParked = false
         } else if getValue("Mount Agent | MOUNT_TRACKING | OFF") == "true" {
             self.mountTrackingStatus = "warn"
             self.mountTrackingText = "Mount Not Tracking"
             self.mountIsTracking = false
+            self.mountIsParked = false
         } else {
             self.mountTrackingStatus = "unknown"
             self.mountTrackingText = "Mount State Unknown"
             self.mountIsTracking = false
+            self.mountIsParked = true
         }
 
         if self.mountIsTracking {
@@ -349,19 +356,29 @@ class IndigoProperties: ObservableObject, Hashable {
             self.ParkandWarmButtonTitle = "Park and Warm"
             self.ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
             self.ParkandWarmButtonOK = "Park"
+            self.isPartAndWarmButtonEnabled = !self.mountIsParked || self.imagerIsCoolerOn
+
         } else if self.isMountConnected && !self.isImagerConnected {
             self.ParkandWarmButtonTitle = "Park Mount"
             self.ParkandWarmButtonDescription = "Immediately park the mount, if possible."
             self.ParkandWarmButtonOK = "Park"
+            self.isPartAndWarmButtonEnabled = !self.mountIsParked
+
         } else if !self.isMountConnected && self.isImagerConnected {
             self.ParkandWarmButtonTitle = "Warm Cooler"
             self.ParkandWarmButtonDescription = "Immediately turn off imager cooling, if possible."
             self.ParkandWarmButtonOK = "Warm"
+            self.isPartAndWarmButtonEnabled = self.imagerIsCoolerOn
+
         } else {
             self.ParkandWarmButtonTitle = "Park and Warm"
             self.ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
             self.ParkandWarmButtonOK = "Park"
+            self.isPartAndWarmButtonEnabled = false
+
         }
+        
+        
 
         
         /*

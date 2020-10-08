@@ -171,6 +171,7 @@ struct ContentView: View {
                     Button(action: { self.isAlertShowing = true }) {
                         Text(client.properties.ParkandWarmButtonTitle)
                     }
+                    .disabled(!client.properties.isPartAndWarmButtonEnabled)
                     .alert(isPresented: $isAlertShowing, content: {
                         Alert(
                             title: Text(client.properties.ParkandWarmButtonTitle),
