@@ -88,9 +88,11 @@ struct SettingsView: View {
             //.listStyle(GroupedListStyle())
             .navigationBarTitle("Servers")
             .onAppear(perform: {
-                if !client.bonjourBrowser.names().contains(self.imager) { self.imager = "None" }
-                if !client.bonjourBrowser.names().contains(self.guider) { self.guider = "None" }
-                if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    if !client.bonjourBrowser.names().contains(self.imager) { self.imager = "None" }
+                    if !client.bonjourBrowser.names().contains(self.guider) { self.guider = "None" }
+                    if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
+                }
             })
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

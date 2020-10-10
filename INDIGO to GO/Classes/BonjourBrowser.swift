@@ -70,6 +70,7 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
                     self.discovered.append(endpoint)
                     break
                 case let .removed(result):
+                    // TODO: if the selected item goes away, go back to "None"
                     let endpoint = BonjourEndpoint(endpoint: result.endpoint)
                     print("Removing Bonjour Endpoint: \(endpoint.name)")
                     self.discovered.removeAll(where: { $0.name == endpoint.name } )
