@@ -116,19 +116,10 @@ struct ContentView: View {
             }
             
             if client.properties.isImagerConnected {
-                Section(header: Text("Latest Image")){
-                    Button(action: {
-                        self.isWebViewSheetShowing = true
-                    } ) {
-                        Text(client.properties.imagerImageLatest)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.5)
-                            .truncationMode(.head)
-                    }
+                    Button(action: { self.isWebViewSheetShowing = true } ) { Text("Preview") }
                     .sheet(isPresented: $isWebViewSheetShowing, content: {
                         WebViewView(url: client.properties.imagerLatestImageURL)
                     })
-                }
             }
             
             // =================================================================== GUIDER
