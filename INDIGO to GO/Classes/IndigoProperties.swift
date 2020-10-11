@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftyJSON
+import URLImage
 import SwiftUI
 
 class IndigoProperties: ObservableObject, Hashable {
@@ -50,7 +51,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var imagerImagesTotal: Int = 0
     @Published var imagerImagesTaken: Int = 0
     
-    @Published var imagerLatestImageURL: String = ""
+    @Published var imagerLatestImageURL: URL = URL(string: "https://www.dropbox.com/s/wei6v5vir7adihc/Andromeda-RGB.jpg?raw=1")!
     @Published var imagerImageLatest: String = ""
     @Published var sequences: [IndigoSequence] = []
     @Published var imagerTotalTime: Float = 0
@@ -544,8 +545,10 @@ class IndigoProperties: ObservableObject, Hashable {
                                 // handle special cases
                                 if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
                                     if let urlprefix = source.url {
-                                        let url = urlprefix + itemValue
-                                        self.imagerLatestImageURL = url
+                                        let url = URL(string: urlprefix + itemValue)!
+                                        let placeholder = Bundle.main.url(forResource: "1x1", withExtension: "png")!
+                                        DispatchQueue.main.async { self.imagerLatestImageURL = placeholder }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.imagerLatestImageURL = url }
                                         print("imagerLatestImageURL: \(url)")
                                     }
                                 }

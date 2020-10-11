@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import URLImage
 import Combine
 
 struct ContentView: View {
@@ -116,10 +117,16 @@ struct ContentView: View {
             }
             
             if client.properties.isImagerConnected {
-                    Button(action: { self.isWebViewSheetShowing = true } ) { Text("Preview") }
-                    .sheet(isPresented: $isWebViewSheetShowing, content: {
-                        WebViewView(url: client.properties.imagerLatestImageURL)
+                DisclosureGroup("Preview", isExpanded: $isWebViewSheetShowing) {
+                    URLImage(client.properties.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
+                        Text("Loading...")
+                    }, content: {
+                        $0.image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipped()
                     })
+                }
             }
             
             // =================================================================== GUIDER
@@ -191,6 +198,8 @@ struct ContentView: View {
             }
         }
         .onAppear(perform: {
+            
+            URLImageService.shared.setDefaultExpiryTime(0.0)
 
             // Start up Bonjour, let stuff populate
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {

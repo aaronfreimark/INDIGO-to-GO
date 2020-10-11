@@ -10,6 +10,8 @@
 		930C34A325339F320014A186 /* Andromeda-RGB.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349B25339ED70014A186 /* Andromeda-RGB.png */; };
 		930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */; };
 		930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */; };
+		930C34AF2533AC160014A186 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 930C34AE2533AC160014A186 /* URLImage */; };
+		930C34B32533BCAD0014A186 /* 1x1.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C34B22533BCAD0014A186 /* 1x1.png */; };
 		9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9311AC9125129C2200725CB9 /* SettingsView.swift */; };
 		931AF6372509B96F00EE6300 /* INDIGO_to_GOApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */; };
 		931AF6392509B96F00EE6300 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6382509B96F00EE6300 /* ContentView.swift */; };
@@ -19,7 +21,6 @@
 		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
 		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
-		938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938917C3251E4B4700D9B3F3 /* WebView.swift */; };
 		938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
 		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
@@ -32,6 +33,7 @@
 		930C349B25339ED70014A186 /* Andromeda-RGB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB.png"; sourceTree = "<group>"; };
 		930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@2x.png"; sourceTree = "<group>"; };
 		930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@3x.png"; sourceTree = "<group>"; };
+		930C34B22533BCAD0014A186 /* 1x1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1x1.png; sourceTree = "<group>"; };
 		9311AC9125129C2200725CB9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		931AF6332509B96F00EE6300 /* INDIGO to GO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "INDIGO to GO.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOApp.swift; sourceTree = "<group>"; };
@@ -42,7 +44,6 @@
 		931E89D5252472B800FCFAB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93577355252A526E005670B3 /* BonjourEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourEndpoint.swift; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
-		938917C3251E4B4700D9B3F3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		938F010625114B2D00599096 /* IndigoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoItem.swift; sourceTree = "<group>"; };
 		939F157D250AAB63004A09D7 /* IndigoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClient.swift; sourceTree = "<group>"; };
@@ -58,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				930C34AF2533AC160014A186 /* URLImage in Frameworks */,
 				931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,6 +90,7 @@
 		931AF6352509B96F00EE6300 /* INDIGO to GO */ = {
 			isa = PBXGroup;
 			children = (
+				930C34B22533BCAD0014A186 /* 1x1.png */,
 				93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */,
 				93BF080F2513EA320018DEC0 /* Classes */,
 				931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */,
@@ -113,7 +116,6 @@
 			children = (
 				931AF6382509B96F00EE6300 /* ContentView.swift */,
 				9311AC9125129C2200725CB9 /* SettingsView.swift */,
-				938917C3251E4B4700D9B3F3 /* WebView.swift */,
 				93BFF7D72524F3C300B733CE /* StatusRow.swift */,
 			);
 			path = Views;
@@ -152,6 +154,7 @@
 			name = "INDIGO to GO";
 			packageProductDependencies = (
 				931D1E0C250C01AF00BFFA6B /* SwiftyJSON */,
+				930C34AE2533AC160014A186 /* URLImage */,
 			);
 			productName = "INDIGO Status";
 			productReference = 931AF6332509B96F00EE6300 /* INDIGO to GO.app */;
@@ -182,6 +185,7 @@
 			mainGroup = 931AF62A2509B96F00EE6300;
 			packageReferences = (
 				931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
+				930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */,
 			);
 			productRefGroup = 931AF6342509B96F00EE6300 /* Products */;
 			projectDirPath = "";
@@ -200,6 +204,7 @@
 				930C34A325339F320014A186 /* Andromeda-RGB.png in Resources */,
 				930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */,
 				930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */,
+				930C34B32533BCAD0014A186 /* 1x1.png in Resources */,
 				931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */,
 				938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */,
 				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
@@ -235,7 +240,6 @@
 			files = (
 				93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */,
 				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
-				938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */,
 				93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */,
 				93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */,
 				9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */,
@@ -445,6 +449,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dmytro-anokhin/url-image.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
 		931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
@@ -456,6 +468,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		930C34AE2533AC160014A186 /* URLImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */;
+			productName = URLImage;
+		};
 		931D1E0C250C01AF00BFFA6B /* SwiftyJSON */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
