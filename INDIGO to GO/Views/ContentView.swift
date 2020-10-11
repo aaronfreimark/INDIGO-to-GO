@@ -117,7 +117,8 @@ struct ContentView: View {
             }
             
             if client.properties.isImagerConnected {
-                DisclosureGroup("Preview", isExpanded: $isWebViewSheetShowing) {
+                DisclosureGroup(isExpanded: $isWebViewSheetShowing, content:
+                {
                     URLImage(client.properties.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
                         Text("Loading...")
                     }, content: {
@@ -126,7 +127,17 @@ struct ContentView: View {
                             .aspectRatio(contentMode: .fill)
                             .clipped()
                     })
-                }
+                }, label:
+                    {
+                        HStack
+                        {
+                            Text("Preview")
+                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                        .onTapGesture { isWebViewSheetShowing = !isWebViewSheetShowing }
+                    })
             }
             
             // =================================================================== GUIDER
