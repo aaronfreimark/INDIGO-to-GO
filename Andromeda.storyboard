@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="ipad9_7" orientation="portrait" layout="fullscreen" appearance="light"/>
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17502"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,31 +12,30 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <view key="view" userInteractionEnabled="NO" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                    <view key="view" userInteractionEnabled="NO" contentMode="scaleAspectFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
-                                <rect key="frame" x="0.0" y="1004" width="768" height="0.0"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Andromeda-RGB.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Jee-0u-V3d">
+                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pLH-vY-Fgg">
+                                <rect key="frame" x="50" y="94" width="314" height="239"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="200"/>
+                                <color key="textColor" systemColor="systemBackgroundColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Andromeda-RGB.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Jee-0u-V3d">
-                                <rect key="frame" x="0.0" y="0.0" width="768" height="1004"/>
-                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" notEnabled="YES"/>
                         </accessibility>
                         <constraints>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="Jee-0u-V3d" secondAttribute="trailing" id="2lb-zz-Exd"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="centerX" secondItem="obG-Y5-kRd" secondAttribute="centerX" id="5cz-MP-9tL"/>
-                            <constraint firstItem="obG-Y5-kRd" firstAttribute="top" secondItem="Jee-0u-V3d" secondAttribute="bottom" id="IiC-he-Ggf"/>
-                            <constraint firstItem="obG-Y5-kRd" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" symbolic="YES" id="SfN-ll-jLj"/>
-                            <constraint firstAttribute="bottom" secondItem="obG-Y5-kRd" secondAttribute="bottom" constant="20" id="Y44-ml-fuU"/>
+                            <constraint firstItem="pLH-vY-Fgg" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="50" id="8FQ-H6-6qT"/>
+                            <constraint firstItem="pLH-vY-Fgg" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="50" id="AC9-RZ-lq4"/>
+                            <constraint firstItem="Jee-0u-V3d" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" id="Ka2-oh-Io4"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="pLH-vY-Fgg" secondAttribute="trailing" constant="50" id="R5Z-QD-IKL"/>
+                            <constraint firstAttribute="bottom" secondItem="Jee-0u-V3d" secondAttribute="bottom" id="et6-cy-5fJ"/>
                             <constraint firstItem="Jee-0u-V3d" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" id="tNJ-eM-a99"/>
                             <constraint firstItem="Jee-0u-V3d" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="zly-5x-L1m"/>
                         </constraints>
@@ -48,5 +48,8 @@
     </scenes>
     <resources>
         <image name="Andromeda-RGB.jpg" width="1995.5" height="1536"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>
