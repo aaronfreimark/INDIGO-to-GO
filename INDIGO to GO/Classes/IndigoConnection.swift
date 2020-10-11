@@ -202,11 +202,13 @@ class IndigoConnection {
     }
     
     private func stop(error: Error?) {
-        self.websocketConnection!.stateUpdateHandler = nil
-        self.websocketConnection!.cancel()
-        if let didStopCallback = self.didStopCallback {
-            self.didStopCallback = nil
-            didStopCallback(error)
+        if self.websocketConnection != nil {
+            self.websocketConnection!.stateUpdateHandler = nil
+            self.websocketConnection!.cancel()
+            if let didStopCallback = self.didStopCallback {
+                self.didStopCallback = nil
+                didStopCallback(error)
+            }
         }
     }
     
