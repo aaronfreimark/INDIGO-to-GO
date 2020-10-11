@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		930C34A325339F320014A186 /* Andromeda-RGB.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349B25339ED70014A186 /* Andromeda-RGB.png */; };
+		930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */; };
+		930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */; };
 		9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9311AC9125129C2200725CB9 /* SettingsView.swift */; };
 		931AF6372509B96F00EE6300 /* INDIGO_to_GOApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */; };
 		931AF6392509B96F00EE6300 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6382509B96F00EE6300 /* ContentView.swift */; };
@@ -17,19 +20,18 @@
 		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938917C4251E4B4700D9B3F3 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938917C3251E4B4700D9B3F3 /* WebView.swift */; };
-		938D6B6F25204C2100F65BDC /* Andromeda.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938D6B6E25204C2100F65BDC /* Andromeda.storyboard */; };
+		938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
-		9393334F252E27CB0074C375 /* Andromeda-RGB@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9393334C252E27CB0074C375 /* Andromeda-RGB@2x.jpg */; };
-		93933350252E27CB0074C375 /* Andromeda-RGB@3x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9393334D252E27CB0074C375 /* Andromeda-RGB@3x.jpg */; };
-		93933351252E27CB0074C375 /* Andromeda-RGB.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9393334E252E27CB0074C375 /* Andromeda-RGB.jpg */; };
 		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
-		93A6047B250D361600E93EA4 /* indigo-response.json in Resources */ = {isa = PBXBuildFile; fileRef = 93A6047A250D361600E93EA4 /* indigo-response.json */; };
 		93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BF08042513E9E90018DEC0 /* IndigoProperties.swift */; };
 		93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRow.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		930C349B25339ED70014A186 /* Andromeda-RGB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB.png"; sourceTree = "<group>"; };
+		930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@2x.png"; sourceTree = "<group>"; };
+		930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@3x.png"; sourceTree = "<group>"; };
 		9311AC9125129C2200725CB9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		931AF6332509B96F00EE6300 /* INDIGO to GO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "INDIGO to GO.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOApp.swift; sourceTree = "<group>"; };
@@ -41,14 +43,8 @@
 		93577355252A526E005670B3 /* BonjourEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourEndpoint.swift; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
 		938917C3251E4B4700D9B3F3 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
-		938D6B6E25204C2100F65BDC /* Andromeda.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Andromeda.storyboard; sourceTree = "<group>"; };
+		938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		938F010625114B2D00599096 /* IndigoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoItem.swift; sourceTree = "<group>"; };
-		9393334C252E27CB0074C375 /* Andromeda-RGB@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Andromeda-RGB@2x.jpg"; sourceTree = "<group>"; };
-		9393334D252E27CB0074C375 /* Andromeda-RGB@3x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Andromeda-RGB@3x.jpg"; sourceTree = "<group>"; };
-		9393334E252E27CB0074C375 /* Andromeda-RGB.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Andromeda-RGB.jpg"; sourceTree = "<group>"; };
-		93933354252E28220074C375 /* Andromeda-RGB.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Andromeda-RGB.jpg"; sourceTree = "<group>"; };
-		93933355252E28220074C375 /* Andromeda-RGB@3x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Andromeda-RGB@3x.jpg"; sourceTree = "<group>"; };
-		93933356252E28220074C375 /* Andromeda-RGB@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Andromeda-RGB@2x.jpg"; sourceTree = "<group>"; };
 		939F157D250AAB63004A09D7 /* IndigoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClient.swift; sourceTree = "<group>"; };
 		93A6047A250D361600E93EA4 /* indigo-response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "indigo-response.json"; sourceTree = "<group>"; };
 		93BF08042513E9E90018DEC0 /* IndigoProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoProperties.swift; sourceTree = "<group>"; };
@@ -72,8 +68,10 @@
 		931AF62A2509B96F00EE6300 = {
 			isa = PBXGroup;
 			children = (
-				93933353252E28220074C375 /* Content */,
-				938D6B6E25204C2100F65BDC /* Andromeda.storyboard */,
+				930C349B25339ED70014A186 /* Andromeda-RGB.png */,
+				930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */,
+				930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */,
+				938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */,
 				931AF6352509B96F00EE6300 /* INDIGO to GO */,
 				931AF6342509B96F00EE6300 /* Products */,
 			);
@@ -97,7 +95,6 @@
 				931AF63F2509B97000EE6300 /* Info.plist */,
 				93A6047A250D361600E93EA4 /* indigo-response.json */,
 				931E89D5252472B800FCFAB7 /* Assets.xcassets */,
-				9393334B252E27A40074C375 /* Content */,
 				931AF63C2509B97000EE6300 /* Preview Content */,
 			);
 			path = "INDIGO to GO";
@@ -109,27 +106,6 @@
 				931AF63D2509B97000EE6300 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		9393334B252E27A40074C375 /* Content */ = {
-			isa = PBXGroup;
-			children = (
-				9393334E252E27CB0074C375 /* Andromeda-RGB.jpg */,
-				9393334C252E27CB0074C375 /* Andromeda-RGB@2x.jpg */,
-				9393334D252E27CB0074C375 /* Andromeda-RGB@3x.jpg */,
-			);
-			path = Content;
-			sourceTree = "<group>";
-		};
-		93933353252E28220074C375 /* Content */ = {
-			isa = PBXGroup;
-			children = (
-				93933354252E28220074C375 /* Andromeda-RGB.jpg */,
-				93933355252E28220074C375 /* Andromeda-RGB@3x.jpg */,
-				93933356252E28220074C375 /* Andromeda-RGB@2x.jpg */,
-			);
-			name = Content;
-			path = "INDIGO to GO/Content";
 			sourceTree = "<group>";
 		};
 		93BF080B2513EA160018DEC0 /* Views */ = {
@@ -221,13 +197,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93933351252E27CB0074C375 /* Andromeda-RGB.jpg in Resources */,
-				93933350252E27CB0074C375 /* Andromeda-RGB@3x.jpg in Resources */,
-				9393334F252E27CB0074C375 /* Andromeda-RGB@2x.jpg in Resources */,
+				930C34A325339F320014A186 /* Andromeda-RGB.png in Resources */,
+				930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */,
+				930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */,
 				931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */,
-				938D6B6F25204C2100F65BDC /* Andromeda.storyboard in Resources */,
+				938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */,
 				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
-				93A6047B250D361600E93EA4 /* indigo-response.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
