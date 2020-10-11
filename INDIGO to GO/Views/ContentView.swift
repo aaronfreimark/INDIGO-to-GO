@@ -53,7 +53,7 @@ struct ContentView: View {
                                     }
                                     .frame(height: 5.0)
                                 }
-                                ProgressView(value: Float(client.properties.imagerImageTime), total: Float(client.properties.imagerTotalTime))
+                                ProgressView(value: Float(client.properties.imagerElapsedTime), total: Float(client.properties.imagerTotalTime))
                                     .frame(height: 15.0)
                             }
                             .padding()
@@ -162,6 +162,7 @@ struct ContentView: View {
                     Button(action: { self.isAlertShowing = true }) {
                         Text(client.properties.ParkandWarmButtonTitle)
                     }
+                    .disabled(!client.properties.isPartAndWarmButtonEnabled)
                     .alert(isPresented: $isAlertShowing, content: {
                         Alert(
                             title: Text(client.properties.ParkandWarmButtonTitle),
@@ -176,7 +177,7 @@ struct ContentView: View {
                         )
                     })
                 }
-                Button(action: { self.isSettingsSheetShowing = true }) {
+                Button(action: serversButton) {
                     Text("Servers")
                 }
                 .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView(client: self.client) })
@@ -184,24 +185,45 @@ struct ContentView: View {
             
         }
         .listStyle(GroupedListStyle())
-        .onAppear(perform: {
-            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                
-                
-                // Show the settings sheet if after 2 seconds there are no connected servers...
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                    if self.client.connectedServers().count == 0 {
-                        self.isSettingsSheetShowing = true
-                    }
-                }
-                
-                
-            })
-        })
         .onReceive(timer) { input in
-            if !isSettingsSheetShowing && !isWebViewSheetShowing { client.updateUI() }
+            if !isSettingsSheetShowing && !isWebViewSheetShowing {
+                client.updateUI()
+            }
         }
+        .onAppear(perform: {
+
+            // Start up Bonjour, let stuff populate
+            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                client.bonjourBrowser.seek()
+            })
+
+            // Show the settings sheet if after 2 seconds there are no connected servers...
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if self.client.connectedServers().count == 0 {
+                    // Start up Bonjour, let stuff populate
+                    self.isSettingsSheetShowing = true
+                }
+            }
+        })
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            
+            // Start up Bonjour, let stuff populate
+            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                client.bonjourBrowser.seek()
+            })
+            
+            // after 1 second search for whatever is in serverSettings.servers to try to reconnect
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                client.reinitSavedServers()
+            }
+        }
+
     }
+    
+    private func serversButton() {
+        self.isSettingsSheetShowing = true
+    }
+    
     
 }
 

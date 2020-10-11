@@ -10,8 +10,7 @@ import Combine
 
 struct SettingsView: View {
 
-    var client: IndigoClient
-    var userSettings = UserSettings()
+    @ObservedObject var client: IndigoClient
 
     @State var imager: String
     @State var guider: String
@@ -21,10 +20,10 @@ struct SettingsView: View {
     var presentationMode: Binding<PresentationMode>
 
     init(client: IndigoClient) {
-        _imager = State(initialValue: userSettings.imager)
-        _guider = State(initialValue: userSettings.guider)
-        _mount = State(initialValue: userSettings.mount)
         self.client = client
+        _imager = State(initialValue: client.defaultImager)
+        _guider = State(initialValue: client.defaultGuider)
+        _mount = State(initialValue: client.defaultMount)
         
     }
     
@@ -64,7 +63,7 @@ struct SettingsView: View {
 
                 HStack() {
                     Spacer()
-                    Button(action: saveServers) { Text("Save") }
+                    Button(action: self.saveServers) { Text("Save") }
                         .frame(width: 200.0)
                         .foregroundColor(Color.white)
                         .padding()
@@ -89,19 +88,30 @@ struct SettingsView: View {
             //.listStyle(GroupedListStyle())
             .navigationBarTitle("Servers")
             .onAppear(perform: {
-                print("client.bonjourBrowser.discovered: \(client.bonjourBrowser.discovered)")
-                if !client.bonjourBrowser.names().contains(self.imager) { self.imager = "None" }
-                if !client.bonjourBrowser.names().contains(self.guider) { self.guider = "None" }
-                if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    if !client.bonjourBrowser.names().contains(self.imager) { self.imager = "None" }
+                    if !client.bonjourBrowser.names().contains(self.guider) { self.guider = "None" }
+                    if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
+                }
             })
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                client.bonjourBrowser.seek()
+            }
+        }
+
     }
     
     func saveServers() {
-        userSettings.imager = imager
-        userSettings.guider = guider
-        userSettings.mount = mount
-        self.client.reinit(servers: [imager, guider, mount])
+        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+            self.client.bonjourBrowser.cancel()
+        })
+
+        self.client.defaultImager = imager
+        self.client.defaultGuider = guider
+        self.client.defaultMount = mount
+        self.client.reinitSavedServers()
         
         self.presentationMode.wrappedValue.dismiss()
     }
@@ -116,27 +126,3 @@ struct SettingsView_Previews: PreviewProvider {
     }
 }
 
-class UserSettings: ObservableObject {
-/*
- @Published var servers: [String] {
-        didSet { UserDefaults.standard.set(servers, forKey: "servers") }
-    }
-*/
-    
-    @Published var imager: String {
-        didSet { UserDefaults.standard.set(imager, forKey: "imager") }
-    }
-    @Published var guider: String {
-        didSet { UserDefaults.standard.set(guider, forKey: "guider") }
-    }
-    @Published var mount: String {
-        didSet { UserDefaults.standard.set(mount, forKey: "mount") }
-    }
-
-    init() {
-        // self.servers = UserDefaults.standard.object(forKey: "servers") as? [String] ?? ["indigosky"]
-        self.imager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
-        self.guider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
-        self.mount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
-    }
-}

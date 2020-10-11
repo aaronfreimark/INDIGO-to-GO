@@ -28,6 +28,7 @@ class IndigoProperties: ObservableObject, Hashable {
 
     
     @Published var mountIsTracking = false
+    var mountIsParked = false
     @Published var mountTrackingStatus: String = ""
     @Published var mountTrackingText: String = ""
     @Published var mountMeridian: String = ""
@@ -43,6 +44,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var imagerCameraTemperature: String = ""
     @Published var imagerCoolingStatus: String = ""
     @Published var imagerCoolingText: String = ""
+    var imagerIsCoolerOn = false
 
     @Published var imagerExpectedFinish: String = ""
     @Published var imagerImagesTotal: Int = 0
@@ -52,7 +54,7 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var imagerImageLatest: String = ""
     @Published var sequences: [IndigoSequence] = []
     @Published var imagerTotalTime: Float = 0
-    @Published var imagerImageTime: Float = 0
+    @Published var imagerElapsedTime: Float = 0
 
     @Published var imagerVersion: String = ""
     @Published var guiderVersion: String = ""
@@ -66,7 +68,8 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var ParkandWarmButtonTitle = "Park and Warm"
     @Published var ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
     @Published var ParkandWarmButtonOK = "Park"
-
+    @Published var isPartAndWarmButtonEnabled = false
+    
     init(queue: DispatchQueue, isPreview: Bool = false) {
         self.queue = queue
         if isPreview { self.setUpPreview() }
@@ -123,9 +126,9 @@ class IndigoProperties: ObservableObject, Hashable {
         self.imagerImageLatest = getValue("Imager Agent | CCD_IMAGE_FILE | FILE") ?? ""
 
         self.imagerCameraTemperature = getValue("Imager Agent | CCD_TEMPERATURE | TEMPERATURE") ?? ""
-        let imagerIsCoolerOn = getValue("Imager Agent | CCD_COOLER | ON") == "true"
+        self.imagerIsCoolerOn = getValue("Imager Agent | CCD_COOLER | ON") == "true"
         
-        if !imagerIsCoolerOn {
+        if !self.imagerIsCoolerOn {
             self.imagerCoolingText = "Cooling Off"
             self.imagerCoolingStatus = "alert"
         } else if getState("Imager Agent | CCD_TEMPERATURE | TEMPERATURE") == .Ok {
@@ -210,29 +213,38 @@ class IndigoProperties: ObservableObject, Hashable {
         }
         
         self.sequences = imageTimes
-        self.imagerTotalTime = totalTime
+        self.imagerTotalTime = totalTime > 0 ? totalTime : 1.0
 
         let timeRemaining = totalTime - elapsedTime
         
-        self.imagerImageTime = elapsedTime
+        self.imagerElapsedTime = elapsedTime
         self.imagerImagesTaken = imagesTaken
         self.imagerImagesTotal = imagesTotal
 
-        switch self.imagerState {
-        case .Stopped:
+        self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(timeRemaining)))
+        
+        if totalTime == 0 {
+            self.imagerExpectedFinish = "—"
+        } else if self.imagerState == .Stopped {
             self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(totalTime)))
-            break
-        case .Paused, .Sequencing:
+        } else {
             self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(timeRemaining)))
         }
 
 
         // =================================================================== GUIDER
         
-        if getValue("Guider Agent | AGENT_START_PROCESS | GUIDING") == "true" {
-            self.guiderTrackingText = "Guiding"
+        let isGuiding = getValue("Guider Agent | AGENT_START_PROCESS | GUIDING") == "true"
+        let isDithering = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DITHERING") ?? "0") ?? 0 > 0
+        let isCalibrating = getValue("Guider Agent | AGENT_START_PROCESS | CALIBRATION") == "true"
+        
+        if isGuiding && isDithering {
+            self.guiderTrackingText = "Dithering"
             self.guiderTrackingStatus = "ok"
-        } else if getValue("Guider Agent | AGENT_START_PROCESS | CALIBRATION") == "true" {
+        } else if isGuiding {
+                self.guiderTrackingText = "Guiding"
+                self.guiderTrackingStatus = "ok"
+        } else if isCalibrating {
             self.guiderTrackingText = "Calibrating"
             self.guiderTrackingStatus = "warn"
         } else {
@@ -276,18 +288,22 @@ class IndigoProperties: ObservableObject, Hashable {
             self.mountTrackingStatus = "alert"
             self.mountTrackingText = "Mount Parked"
             self.mountIsTracking = false
+            self.mountIsParked = true
         } else if getValue("Mount Agent | MOUNT_TRACKING | ON") == "true" {
             self.mountTrackingStatus = "ok"
             self.mountTrackingText = "Mount Tracking"
             self.mountIsTracking = true
+            self.mountIsParked = false
         } else if getValue("Mount Agent | MOUNT_TRACKING | OFF") == "true" {
             self.mountTrackingStatus = "warn"
             self.mountTrackingText = "Mount Not Tracking"
             self.mountIsTracking = false
+            self.mountIsParked = false
         } else {
             self.mountTrackingStatus = "unknown"
             self.mountTrackingText = "Mount State Unknown"
             self.mountIsTracking = false
+            self.mountIsParked = true
         }
 
         if self.mountIsTracking {
@@ -296,10 +312,15 @@ class IndigoProperties: ObservableObject, Hashable {
             if let hourAngle = Float(getValue("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0") {
                 var timeUntilMeridianSeconds = 3600 * (24.0 - hourAngle)
                 while timeUntilMeridianSeconds >= secondsInDay {
-                    timeUntilMeridianSeconds = timeUntilMeridianSeconds - secondsInDay
+                    timeUntilMeridianSeconds -= secondsInDay
                 }
 
                 let mountMeridianTime = Date().addingTimeInterval(TimeInterval(timeUntilMeridianSeconds))
+
+                // Take elapsed time into account!
+                if self.imagerState != .Stopped {
+                    timeUntilMeridianSeconds += elapsedTime // effectively counds from start time of sequence
+                }
                 
                 self.mountSecondsUntilMeridian = timeUntilMeridianSeconds
                 self.mountMeridian = timeString(date: mountMeridianTime)
@@ -311,10 +332,15 @@ class IndigoProperties: ObservableObject, Hashable {
 
                     var timeUntilHALimitSeconds = 3600 * (HALimit - hourAngle)
                     while timeUntilHALimitSeconds >= secondsInDay {
-                        timeUntilHALimitSeconds = timeUntilHALimitSeconds - secondsInDay
+                        timeUntilHALimitSeconds -= secondsInDay
                     }
                     
                     let mountHALimitTime = Date().addingTimeInterval(TimeInterval(timeUntilHALimitSeconds))
+
+                    // Take elapsed time into account!
+                    if self.imagerState != .Stopped {
+                        timeUntilHALimitSeconds += elapsedTime // effectively counds from start time of sequence
+                    }
 
                     self.mountSecondsUntilHALimit = timeUntilHALimitSeconds
                     self.mountHALimit = timeString(date: mountHALimitTime)
@@ -330,19 +356,29 @@ class IndigoProperties: ObservableObject, Hashable {
             self.ParkandWarmButtonTitle = "Park and Warm"
             self.ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
             self.ParkandWarmButtonOK = "Park"
+            self.isPartAndWarmButtonEnabled = !self.mountIsParked || self.imagerIsCoolerOn
+
         } else if self.isMountConnected && !self.isImagerConnected {
             self.ParkandWarmButtonTitle = "Park Mount"
             self.ParkandWarmButtonDescription = "Immediately park the mount, if possible."
             self.ParkandWarmButtonOK = "Park"
+            self.isPartAndWarmButtonEnabled = !self.mountIsParked
+
         } else if !self.isMountConnected && self.isImagerConnected {
             self.ParkandWarmButtonTitle = "Warm Cooler"
             self.ParkandWarmButtonDescription = "Immediately turn off imager cooling, if possible."
             self.ParkandWarmButtonOK = "Warm"
+            self.isPartAndWarmButtonEnabled = self.imagerIsCoolerOn
+
         } else {
             self.ParkandWarmButtonTitle = "Park and Warm"
             self.ParkandWarmButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
             self.ParkandWarmButtonOK = "Park"
+            self.isPartAndWarmButtonEnabled = false
+
         }
+        
+        
 
         
         /*
@@ -371,17 +407,51 @@ class IndigoProperties: ObservableObject, Hashable {
     }
 
     func setUpPreview() {
+        
+        /*
+         *  Preview has HA = 22:00, HA_LIMIT = 23:40
+         *  Sequence has dots every 10 minutes, 1 hour per filter, 3 hours total
+         *
+         *  If start time is midnight:
+         *      meridian = 2AM
+         *      HA Limit = 1:45AM
+         *      End Time = 3AM
+         *
+         *  Stopped: Count time from Date() i.e. NOW
+         *  Sequencing: Count time from Date() - Elapsed Time = sequence start time
+         *  Paused: Same as sequencing! Date() will increase with each second, but Elapsed Time will NOT
+         *
+         */
+        
+        self.imagerState = .Sequencing
+
+        
         setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
         setValue(key: "Mount Agent | MOUNT_TRACKING | ON", toValue: "true", toState: "Ok")
-        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "22.0", toState: "Ok", toTarget: "23.75")
+        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "22.0", toState: "Ok", toTarget: "23.66666666")
         
-        
-        setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Busy")
-
+        switch self.imagerState {
+        case .Sequencing:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "true", toState: "Busy")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Ok")
+            break
+        case .Paused:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "false", toState: "Ok")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Busy")
+            break
+        case .Stopped:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "false", toState: "Ok")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Ok")
+            break
+        }
+            
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", toValue: "exposure=600.0;count=6.0;filter=R;", toState: "Ok")
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", toValue: "filter=B;", toState: "Ok")
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", toValue: "filter=G;", toState: "Ok")
+        
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "1;2;3;", toState: "Ok")
+//        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "", toState: "Ok")
+        
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCH", toValue: "1", toState: "Busy")
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCHES", toValue: "3", toState: "Busy")
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | FRAME", toValue: "3", toState: "Busy")
@@ -390,7 +460,6 @@ class IndigoProperties: ObservableObject, Hashable {
         setValue(key: "Imager Agent | CCD_TEMPERATURE | TEMPERATURE", toValue: "-20", toState: "Ok")
 
         setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
-        
     }
 
 
@@ -444,7 +513,7 @@ class IndigoProperties: ObservableObject, Hashable {
     
     func injest(json: JSON, source: IndigoConnection) {
         // loop through the INDIGO structure and parse into a more usable struct
-        // if json.rawString()!.contains("HA_TRACKING") { print(json.rawString()) }
+        // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
 
         for (type, subJson):(String, JSON) in json {
             

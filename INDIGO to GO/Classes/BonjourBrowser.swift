@@ -11,7 +11,7 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     
     var browser: NWBrowser!
     
-    var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
+    @Published var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
         willSet {
             objectWillChange.send()
         }
@@ -39,33 +39,52 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
         //return self.discovered.isEmpty
     }
     
+    func cancel() {
+        print("BonjourBrowser: Canceling...")
+        self.browser.cancel()
+    }
+    
     func seek() {
-        if self.foundNone() {
-            let bonjourTCP = NWBrowser.Descriptor.bonjour(type: "_indigo._tcp" , domain: nil)
-            let bonjourParms = NWParameters.init()
-            browser = NWBrowser(for: bonjourTCP, using: bonjourParms)
-            browser.stateUpdateHandler = { newState in
-                switch newState {
-                case .ready:
-                    print("Bonjour new connection")
-                case .cancelled:
-                    print("Bonjour canceled.")
-                default:
-                    break
-                }
+        self.discovered = [BonjourEndpoint()]
+        
+        let bonjourTCP = NWBrowser.Descriptor.bonjour(type: "_indigo._tcp" , domain: nil)
+        let bonjourParms = NWParameters.init()
+        browser = NWBrowser(for: bonjourTCP, using: bonjourParms)
+        browser.stateUpdateHandler = { newState in
+            switch newState {
+            case .ready:
+                print("Bonjour new connection")
+            case .cancelled:
+                print("Bonjour canceled.")
+            default:
+                break
             }
-            
-            browser.browseResultsChangedHandler = { ( results, changes ) in
-                self.discovered = [BonjourEndpoint()]
-                for result in results {
+        }
+        
+        browser.browseResultsChangedHandler = { ( _, changes ) in
+            for change in changes {
+                switch change {
+                case let .added(result):
                     let endpoint = BonjourEndpoint(endpoint: result.endpoint)
                     print("New Bonjour Endpoint: \(endpoint.name)")
                     self.discovered.append(endpoint)
+                    break
+                case let .removed(result):
+                    // TODO: if the selected item goes away, go back to "None"
+                    let endpoint = BonjourEndpoint(endpoint: result.endpoint)
+                    print("Removing Bonjour Endpoint: \(endpoint.name)")
+                    self.discovered.removeAll(where: { $0.name == endpoint.name } )
+                    break
+                case .identical, .changed:
+                    break
+                @unknown default:
+                    break
                 }
             }
-            
-            self.browser.start(queue: DispatchQueue.main)
         }
+        
+        print("BonjourBrowser: Starting...")
+        self.browser.start(queue: DispatchQueue.main)
     }
 }
 
