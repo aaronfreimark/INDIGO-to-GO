@@ -4,7 +4,6 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17502"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,22 +18,13 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Andromeda-RGB.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Jee-0u-V3d">
                                 <rect key="frame" x="0.0" y="44" width="414" height="852"/>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="pLH-vY-Fgg">
-                                <rect key="frame" x="50" y="94" width="314" height="239"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="200"/>
-                                <color key="textColor" systemColor="systemBackgroundColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" notEnabled="YES"/>
                         </accessibility>
                         <constraints>
-                            <constraint firstItem="pLH-vY-Fgg" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="50" id="8FQ-H6-6qT"/>
-                            <constraint firstItem="pLH-vY-Fgg" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="50" id="AC9-RZ-lq4"/>
                             <constraint firstItem="Jee-0u-V3d" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" id="Ka2-oh-Io4"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="pLH-vY-Fgg" secondAttribute="trailing" constant="50" id="R5Z-QD-IKL"/>
                             <constraint firstAttribute="bottom" secondItem="Jee-0u-V3d" secondAttribute="bottom" id="et6-cy-5fJ"/>
                             <constraint firstItem="Jee-0u-V3d" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" id="tNJ-eM-a99"/>
                             <constraint firstItem="Jee-0u-V3d" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="zly-5x-L1m"/>
@@ -48,8 +38,5 @@
     </scenes>
     <resources>
         <image name="Andromeda-RGB.jpg" width="1995.5" height="1536"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>
