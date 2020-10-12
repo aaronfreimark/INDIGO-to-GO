@@ -14,7 +14,7 @@
 		930C34B32533BCAD0014A186 /* 1x1.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C34B22533BCAD0014A186 /* 1x1.png */; };
 		930C34B82533DBAE0014A186 /* ImagerProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930C34B72533DBAE0014A186 /* ImagerProgressView.swift */; };
 		9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9311AC9125129C2200725CB9 /* SettingsView.swift */; };
-		931AF6372509B96F00EE6300 /* INDIGO_to_GOApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */; };
+		931AF6372509B96F00EE6300 /* IndigoToGo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6362509B96F00EE6300 /* IndigoToGo.swift */; };
 		931AF6392509B96F00EE6300 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6382509B96F00EE6300 /* ContentView.swift */; };
 		931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931AF63D2509B97000EE6300 /* Preview Assets.xcassets */; };
 		931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF663250A564900EE6300 /* BonjourBrowser.swift */; };
@@ -43,7 +43,7 @@
 		930C34B72533DBAE0014A186 /* ImagerProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagerProgressView.swift; sourceTree = "<group>"; };
 		9311AC9125129C2200725CB9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		931AF6332509B96F00EE6300 /* INDIGO to GO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "INDIGO to GO.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOApp.swift; sourceTree = "<group>"; };
+		931AF6362509B96F00EE6300 /* IndigoToGo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoToGo.swift; sourceTree = "<group>"; };
 		931AF6382509B96F00EE6300 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		931AF63D2509B97000EE6300 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		931AF63F2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -106,7 +106,7 @@
 				930C34B22533BCAD0014A186 /* 1x1.png */,
 				93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */,
 				93BF080F2513EA320018DEC0 /* Classes */,
-				931AF6362509B96F00EE6300 /* INDIGO_to_GOApp.swift */,
+				931AF6362509B96F00EE6300 /* IndigoToGo.swift */,
 				93BF080B2513EA160018DEC0 /* Views */,
 				931AF63F2509B97000EE6300 /* Info.plist */,
 				93A6047A250D361600E93EA4 /* indigo-response.json */,
@@ -280,7 +280,7 @@
 				931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */,
 				931AF6392509B96F00EE6300 /* ContentView.swift in Sources */,
 				938F010725114B2D00599096 /* IndigoItem.swift in Sources */,
-				931AF6372509B96F00EE6300 /* INDIGO_to_GOApp.swift in Sources */,
+				931AF6372509B96F00EE6300 /* IndigoToGo.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

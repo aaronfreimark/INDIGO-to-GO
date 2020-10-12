@@ -8,10 +8,12 @@
 import SwiftUI
 
 @main
-struct INDIGO_to_GOApp: App {
+struct IndigoToGoApp: App {
+    @StateObject private var client = IndigoClient()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView(client: IndigoClient())
+            ContentView(client: client)
         }
     }
 }
