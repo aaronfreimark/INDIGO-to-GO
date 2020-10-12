@@ -18,18 +18,13 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
     // solar.sunrise
     // solar.astronomicalSunrise
     
-    override init() {
-        self.isPreview = false
+    init(isPreview: Bool = false) {
+        self.isPreview = isPreview
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
         manager.requestWhenInUseAuthorization()
         manager.requestLocation()
-    }
-    
-    init(isPreview: Bool = false) {
-        self.isPreview = isPreview
-        super.init()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -39,8 +34,8 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
             
             self.solar = Solar(for: Date.tomorrow, coordinate: location.coordinate)
 
-//            print("Found user's location: \(location)")
-//            print("Sunrise: \(self.solar)")
+            print("Found user's location: \(location)")
+            print("Sunrise: \(self.solar)")
         }
     }
 

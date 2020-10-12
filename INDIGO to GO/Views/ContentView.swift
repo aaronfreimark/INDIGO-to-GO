@@ -45,7 +45,7 @@ struct ContentView: View {
                     if client.properties.isImagerConnected {
                         StatusRow(description: "Estimated Completion", subtext: client.properties.imagerExpectedFinish, status: "clock")
                     }
-                    if client.properties.isMountHALimitEnabled {
+                    if client.properties.isMountConnected && client.properties.isMountHALimitEnabled {
                         StatusRow(description: "HA Limit", subtext: client.properties.mountHALimit, status: "exclamationmark.arrow.circlepath")
                     }
                     if client.properties.isMountConnected  {
