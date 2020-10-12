@@ -15,7 +15,7 @@ Monitor services using the INDIGO astronomy protocol from iOS &amp; Mac Catalyst
 * Displays guiding status & RMSE
 * Allows you to park the mount and/or disable the cooler at any time 
 
-![Main Screen](Documentation/screen-servers.png)
+![Servers Screen](Documentation/screen-servers.png)
 
 INDIGO to GO runs on any iPhone or iPad running iOS 14, and also any Mac running macOS 11 "Big Sur".
 

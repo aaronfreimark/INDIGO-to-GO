@@ -32,6 +32,8 @@
 		93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */; };
 		93EC16FA2534BCD200392AC9 /* LocationFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F92534BCD200392AC9 /* LocationFeatures.swift */; };
 		93EC16FF2534DCA500392AC9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 93EC16FE2534DCA500392AC9 /* README.md */; };
+		93EC17042534E2F700392AC9 /* screen-main.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17022534E2F700392AC9 /* screen-main.png */; };
+		93EC17052534E2F700392AC9 /* screen-servers.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17032534E2F700392AC9 /* screen-servers.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +63,8 @@
 		93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagerPreviewView.swift; sourceTree = "<group>"; };
 		93EC16F92534BCD200392AC9 /* LocationFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFeatures.swift; sourceTree = "<group>"; };
 		93EC16FE2534DCA500392AC9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		93EC17022534E2F700392AC9 /* screen-main.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screen-main.png"; sourceTree = "<group>"; };
+		93EC17032534E2F700392AC9 /* screen-servers.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screen-servers.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,7 @@
 		931AF62A2509B96F00EE6300 = {
 			isa = PBXGroup;
 			children = (
+				93EC17012534E2F700392AC9 /* Documentation */,
 				93EC16FE2534DCA500392AC9 /* README.md */,
 				930C349B25339ED70014A186 /* Andromeda-RGB.png */,
 				930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */,
@@ -147,6 +152,15 @@
 				93EC16F92534BCD200392AC9 /* LocationFeatures.swift */,
 			);
 			path = Classes;
+			sourceTree = "<group>";
+		};
+		93EC17012534E2F700392AC9 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				93EC17022534E2F700392AC9 /* screen-main.png */,
+				93EC17032534E2F700392AC9 /* screen-servers.png */,
+			);
+			path = Documentation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -221,7 +235,9 @@
 				930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */,
 				930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */,
 				930C34B32533BCAD0014A186 /* 1x1.png in Resources */,
+				93EC17042534E2F700392AC9 /* screen-main.png in Resources */,
 				931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */,
+				93EC17052534E2F700392AC9 /* screen-servers.png in Resources */,
 				938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */,
 				93EC16FF2534DCA500392AC9 /* README.md in Resources */,
 				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
