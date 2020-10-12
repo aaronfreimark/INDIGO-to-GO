@@ -28,6 +28,7 @@
 		93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BF08042513E9E90018DEC0 /* IndigoProperties.swift */; };
 		93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRow.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
+		93EC16EE25348A7900392AC9 /* Solar in Frameworks */ = {isa = PBXBuildFile; productRef = 93EC16ED25348A7900392AC9 /* Solar */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93EC16EE25348A7900392AC9 /* Solar in Frameworks */,
 				930C34AF2533AC160014A186 /* URLImage in Frameworks */,
 				931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */,
 			);
@@ -158,6 +160,7 @@
 			packageProductDependencies = (
 				931D1E0C250C01AF00BFFA6B /* SwiftyJSON */,
 				930C34AE2533AC160014A186 /* URLImage */,
+				93EC16ED25348A7900392AC9 /* Solar */,
 			);
 			productName = "INDIGO Status";
 			productReference = 931AF6332509B96F00EE6300 /* INDIGO to GO.app */;
@@ -189,6 +192,7 @@
 			packageReferences = (
 				931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */,
+				93EC16EC25348A7900392AC9 /* XCRemoteSwiftPackageReference "Solar" */,
 			);
 			productRefGroup = 931AF6342509B96F00EE6300 /* Products */;
 			projectDirPath = "";
@@ -469,6 +473,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		93EC16EC25348A7900392AC9 /* XCRemoteSwiftPackageReference "Solar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/amerikan/Solar";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -481,6 +493,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
+		};
+		93EC16ED25348A7900392AC9 /* Solar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93EC16EC25348A7900392AC9 /* XCRemoteSwiftPackageReference "Solar" */;
+			productName = Solar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

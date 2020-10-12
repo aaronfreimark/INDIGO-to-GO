@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Solar",
+        "repositoryURL": "https://github.com/amerikan/Solar",
+        "state": {
+          "branch": "master",
+          "revision": "558d1a7736aeaa0d4c13989333b3a092d88b19ff",
+          "version": null
+        }
+      },
+      {
         "package": "SwiftyJSON",
         "repositoryURL": "https://github.com/SwiftyJSON/SwiftyJSON.git",
         "state": {
