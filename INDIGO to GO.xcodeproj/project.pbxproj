@@ -22,7 +22,6 @@
 		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
 		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
-		938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
 		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
 		93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BF08042513E9E90018DEC0 /* IndigoProperties.swift */; };
@@ -52,7 +51,6 @@
 		931E89D5252472B800FCFAB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		93577355252A526E005670B3 /* BonjourEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourEndpoint.swift; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
-		938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		938F010625114B2D00599096 /* IndigoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoItem.swift; sourceTree = "<group>"; };
 		939F157D250AAB63004A09D7 /* IndigoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClient.swift; sourceTree = "<group>"; };
 		93A6047A250D361600E93EA4 /* indigo-response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "indigo-response.json"; sourceTree = "<group>"; };
@@ -89,7 +87,6 @@
 				930C349B25339ED70014A186 /* Andromeda-RGB.png */,
 				930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */,
 				930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */,
-				938D6B6E25204C2100F65BDC /* Launch Screen.storyboard */,
 				931AF6352509B96F00EE6300 /* INDIGO to GO */,
 				931AF6342509B96F00EE6300 /* Products */,
 			);
@@ -238,7 +235,6 @@
 				93EC17042534E2F700392AC9 /* screen-main.png in Resources */,
 				931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */,
 				93EC17052534E2F700392AC9 /* screen-servers.png in Resources */,
-				938D6B6F25204C2100F65BDC /* Launch Screen.storyboard in Resources */,
 				93EC16FF2534DCA500392AC9 /* README.md in Resources */,
 				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
 			);
