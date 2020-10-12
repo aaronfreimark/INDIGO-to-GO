@@ -29,6 +29,7 @@
 		93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRow.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
 		93EC16EE25348A7900392AC9 /* Solar in Frameworks */ = {isa = PBXBuildFile; productRef = 93EC16ED25348A7900392AC9 /* Solar */; };
+		93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		93BFF7D72524F3C300B733CE /* StatusRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRow.swift; sourceTree = "<group>"; };
 		93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "INDIGO to GO.entitlements"; sourceTree = "<group>"; };
 		93E4107D2514E5050027A62D /* IndigoConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoConnection.swift; sourceTree = "<group>"; };
+		93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagerPreviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				9311AC9125129C2200725CB9 /* SettingsView.swift */,
 				93BFF7D72524F3C300B733CE /* StatusRow.swift */,
 				930C34B72533DBAE0014A186 /* ImagerProgressView.swift */,
+				93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -245,6 +248,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */,
 				93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */,
 				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
 				93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */,

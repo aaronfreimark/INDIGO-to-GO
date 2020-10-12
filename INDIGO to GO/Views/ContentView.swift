@@ -18,7 +18,6 @@ struct ContentView: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     // Keep track of whether a sheet is showing or not. This works much better as two booleans vs an enum
-    @State private var isWebViewSheetShowing: Bool = false
     @State private var isSettingsSheetShowing: Bool = false
     @State private var isAlertShowing: Bool = false
 
@@ -56,27 +55,7 @@ struct ContentView: View {
             }
             
             if client.properties.isImagerConnected {
-                DisclosureGroup(isExpanded: $isWebViewSheetShowing, content:
-                {
-                    URLImage(client.properties.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
-                        Text("Loading...")
-                    }, content: {
-                        $0.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .clipped()
-                    })
-                }, label:
-                    {
-                        HStack
-                        {
-                            Text("Preview")
-                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture { isWebViewSheetShowing = !isWebViewSheetShowing }
-                    })
+                ImagerPreviewView(client: client)
             }
             
             // =================================================================== GUIDER
@@ -143,7 +122,7 @@ struct ContentView: View {
         }
         .listStyle(GroupedListStyle())
         .onReceive(timer) { input in
-            if !isSettingsSheetShowing && !isWebViewSheetShowing {
+            if !isSettingsSheetShowing {
                 client.updateUI()
             }
         }

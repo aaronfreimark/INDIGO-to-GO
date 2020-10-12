@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 struct ImagerProgressView: View {
 
@@ -84,6 +83,12 @@ struct ImagerProgressView: View {
 
 struct ProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        ProgressView()
+        List {
+            Section {
+                let client = IndigoClient(isPreview: true)
+                ImagerProgressView(client: client)
+            }
+        }
+        .listStyle(GroupedListStyle())
     }
 }
