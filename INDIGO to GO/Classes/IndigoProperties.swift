@@ -251,9 +251,9 @@ class IndigoProperties: ObservableObject, Hashable {
         } else {
             self.guiderTrackingText = "Guiding Off"
             self.guiderTrackingStatus = "alert"
-        }
+    }
 
-        if self.guiderTrackingText == "Guiding" {
+        if self.guiderTrackingText == "Guiding" || self.guiderTrackingText == "Dithering" {
             let guiderDriftX = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DRIFT_X") ?? "0") ?? 0
             let guiderDriftY = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DRIFT_Y") ?? "0") ?? 0
             let guiderDriftMaximum = max(abs(guiderDriftX),abs(guiderDriftY))
