@@ -51,6 +51,9 @@ struct ContentView: View {
                     if client.properties.isMountConnected  {
                         StatusRow(description: "Meridian Transit", subtext: client.properties.mountMeridian, status: "ellipsis.circle")
                     }
+                    if client.location.hasLocation  {
+                        StatusRow(description: "Sunrise", subtext: client.location.sunrise(), status: "sun.max")
+                    }
                 }
             }
             

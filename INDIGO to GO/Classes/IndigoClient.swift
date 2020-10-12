@@ -18,6 +18,9 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     @ObservedObject var bonjourBrowser: BonjourBrowser = BonjourBrowser()
     @Published var properties: IndigoProperties
     var connections: [String: IndigoConnection] = [:]
+
+    var location: LocationFeatures
+
     var defaultImager: String {
         didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") }
     }
@@ -35,12 +38,14 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     
     var anyCancellable: AnyCancellable? = nil
 
+    
  
     
     init(isPreview: Bool = false) {
         
         self.properties = IndigoProperties(queue: self.queue, isPreview: isPreview)
-
+        self.location = LocationFeatures(isPreview: isPreview)
+        
         self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
         self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
         self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"

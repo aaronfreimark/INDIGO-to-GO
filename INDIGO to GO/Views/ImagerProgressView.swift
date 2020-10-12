@@ -17,28 +17,41 @@ struct ImagerProgressView: View {
     
     var body: some View {
         
+        let imagerTotalTime = CGFloat(client.properties.imagerTotalTime)
+        
         Group {
             StatusRow(description: client.properties.imagerSequenceText, subtext: "\(client.properties.imagerImagesTaken) / \(client.properties.imagerImagesTotal)", status: client.properties.imagerSequenceStatus)
             
             ZStack {
                 VStack {
+                    
+                    // Exposure Dots
+                    
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
                             ForEach(client.properties.sequences, id: \.self) { sequence in
-                                sequence.progressView(imagerTotalTime: client.properties.imagerTotalTime, enclosingWidth: metrics.size.width)
+                                sequence.progressView(imagerTotalTime: imagerTotalTime, enclosingWidth: metrics.size.width)
                             }
                         }
                         .frame(height: 5.0)
                     }
+
+                    // Progress Bar
+
                     ProgressView(value: Float(client.properties.imagerElapsedTime), total: Float(client.properties.imagerTotalTime))
                         .frame(height: 15.0)
+            
                 }
                 .padding()
                 
+                
+                // Meridian & HA Limit
+                
+                
                 if client.properties.isMountConnected && client.properties.mountIsTracking {
                     
-                    let proportionHa = CGFloat(client.properties.mountSecondsUntilHALimit) / CGFloat(client.properties.imagerTotalTime)
-                    let proportionMeridian = CGFloat(client.properties.mountSecondsUntilMeridian) / CGFloat(client.properties.imagerTotalTime)
+                    let proportionHa = CGFloat(client.properties.mountSecondsUntilHALimit) / imagerTotalTime
+                    let proportionMeridian = CGFloat(client.properties.mountSecondsUntilMeridian) / imagerTotalTime
                     
                     
                     if client.properties.isMountHALimitEnabled {
@@ -75,10 +88,49 @@ struct ImagerProgressView: View {
                 } else {
                     EmptyView()
                 }
+
+                
+                
+                // Sunrise
+
+                if client.location.hasLocation {
+                    
+                    let adjustedSunrise: Float = client.location.timeUntilSunriseSeconds()  + client.properties.elapsedTimeIfSequencing()
+                    let adjustedAstonomicalSunrise: Float = client.location.timeUntilAstronomicalSunriseSeconds() + client.properties.elapsedTimeIfSequencing()
+                    let preSunrise: Float = adjustedSunrise - adjustedAstonomicalSunrise
+                    
+                    let proportionAstronomicalSunrise: CGFloat = CGFloat(adjustedAstonomicalSunrise) / imagerTotalTime
+                    let proportionPreSunrise: CGFloat = CGFloat(preSunrise) / imagerTotalTime
+                    
+                    
+                    
+                    GeometryReader { metrics in
+                        HStack(alignment: .center, spacing: 0) {
+                            let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionAstronomicalSunrise
+                            
+                            Spacer()
+                                .frame(width: spacerWidth)
+                            Rectangle()
+                                .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 1.0, green: 1.0, blue: 0.0, opacity: 0.0), Color(red: 1.0, green: 1.0, blue: 0.0, opacity: 0.5)]), startPoint: .leading, endPoint: .trailing))
+                                .frame(width: CGFloat(metrics.size.width) * proportionPreSunrise)
+                            Rectangle()
+                                .fill(Color(red: 1.0, green: 1.0, blue: 0.0, opacity: 0.5))
+                        }
+                    }
+                    .padding(.horizontal)
+                                        
+                } else {
+                    EmptyView()
+                }
+
+
             }
+            .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous).padding(.horizontal))
         }
         
     }
+    
+    
 }
 
 struct ProgressView_Previews: PreviewProvider {
@@ -92,3 +144,5 @@ struct ProgressView_Previews: PreviewProvider {
         .listStyle(GroupedListStyle())
     }
 }
+
+

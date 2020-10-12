@@ -35,6 +35,8 @@
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>INDIGO to GO uses Bonjour to discover your INDIGO server(s).</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is needed to determine sunrise. This data is kept on your device.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

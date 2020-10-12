@@ -30,6 +30,7 @@
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
 		93EC16EE25348A7900392AC9 /* Solar in Frameworks */ = {isa = PBXBuildFile; productRef = 93EC16ED25348A7900392AC9 /* Solar */; };
 		93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */; };
+		93EC16FA2534BCD200392AC9 /* LocationFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F92534BCD200392AC9 /* LocationFeatures.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "INDIGO to GO.entitlements"; sourceTree = "<group>"; };
 		93E4107D2514E5050027A62D /* IndigoConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoConnection.swift; sourceTree = "<group>"; };
 		93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagerPreviewView.swift; sourceTree = "<group>"; };
+		93EC16F92534BCD200392AC9 /* LocationFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFeatures.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				93577355252A526E005670B3 /* BonjourEndpoint.swift */,
 				93E4107D2514E5050027A62D /* IndigoConnection.swift */,
 				937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */,
+				93EC16F92534BCD200392AC9 /* LocationFeatures.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 				93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */,
 				93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */,
 				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
+				93EC16FA2534BCD200392AC9 /* LocationFeatures.swift in Sources */,
 				93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */,
 				93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */,
 				9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */,
@@ -393,6 +397,7 @@
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"INDIGO To Go/Preview Content\"";
 				DEVELOPMENT_TEAM = QLSSS38HN8;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "INDIGO To Go/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -420,6 +425,7 @@
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "\"INDIGO To Go/Preview Content\"";
 				DEVELOPMENT_TEAM = QLSSS38HN8;
+				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "INDIGO To Go/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;

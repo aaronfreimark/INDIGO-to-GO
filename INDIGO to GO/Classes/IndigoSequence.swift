@@ -41,8 +41,8 @@ struct IndigoSequence: Hashable {
         
     }
     
-    func progressView(imagerTotalTime: Float, enclosingWidth: CGFloat) -> some View {
-        let proportion: CGFloat = CGFloat(self.totalTime) / CGFloat(imagerTotalTime)
+    func progressView(imagerTotalTime: CGFloat, enclosingWidth: CGFloat) -> some View {
+        let proportion: CGFloat = CGFloat(self.totalTime) / imagerTotalTime
         let widthPx =  proportion * CGFloat(enclosingWidth)
         
         let eachCircleWidthPx = widthPx / CGFloat(self.count)

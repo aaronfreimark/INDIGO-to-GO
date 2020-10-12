@@ -156,12 +156,6 @@ class IndigoProperties: ObservableObject, Hashable {
             imagerFrameInProgress = Float(imagerFrameInProgressString) ?? 0
         }
         
-        
-/*
-         Imager Agent | AGENT_IMAGER_STATS | EXPOSURE: 584
-         
-         */
-
         var totalTime: Float = 0
         var elapsedTime: Float = 0
         var thisBatch = 1
@@ -243,16 +237,16 @@ class IndigoProperties: ObservableObject, Hashable {
             self.guiderTrackingText = "Dithering"
             self.guiderTrackingStatus = "ok"
         } else if isGuiding {
-                self.guiderTrackingText = "Guiding"
-                self.guiderTrackingStatus = "ok"
+            self.guiderTrackingText = "Guiding"
+            self.guiderTrackingStatus = "ok"
         } else if isCalibrating {
             self.guiderTrackingText = "Calibrating"
             self.guiderTrackingStatus = "warn"
         } else {
             self.guiderTrackingText = "Guiding Off"
             self.guiderTrackingStatus = "alert"
-    }
-
+        }
+        
         if self.guiderTrackingText == "Guiding" || self.guiderTrackingText == "Dithering" {
             let guiderDriftX = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DRIFT_X") ?? "0") ?? 0
             let guiderDriftY = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DRIFT_Y") ?? "0") ?? 0
@@ -322,10 +316,7 @@ class IndigoProperties: ObservableObject, Hashable {
 
                 let mountMeridianTime = Date().addingTimeInterval(TimeInterval(timeUntilMeridianSeconds))
 
-                // Take elapsed time into account!
-                if self.imagerState != .Stopped {
-                    timeUntilMeridianSeconds += elapsedTime // effectively counds from start time of sequence
-                }
+                timeUntilMeridianSeconds += elapsedTimeIfSequencing()
                 
                 self.mountSecondsUntilMeridian = timeUntilMeridianSeconds
                 self.mountMeridian = timeString(date: mountMeridianTime)
@@ -342,10 +333,7 @@ class IndigoProperties: ObservableObject, Hashable {
                     
                     let mountHALimitTime = Date().addingTimeInterval(TimeInterval(timeUntilHALimitSeconds))
 
-                    // Take elapsed time into account!
-                    if self.imagerState != .Stopped {
-                        timeUntilHALimitSeconds += elapsedTime // effectively counds from start time of sequence
-                    }
+                    timeUntilHALimitSeconds += elapsedTimeIfSequencing()
 
                     self.mountSecondsUntilHALimit = timeUntilHALimitSeconds
                     self.mountHALimit = timeString(date: mountHALimitTime)
@@ -433,7 +421,7 @@ class IndigoProperties: ObservableObject, Hashable {
         
         setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
         setValue(key: "Mount Agent | MOUNT_TRACKING | ON", toValue: "true", toState: "Ok")
-        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "22.0", toState: "Ok", toTarget: "23.66666666")
+        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "23.0", toState: "Ok", toTarget: "23.66666666")
         
         switch self.imagerState {
         case .Sequencing:
@@ -515,9 +503,18 @@ class IndigoProperties: ObservableObject, Hashable {
             self.properties.removeValue(forKey: key)
         }
     }
+
+    
+    /// Shifts times for Meridian & HA Limit over if sequence is running, so these count from start of sequence instead of now()
+    func elapsedTimeIfSequencing() -> Float {
+        if self.imagerState != .Stopped {
+            return self.imagerElapsedTime
+        } else {
+            return 0.0
+        }
+    }
     
     func injest(json: JSON, source: IndigoConnection) {
-        // loop through the INDIGO structure and parse into a more usable struct
         // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
 
         for (type, subJson):(String, JSON) in json {
@@ -597,7 +594,8 @@ class IndigoProperties: ObservableObject, Hashable {
     
     var timeFormat: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
         return formatter
     }
     
