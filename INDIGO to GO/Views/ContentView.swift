@@ -11,7 +11,7 @@ import Combine
 
 struct ContentView: View {
     // The interesting stuff is in this object!
-    @ObservedObject var client = IndigoClient()
+    @ObservedObject var client: IndigoClient
         
     // Set up a timer for periodic refresh
     @State var currentDate = Date()
@@ -39,68 +39,7 @@ struct ContentView: View {
             
             if client.properties.isImagerConnected || client.properties.isMountConnected {
                 Section(header: Text("Sequence")) {
-                    if client.properties.isImagerConnected {
-                        StatusRow(description: client.properties.imagerSequenceText, subtext: "\(client.properties.imagerImagesTaken) / \(client.properties.imagerImagesTotal)", status: client.properties.imagerSequenceStatus)
-
-            // =================================================================== PROGRESS
-
-                        ZStack {
-                            VStack {
-                                GeometryReader { metrics in
-                                    HStack(alignment: .center, spacing: 0) {
-                                        ForEach(client.properties.sequences, id: \.self) { sequence in
-                                            sequence.progressView(imagerTotalTime: client.properties.imagerTotalTime, enclosingWidth: metrics.size.width)
-                                        }
-                                    }
-                                    .frame(height: 5.0)
-                                }
-                                ProgressView(value: Float(client.properties.imagerElapsedTime), total: Float(client.properties.imagerTotalTime))
-                                    .frame(height: 15.0)
-                            }
-                            .padding()
-                            
-                            if client.properties.isMountConnected && client.properties.mountIsTracking {
-                                
-                                let proportionHa = CGFloat(client.properties.mountSecondsUntilHALimit) / CGFloat(client.properties.imagerTotalTime)
-                                let proportionMeridian = CGFloat(client.properties.mountSecondsUntilMeridian) / CGFloat(client.properties.imagerTotalTime)
-                                
-                                
-                                if client.properties.isMountHALimitEnabled {
-                                    GeometryReader { metrics in
-                                        HStack(alignment: .center, spacing: 0) {
-                                            let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionHa
-                                            
-                                            Spacer()
-                                                .frame(width: spacerWidth)
-                                            Rectangle()
-                                                .fill(Color.orange)
-                                                .opacity(0.3)
-                                                .frame(width: CGFloat(metrics.size.width) * (proportionMeridian - proportionHa))
-                                            Spacer()
-                                        }
-                                    }
-                                    .padding(.horizontal)
-                                }
-
-                                GeometryReader { metrics in
-                                    HStack(alignment: .center, spacing: 0) {
-                                        let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionMeridian
-                                        
-                                        Spacer()
-                                            .frame(width: spacerWidth)
-                                        Rectangle()
-                                            .fill(Color.orange)
-                                            .frame(width: 2)
-                                        Spacer()
-                                    }
-                                }
-                                .padding(.horizontal)
-
-                            } else {
-                                EmptyView()
-                            }
-                        }
-                    }
+                    if client.properties.isImagerConnected  { ImagerProgressView(client: client) }
 
                     // =================================================================== COMPLETION
 
@@ -257,6 +196,3 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-enum SheetList: String {
-    case WebView, Settings
-}

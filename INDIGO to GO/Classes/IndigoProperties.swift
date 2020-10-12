@@ -307,6 +307,10 @@ class IndigoProperties: ObservableObject, Hashable {
             self.mountIsParked = true
         }
 
+        if let HALimit = Float(getTarget("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0") {
+            self.isMountHALimitEnabled = HALimit != 24.0
+        }
+        
         if self.mountIsTracking {
             let secondsInDay = Float(24 * 60 * 60)
 

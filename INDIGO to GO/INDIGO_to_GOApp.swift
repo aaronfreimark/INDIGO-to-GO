@@ -11,7 +11,7 @@ import SwiftUI
 struct INDIGO_to_GOApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(client: IndigoClient())
         }
     }
 }
