@@ -16,29 +16,34 @@ struct ImagerPreviewView: View {
     init(client: IndigoClient) {
         self.client = client
     }
-
+    
     var body: some View {
-        DisclosureGroup(isExpanded: $isPreviewShowing, content:
-        {
-            URLImage(client.properties.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
-                Text("Loading...")
-            }, content: {
-                $0.image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipped()
-            })
-        }, label:
-            {
-                HStack
+        DisclosureGroup(
+            isExpanded: $isPreviewShowing,
+            content:
                 {
-                    Text("Preview")
-                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-                .onTapGesture { isPreviewShowing = !isPreviewShowing }
-            })
+                    URLImage(client.properties.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
+                        Text("Loading...")
+                    }, content: {
+                        $0.image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipped()
+                    })
+                }, label:
+                    {
+                        HStack
+                        {
+                            Text("Preview")
+                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                        .onTapGesture { isPreviewShowing = !isPreviewShowing }
+                    })
+            .onAppear {
+                URLImageService.shared.setDefaultExpiryTime(0.0)
+            }
     }
 }
 

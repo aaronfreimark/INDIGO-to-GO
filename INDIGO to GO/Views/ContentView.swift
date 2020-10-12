@@ -6,34 +6,38 @@
 //
 
 import SwiftUI
-import URLImage
-import Combine
 
 struct ContentView: View {
     // The interesting stuff is in this object!
     @ObservedObject var client: IndigoClient
         
     // Set up a timer for periodic refresh
-    @State var currentDate = Date()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State var isShowingServerNotice = false
     
     // Keep track of whether a sheet is showing or not. This works much better as two booleans vs an enum
     @State private var isSettingsSheetShowing: Bool = false
     @State private var isAlertShowing: Bool = false
-
-    // URL of preview image; Probably doesn't need to be its own variable like this. I think we're trying to make sure it doesn't reload every 1 second.
-    @State var imgURL: String?
     
     var body: some View {
         
         List {
             if !client.properties.isAnythingConnected {
-                Section {
-                    Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
-                        .padding(30)
+                if self.isShowingServerNotice {
+                    Section {
+                        Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
+                            .padding(30)
+                    }
+                } else {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
                 }
+                
             }
-
+            
             // =================================================================== SEQUENCE
             
             if client.properties.isImagerConnected || client.properties.isMountConnected {
@@ -131,30 +135,29 @@ struct ContentView: View {
         }
         .onAppear(perform: {
             
-            URLImageService.shared.setDefaultExpiryTime(0.0)
-
-            // Start up Bonjour, let stuff populate
+            /// Start up Bonjour, let stuff populate
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                self.isShowingServerNotice = false
                 client.bonjourBrowser.seek()
             })
 
-            // Show the settings sheet if after 2 seconds there are no connected servers...
+            /// after 2 second ssearch for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                if self.client.connectedServers().count == 0 {
-                    // Start up Bonjour, let stuff populate
-                    self.isSettingsSheetShowing = true
-                }
+                self.isShowingServerNotice = true
+                client.reinitSavedServers()
             }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             
-            // Start up Bonjour, let stuff populate
+            /// Start up Bonjour, let stuff populate
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
+                self.isShowingServerNotice = false
                 client.bonjourBrowser.seek()
             })
             
-            // after 1 second search for whatever is in serverSettings.servers to try to reconnect
+            /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.isShowingServerNotice = true
                 client.reinitSavedServers()
             }
         }
