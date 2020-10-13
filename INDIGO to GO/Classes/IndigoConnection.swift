@@ -89,11 +89,12 @@ class IndigoConnection {
                 self.didStopCallback = didStopCallback(error:)
                 self.websocketConnection!.stateUpdateHandler = stateDidChange(to:)
                 
-                // setupReceive
                 self.setupReceive()
                 
-                print("\(self.name): Websocket connection starting... ")
-                self.websocketConnection!.start(queue: self.queue)
+                self.queue.asyncAfter(deadline: .now() + 0.25) {
+                    print("\(self.name): Websocket connection starting... ")
+                    self.websocketConnection!.start(queue: self.queue)
+                }
             }
             
             break
