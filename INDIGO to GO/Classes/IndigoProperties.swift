@@ -592,7 +592,59 @@ class IndigoProperties: ObservableObject, Hashable {
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(properties)
+        hasher.combine(guiderTrackingStatus)
+        hasher.combine(guiderTrackingText)
+        hasher.combine(guiderDriftMax)
+        hasher.combine(guiderRSMEDec)
+        hasher.combine(guiderRSMERA)
+        hasher.combine(guiderRSMEDecStatus)
+        hasher.combine(guiderRSMERAStatus)
+
+            
+        hasher.combine(mountIsTracking)
+        hasher.combine(mountIsParked)
+        hasher.combine(mountTrackingStatus)
+        hasher.combine(mountTrackingText)
+        hasher.combine(mountMeridian)
+        hasher.combine(mountSecondsUntilMeridian)
+        hasher.combine(mountSecondsUntilHALimit)
+        hasher.combine(mountHALimit)
+        hasher.combine(isMountHALimitEnabled)
+
+        hasher.combine(imagerState)
+        hasher.combine(imagerSequenceText)
+        hasher.combine(imagerSequenceStatus)
+
+        hasher.combine(imagerCameraTemperature)
+        hasher.combine(imagerCoolingStatus)
+        hasher.combine(imagerCoolingText)
+        hasher.combine(imagerIsCoolerOn)
+
+        hasher.combine(imagerExpectedFinish)
+        hasher.combine(imagerImagesTotal)
+        hasher.combine(imagerImagesTaken)
+            
+        hasher.combine(imagerLatestImageURL)
+        hasher.combine(imagerImageLatest)
+        hasher.combine(sequences)
+        hasher.combine(imagerTotalTime)
+        hasher.combine(imagerElapsedTime)
+        hasher.combine(imagerStart)
+        hasher.combine(imagerFinish)
+
+        hasher.combine(imagerVersion)
+        hasher.combine(guiderVersion)
+        hasher.combine(mountVersion)
+
+        hasher.combine(isImagerConnected)
+        hasher.combine(isGuiderConnected)
+        hasher.combine(isMountConnected)
+        hasher.combine(isAnythingConnected)
+            
+        hasher.combine(ParkandWarmButtonTitle)
+        hasher.combine(ParkandWarmButtonDescription)
+        hasher.combine(ParkandWarmButtonOK)
+        hasher.combine(isPartAndWarmButtonEnabled)
     }
 
     static func == (lhs: IndigoProperties, rhs: IndigoProperties) -> Bool {
