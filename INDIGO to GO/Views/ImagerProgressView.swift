@@ -11,6 +11,10 @@ struct ImagerProgressView: View {
 
     @ObservedObject var client: IndigoClient
 
+    let sunColor = Color.yellow.opacity(0.3)
+    let meridianColor = Color.orange
+    let haColor = Color.orange.opacity(0.3)
+
     init(client: IndigoClient) {
         self.client = client
     }
@@ -62,8 +66,7 @@ struct ImagerProgressView: View {
                                 Spacer()
                                     .frame(width: spacerWidth)
                                 Rectangle()
-                                    .fill(Color.orange)
-                                    .opacity(0.3)
+                                    .fill(self.haColor)
                                     .frame(width: CGFloat(metrics.size.width) * (proportionMeridian - proportionHa))
                                 Spacer()
                             }
@@ -78,7 +81,7 @@ struct ImagerProgressView: View {
                             Spacer()
                                 .frame(width: spacerWidth)
                             Rectangle()
-                                .fill(Color.orange)
+                                .fill(self.meridianColor)
                                 .frame(width: 2)
                             Spacer()
                         }
@@ -109,10 +112,10 @@ struct ImagerProgressView: View {
                             Spacer()
                                 .frame(width: CGFloat(metrics.size.width) * proportionAstronomicalSunrise)
                             Rectangle()
-                                .fill(LinearGradient(gradient: Gradient(colors: [Color.yellow.opacity(0.0), Color.yellow.opacity(0.5)]), startPoint: .leading, endPoint: .trailing))
+                                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor.opacity(0.0), self.sunColor]), startPoint: .leading, endPoint: .trailing))
                                 .frame(width: CGFloat(metrics.size.width) * proportionPreSunrise)
                             Rectangle()
-                                .fill(Color.yellow.opacity(0.5))
+                                .fill(self.sunColor)
                         }
                     }
                     .padding(.horizontal)
@@ -139,15 +142,14 @@ struct ImagerProgressView: View {
                             
                             if adjustedSunset > 0 {
                                 Rectangle()
-                                    .fill(Color.yellow.opacity(0.5))
+                                    .fill(self.sunColor)
                                     .frame(width: CGFloat(metrics.size.width) * proportionAstronomicalSunset)
                             }
                             
-                            if adjustedAstonomicalSunset > 0 {
-                                Rectangle()
-                                    .fill(LinearGradient(gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.yellow.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))
-                                    .frame(width: CGFloat(metrics.size.width) * proportionPostSunset)
-                            }
+                            /// TODO: what if sunset is before START, so beginning is negative offset?
+                            Rectangle()
+                                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))
+                                .frame(width: CGFloat(metrics.size.width) * proportionPostSunset)
                             Spacer()
                         }
                     }
