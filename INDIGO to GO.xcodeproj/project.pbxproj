@@ -21,19 +21,34 @@
 		931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 931D1E0C250C01AF00BFFA6B /* SwiftyJSON */; };
 		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
 		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
+		9364A3C6253546E200489AC0 /* Solar in Frameworks */ = {isa = PBXBuildFile; productRef = 9364A3C5253546E200489AC0 /* Solar */; };
+		9364A3C7253546E200489AC0 /* Solar in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9364A3C5253546E200489AC0 /* Solar */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
 		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
 		93BF08052513E9E90018DEC0 /* IndigoProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BF08042513E9E90018DEC0 /* IndigoProperties.swift */; };
 		93BFF7D82524F3C300B733CE /* StatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRow.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
-		93EC16EE25348A7900392AC9 /* Solar in Frameworks */ = {isa = PBXBuildFile; productRef = 93EC16ED25348A7900392AC9 /* Solar */; };
 		93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */; };
 		93EC16FA2534BCD200392AC9 /* LocationFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F92534BCD200392AC9 /* LocationFeatures.swift */; };
 		93EC16FF2534DCA500392AC9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 93EC16FE2534DCA500392AC9 /* README.md */; };
 		93EC17042534E2F700392AC9 /* screen-main.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17022534E2F700392AC9 /* screen-main.png */; };
 		93EC17052534E2F700392AC9 /* screen-servers.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17032534E2F700392AC9 /* screen-servers.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9364A3C8253546E200489AC0 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9364A3C7253546E200489AC0 /* Solar in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		930C349B25339ED70014A186 /* Andromeda-RGB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB.png"; sourceTree = "<group>"; };
@@ -70,7 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93EC16EE25348A7900392AC9 /* Solar in Frameworks */,
+				9364A3C6253546E200489AC0 /* Solar in Frameworks */,
 				930C34AF2533AC160014A186 /* URLImage in Frameworks */,
 				931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */,
 			);
@@ -171,6 +186,7 @@
 				931AF6302509B96F00EE6300 /* Frameworks */,
 				931AF6312509B96F00EE6300 /* Resources */,
 				933354C8252AAE7B00576F8C /* ShellScript */,
+				9364A3C8253546E200489AC0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -180,7 +196,7 @@
 			packageProductDependencies = (
 				931D1E0C250C01AF00BFFA6B /* SwiftyJSON */,
 				930C34AE2533AC160014A186 /* URLImage */,
-				93EC16ED25348A7900392AC9 /* Solar */,
+				9364A3C5253546E200489AC0 /* Solar */,
 			);
 			productName = "INDIGO Status";
 			productReference = 931AF6332509B96F00EE6300 /* INDIGO to GO.app */;
@@ -212,7 +228,7 @@
 			packageReferences = (
 				931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */,
-				93EC16EC25348A7900392AC9 /* XCRemoteSwiftPackageReference "Solar" */,
+				9364A3C4253546E200489AC0 /* XCRemoteSwiftPackageReference "Solar" */,
 			);
 			productRefGroup = 931AF6342509B96F00EE6300 /* Products */;
 			projectDirPath = "";
@@ -499,9 +515,9 @@
 				minimumVersion = 5.0.0;
 			};
 		};
-		93EC16EC25348A7900392AC9 /* XCRemoteSwiftPackageReference "Solar" */ = {
+		9364A3C4253546E200489AC0 /* XCRemoteSwiftPackageReference "Solar" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/amerikan/Solar";
+			repositoryURL = "https://github.com/aaronfreimark/Solar";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -520,9 +536,9 @@
 			package = 931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
 			productName = SwiftyJSON;
 		};
-		93EC16ED25348A7900392AC9 /* Solar */ = {
+		9364A3C5253546E200489AC0 /* Solar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 93EC16EC25348A7900392AC9 /* XCRemoteSwiftPackageReference "Solar" */;
+			package = 9364A3C4253546E200489AC0 /* XCRemoteSwiftPackageReference "Solar" */;
 			productName = Solar;
 		};
 /* End XCSwiftPackageProductDependency section */

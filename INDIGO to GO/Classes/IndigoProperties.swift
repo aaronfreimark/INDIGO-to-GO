@@ -56,6 +56,8 @@ class IndigoProperties: ObservableObject, Hashable {
     @Published var sequences: [IndigoSequence] = []
     @Published var imagerTotalTime: Float = 0
     @Published var imagerElapsedTime: Float = 0
+    var imagerStart: Date?
+    var imagerFinish: Date?
 
     @Published var imagerVersion: String = ""
     @Published var guiderVersion: String = ""
@@ -219,11 +221,17 @@ class IndigoProperties: ObservableObject, Hashable {
         self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(timeRemaining)))
         
         if totalTime == 0 {
+            self.imagerStart = Date()
+            self.imagerFinish = nil
             self.imagerExpectedFinish = "—"
         } else if self.imagerState == .Stopped {
-            self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(totalTime)))
+            self.imagerStart = Date()
+            self.imagerFinish = Date().addingTimeInterval(TimeInterval(totalTime))
+            self.imagerExpectedFinish = timeString(date: self.imagerFinish!)
         } else {
-            self.imagerExpectedFinish = timeString(date: Date().addingTimeInterval(TimeInterval(timeRemaining)))
+            self.imagerStart = Date().addingTimeInterval(TimeInterval(-1.0 * elapsedTime))
+            self.imagerFinish = Date().addingTimeInterval(TimeInterval(timeRemaining))
+            self.imagerExpectedFinish = timeString(date: self.imagerFinish!)
         }
 
 

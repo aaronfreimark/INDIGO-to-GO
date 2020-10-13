@@ -12,11 +12,23 @@ import Solar
 
 class LocationFeatures: NSObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
-    var hasLocation: Bool { return self.timeUntilSunriseSeconds() > 0 }
-    var solar: Solar?
+    private var location: CLLocation?
+
     var isPreview: Bool
-    // solar.sunrise
-    // solar.astronomicalSunrise
+    
+    @Published var hasLocation: Bool = false
+    @Published var secondsUntilSunrise: Float = 0
+    @Published var secondsUntilAstronomicalSunrise: Float = 0
+    @Published var secondsUntilSunset: Float = 0
+    @Published var secondsUntilAstronomicalSunset: Float = 0
+    @Published var sunrise: String = "Unknown"
+    
+    
+    /*
+     
+     Sunset day of begining of sequence, sunrise day of end of sequence
+     
+     */
     
     init(isPreview: Bool = false) {
         self.isPreview = isPreview
@@ -29,43 +41,68 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.first {
-
-            /// Give me tomorrow' sunrise, not today's
-            
-            self.solar = Solar(for: Date.tomorrow, coordinate: location.coordinate)
-
             print("Found user's location: \(location)")
-            print("Sunrise: \(self.solar)")
+            self.location = location
+            self.hasLocation = true
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Failed to find user's location: \(error.localizedDescription)")
+        self.hasLocation = false
     }
     
-    
-    func timeUntilSunriseSeconds() -> Float {
-        if self.isPreview { return 60*60*2.25 }
+    func updateUI(start: Date?, finish: Date?) {
+        if self.isPreview {
+            self.secondsUntilSunrise = 60*60*2.25
+            self.secondsUntilAstronomicalSunrise = 60*60*2
+            self.secondsUntilSunset = 60*60*0.1
+            self.secondsUntilAstronomicalSunset = 0
+            self.sunrise = timeString(date: Date().addingTimeInterval(TimeInterval(self.secondsUntilSunrise)))
+            self.hasLocation = true
+        } else {
+            if start == nil { return }
+            if finish == nil { return }
 
-        guard let sunrise = self.solar?.sunrise else { return 0 }
-        let seconds = Float(sunrise.timeIntervalSince(Date()))
-        return seconds
+            guard let finishSolar = Solar(for: finish!, coordinate: self.location!.coordinate) else { return }
+            
+            guard let sunrise = finishSolar.sunrise else { return }
+            self.secondsUntilSunrise = Float(sunrise.timeIntervalSince(Date()))
+
+            guard let astronomicalSunrise = finishSolar.astronomicalSunrise else { return }
+            self.secondsUntilAstronomicalSunrise = Float(astronomicalSunrise.timeIntervalSince(Date()))
+
+            // --
+            
+            guard let startSolar = Solar(for: start!, coordinate: self.location!.coordinate) else { return }
+
+            guard let sunset = startSolar.sunset else { return }
+            self.secondsUntilSunset = Float(sunset.timeIntervalSince(Date()))
+
+            guard let astronomicalSunset = startSolar.astronomicalSunset else { return }
+            self.secondsUntilAstronomicalSunset = Float(astronomicalSunset.timeIntervalSince(Date()))
+
+            if sunset > sunrise {
+                /// Work around a bug in Solar related to timezones. It sometimes picks the wrong day., so we need to go back 24 hrs
+                let fixedStart = start?.addingTimeInterval(-24*60*60)
+                guard let fixedStartSolar = Solar(for: fixedStart!, coordinate: self.location!.coordinate) else { return }
+
+                guard let sunset = fixedStartSolar.sunset else { return }
+                self.secondsUntilSunset = Float(sunset.timeIntervalSince(Date()))
+
+                guard let astronomicalSunset = fixedStartSolar.astronomicalSunset else { return }
+                self.secondsUntilAstronomicalSunset = Float(astronomicalSunset.timeIntervalSince(Date()))
+            }
+
+            
+            self.sunrise = timeString(date: sunrise)
+            
+//            print("Start: \(start), Finish: \(finish)")
+//            print("Sunrise: \(self.secondsUntilSunrise/60/60), Sunset: \(self.secondsUntilSunset/60/60)")
+
+        }
     }
     
-    func timeUntilAstronomicalSunriseSeconds() -> Float {
-        if self.isPreview { return 60*60*2 }
-
-        guard let sunrise = self.solar?.astronomicalSunrise else { return 0 }
-        let seconds = Float(sunrise.timeIntervalSince(Date()))
-        return seconds
-    }
-    
-    func sunrise() -> String {
-        if self.isPreview { return timeString(date: Date().addingTimeInterval(TimeInterval(self.timeUntilSunriseSeconds()))) }
-
-        guard let sunrise = self.solar?.sunrise else { return "Unknown" }
-        return timeString(date: sunrise)
-    }
 
     var timeFormat: DateFormatter {
         let formatter = DateFormatter()

@@ -17,7 +17,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     @ObservedObject var bonjourBrowser: BonjourBrowser = BonjourBrowser()
     @Published var properties: IndigoProperties
-    var connections: [String: IndigoConnection] = [:]
+    @Published var connections: [String: IndigoConnection] = [:]
 
     var location: LocationFeatures
 
@@ -111,6 +111,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
     func updateUI() {
         self.properties.updateUI()
+        self.location.updateUI(start: self.properties.imagerStart, finish: self.properties.imagerFinish)
     }
     
     

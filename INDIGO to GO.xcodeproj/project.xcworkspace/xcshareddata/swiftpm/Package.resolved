@@ -3,10 +3,10 @@
     "pins": [
       {
         "package": "Solar",
-        "repositoryURL": "https://github.com/amerikan/Solar",
+        "repositoryURL": "https://github.com/aaronfreimark/Solar",
         "state": {
           "branch": "master",
-          "revision": "558d1a7736aeaa0d4c13989333b3a092d88b19ff",
+          "revision": "5ceb18600bf6639d480dd5aff91cc1cde38d4959",
           "version": null
         }
       },

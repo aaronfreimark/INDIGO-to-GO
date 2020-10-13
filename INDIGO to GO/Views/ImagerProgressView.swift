@@ -93,28 +93,62 @@ struct ImagerProgressView: View {
                 
                 // Sunrise
 
-                if client.location.hasLocation {
+                if client.location.hasLocation && client.properties.imagerFinish != nil {
                     
-                    let adjustedSunrise: Float = client.location.timeUntilSunriseSeconds()  + client.properties.elapsedTimeIfSequencing()
-                    let adjustedAstonomicalSunrise: Float = client.location.timeUntilAstronomicalSunriseSeconds() + client.properties.elapsedTimeIfSequencing()
+                    let adjustedSunrise: Float = client.location.secondsUntilSunrise + client.properties.elapsedTimeIfSequencing()
+                    let adjustedAstonomicalSunrise: Float = client.location.secondsUntilAstronomicalSunrise + client.properties.elapsedTimeIfSequencing()
                     let preSunrise: Float = adjustedSunrise - adjustedAstonomicalSunrise
                     
                     let proportionAstronomicalSunrise: CGFloat = CGFloat(adjustedAstonomicalSunrise) / imagerTotalTime
                     let proportionPreSunrise: CGFloat = CGFloat(preSunrise) / imagerTotalTime
                     
                     
+                    GeometryReader { metrics in
+                        HStack(alignment: .center, spacing: 0) {
+                            
+                            Spacer()
+                                .frame(width: CGFloat(metrics.size.width) * proportionAstronomicalSunrise)
+                            Rectangle()
+                                .fill(LinearGradient(gradient: Gradient(colors: [Color.yellow.opacity(0.0), Color.yellow.opacity(0.5)]), startPoint: .leading, endPoint: .trailing))
+                                .frame(width: CGFloat(metrics.size.width) * proportionPreSunrise)
+                            Rectangle()
+                                .fill(Color.yellow.opacity(0.5))
+                        }
+                    }
+                    .padding(.horizontal)
+                                        
+                } else {
+                    EmptyView()
+                }
+
+                
+                // Sunset
+
+                if client.location.hasLocation && client.properties.imagerStart != nil {
+                    
+                    let adjustedSunset: Float = client.location.secondsUntilSunset  + client.properties.elapsedTimeIfSequencing()
+                    let adjustedAstonomicalSunset: Float = client.location.secondsUntilAstronomicalSunset + client.properties.elapsedTimeIfSequencing()
+                    let postSunset: Float = adjustedAstonomicalSunset - adjustedSunset
+                    
+                    let proportionAstronomicalSunset: CGFloat = CGFloat(adjustedAstonomicalSunset) / imagerTotalTime
+                    let proportionPostSunset: CGFloat = CGFloat(postSunset) / imagerTotalTime
+                    
                     
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
-                            let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionAstronomicalSunrise
                             
+                            if adjustedSunset > 0 {
+                                Rectangle()
+                                    .fill(Color.yellow.opacity(0.5))
+                                    .frame(width: CGFloat(metrics.size.width) * proportionAstronomicalSunset)
+                            }
+                            
+                            if adjustedAstonomicalSunset > 0 {
+                                Rectangle()
+                                    .fill(LinearGradient(gradient: Gradient(colors: [Color.yellow.opacity(0.5), Color.yellow.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: CGFloat(metrics.size.width) * proportionPostSunset)
+                            }
                             Spacer()
-                                .frame(width: spacerWidth)
-                            Rectangle()
-                                .fill(LinearGradient(gradient: Gradient(colors: [Color(red: 1.0, green: 1.0, blue: 0.0, opacity: 0.0), Color(red: 1.0, green: 1.0, blue: 0.0, opacity: 0.5)]), startPoint: .leading, endPoint: .trailing))
-                                .frame(width: CGFloat(metrics.size.width) * proportionPreSunrise)
-                            Rectangle()
-                                .fill(Color(red: 1.0, green: 1.0, blue: 0.0, opacity: 0.5))
                         }
                     }
                     .padding(.horizontal)
