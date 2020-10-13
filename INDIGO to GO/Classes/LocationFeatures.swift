@@ -57,7 +57,7 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
             self.secondsUntilSunrise = 60*60*2.25
             self.secondsUntilAstronomicalSunrise = 60*60*2
             self.secondsUntilSunset = 60*60*0.1
-            self.secondsUntilAstronomicalSunset = 0
+            self.secondsUntilAstronomicalSunset = secondsUntilSunset + 18*60
             self.sunrise = timeString(date: Date().addingTimeInterval(TimeInterval(self.secondsUntilSunrise)))
             self.hasLocation = true
         } else {

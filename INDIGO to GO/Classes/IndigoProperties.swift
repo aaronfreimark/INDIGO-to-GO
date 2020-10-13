@@ -424,7 +424,7 @@ class IndigoProperties: ObservableObject, Hashable {
          *
          */
         
-        self.imagerState = .Sequencing
+        self.imagerState = .Stopped
 
         
         setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
@@ -451,7 +451,6 @@ class IndigoProperties: ObservableObject, Hashable {
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", toValue: "filter=G;", toState: "Ok")
         
         setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "1;2;3;", toState: "Ok")
-//        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "", toState: "Ok")
         
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCH", toValue: "1", toState: "Busy")
         setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCHES", toValue: "3", toState: "Busy")

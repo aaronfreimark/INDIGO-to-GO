@@ -115,6 +115,9 @@ struct ImagerProgressView: View {
                                 .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor.opacity(0.0), self.sunColor]), startPoint: .leading, endPoint: .trailing))
                                 .frame(width: CGFloat(metrics.size.width) * proportionPreSunrise)
                             Rectangle()
+                                .fill(Color.yellow)
+                                .frame(width: 1)
+                            Rectangle()
                                 .fill(self.sunColor)
                         }
                     }
@@ -133,9 +136,8 @@ struct ImagerProgressView: View {
                     let adjustedAstonomicalSunset: Float = client.location.secondsUntilAstronomicalSunset + client.properties.elapsedTimeIfSequencing()
                     let postSunset: Float = adjustedAstonomicalSunset - adjustedSunset
                     
-                    let proportionAstronomicalSunset: CGFloat = CGFloat(adjustedAstonomicalSunset) / imagerTotalTime
+                    let proportionSunset: CGFloat = CGFloat(adjustedSunset) / imagerTotalTime
                     let proportionPostSunset: CGFloat = CGFloat(postSunset) / imagerTotalTime
-                    
                     
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
@@ -143,14 +145,23 @@ struct ImagerProgressView: View {
                             if adjustedSunset > 0 {
                                 Rectangle()
                                     .fill(self.sunColor)
-                                    .frame(width: CGFloat(metrics.size.width) * proportionAstronomicalSunset)
+                                    .frame(width: CGFloat(metrics.size.width) * proportionSunset)
+                                Rectangle()
+                                    .fill(Color.yellow)
+                                    .frame(width: 1)
                             }
-                            
-                            /// TODO: what if sunset is before START, so beginning is negative offset?
-                            Rectangle()
-                                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))
-                                .frame(width: CGFloat(metrics.size.width) * proportionPostSunset)
-                            Spacer()
+
+                            if adjustedAstonomicalSunset > 0 {
+
+                                /// sunsetOffset will be negative
+                                let sunsetOffset: CGFloat = adjustedSunset < 0 ? CGFloat(metrics.size.width) * proportionSunset : 0
+
+                                Rectangle()
+                                    .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: CGFloat(metrics.size.width) * proportionPostSunset - sunsetOffset)
+                                    .offset(x: sunsetOffset)
+                                Spacer()
+                            }
                         }
                     }
                     .padding(.horizontal)
