@@ -96,13 +96,11 @@ struct ImagerProgressView: View {
                 
                 // Sunrise
 
-                if client.location.hasLocation && client.imagerFinish != nil {
+                if client.hasLocation && client.imagerFinish != nil {
                     
-                    let adjustedSunrise: Float = client.location.secondsUntilSunrise + client.elapsedTimeIfSequencing()
-                    let adjustedAstonomicalSunrise: Float = client.location.secondsUntilAstronomicalSunrise + client.elapsedTimeIfSequencing()
-                    let preSunrise: Float = adjustedSunrise - adjustedAstonomicalSunrise
+                    let preSunrise: Float = client.secondsUntilSunrise - client.secondsUntilAstronomicalSunrise
                     
-                    let proportionAstronomicalSunrise: CGFloat = CGFloat(adjustedAstonomicalSunrise) / imagerTotalTime
+                    let proportionAstronomicalSunrise: CGFloat = CGFloat(client.secondsUntilAstronomicalSunrise) / imagerTotalTime
                     let proportionPreSunrise: CGFloat = CGFloat(preSunrise) / imagerTotalTime
                     
                     
@@ -130,19 +128,17 @@ struct ImagerProgressView: View {
                 
                 // Sunset
 
-                if client.location.hasLocation && client.imagerStart != nil {
+                if client.hasLocation && client.imagerStart != nil {
                     
-                    let adjustedSunset: Float = client.location.secondsUntilSunset  + client.elapsedTimeIfSequencing()
-                    let adjustedAstonomicalSunset: Float = client.location.secondsUntilAstronomicalSunset + client.elapsedTimeIfSequencing()
-                    let postSunset: Float = adjustedAstonomicalSunset - adjustedSunset
+                    let postSunset: Float = client.secondsUntilAstronomicalSunset - client.secondsUntilSunset
                     
-                    let proportionSunset: CGFloat = CGFloat(adjustedSunset) / imagerTotalTime
+                    let proportionSunset: CGFloat = CGFloat(client.secondsUntilSunset) / imagerTotalTime
                     let proportionPostSunset: CGFloat = CGFloat(postSunset) / imagerTotalTime
                     
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
                             
-                            if adjustedSunset > 0 {
+                            if client.secondsUntilSunset > 0 {
                                 Rectangle()
                                     .fill(self.sunColor)
                                     .frame(width: CGFloat(metrics.size.width) * proportionSunset)
@@ -151,10 +147,10 @@ struct ImagerProgressView: View {
                                     .frame(width: 1)
                             }
 
-                            if adjustedAstonomicalSunset > 0 {
+                            if client.secondsUntilAstronomicalSunset > 0 {
 
                                 /// sunsetOffset will be negative
-                                let sunsetOffset: CGFloat = adjustedSunset < 0 ? CGFloat(metrics.size.width) * proportionSunset : 0
+                                let sunsetOffset: CGFloat = client.secondsUntilSunset < 0 ? CGFloat(metrics.size.width) * proportionSunset : 0
 
                                 Rectangle()
                                     .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))

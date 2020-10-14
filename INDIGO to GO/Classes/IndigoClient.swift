@@ -10,13 +10,14 @@ import SwiftyJSON
 import SwiftUI
 import Combine
 import Network
+import Solar
 
 class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     var id = UUID()
+    var isPreview: Bool
     let queue = DispatchQueue(label: "Client connection Q")
 
-    var location: LocationFeatures
-
+    private var location: LocationFeatures
     private var properties: [String: IndigoItem] = [:]
 
     var defaultImager: String {
@@ -84,10 +85,22 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     /// Properties for the image preview
     @Published var imagerLatestImageURL: URL = URL(string: "https://www.dropbox.com/s/wei6v5vir7adihc/Andromeda-RGB.jpg?raw=1")!
 
+    /// Properties for sunrise & sunset
+    var hasLocation: Bool {
+        return self.location.hasLocation
+    }
+    let secondsInDay = Float(24 * 60 * 60)
+    let negMillion = -1000000
+    @Published var secondsUntilSunrise: Float = -1000000
+    @Published var secondsUntilAstronomicalSunrise: Float = -1000000
+    @Published var secondsUntilSunset: Float = -1000000
+    @Published var secondsUntilAstronomicalSunset: Float = -1000000
+    
     
     init(isPreview: Bool = false) {
         
         self.location = LocationFeatures(isPreview: isPreview)
+        self.isPreview = isPreview
         
         self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
         self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
@@ -154,7 +167,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
 
     func updateUI() {
         self.updateProperties()
-        self.location.updateUI(start: self.imagerStart, finish: self.imagerFinish)
+        //self.location.updateUI(start: self.imagerStart, finish: self.imagerFinish)
     }
     
     
@@ -545,9 +558,6 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
             isMountParked = true
         }
         self.srMountStatus!.isSet = self.isMountConnected
-
-        let secondsInDay = Float(24 * 60 * 60)
-        
         
         /// Meridian Time
         
@@ -623,12 +633,61 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         
         
         /// Sunrise
+        var sunrise: Date?
+        var sunset: Date?
+        var astronomicalSunrise: Date?
+        var astronomicalSunset: Date?
+
+        if let finishSolar = Solar(for: self.imagerFinish ?? Date(), coordinate: self.location.location!.coordinate) {
+            sunrise = finishSolar.sunrise
+            astronomicalSunrise = finishSolar.astronomicalSunrise
+            
+            self.secondsUntilSunrise = Float(sunrise?.timeIntervalSince(Date()) ?? -1000000) + elapsedTimeIfSequencing()
+            self.secondsUntilAstronomicalSunrise = Float(astronomicalSunrise?.timeIntervalSince(Date()) ?? -1000000) + elapsedTimeIfSequencing()
+        } else {
+            self.secondsUntilSunrise = -1000000
+            self.secondsUntilAstronomicalSunrise = -1000000
+        }
+
+        if let startSolar = Solar(for: self.imagerStart ?? Date(), coordinate: self.location.location!.coordinate) {
+            sunset = startSolar.sunset!
+            astronomicalSunset = startSolar.astronomicalSunset!
+            
+            self.secondsUntilSunset = Float(sunset?.timeIntervalSince(Date()) ?? -1000000) + elapsedTimeIfSequencing()
+            self.secondsUntilAstronomicalSunset = Float(astronomicalSunset?.timeIntervalSince(Date()) ?? -1000000) + elapsedTimeIfSequencing()
+        } else {
+            self.secondsUntilSunset = -1000000
+            self.secondsUntilAstronomicalSunset = -1000000
+        }
+
+        /// Work around a bug in Solar related to timezones. It sometimes picks the wrong day., so we need to go back 24 hrs
+        if secondsUntilSunset > secondsUntilSunrise {
+            let fixedStart = self.imagerStart?.addingTimeInterval(-24*60*60)
+            let fixedStartSolar = Solar(for: fixedStart!, coordinate: self.location.location!.coordinate)!
+            
+            sunset = fixedStartSolar.sunset
+            astronomicalSunset = fixedStartSolar.astronomicalSunset
+            
+            self.secondsUntilSunset = Float(sunset?.timeIntervalSince(Date()) ?? -1000000) + elapsedTimeIfSequencing()
+            self.secondsUntilAstronomicalSunset = Float(astronomicalSunset?.timeIntervalSince(Date()) ?? -1000000)
+        }
+
         self.srSunrise = StatusRow(
-            isSet: self.location.hasLocation && self.imagerFinish != nil,
+            isSet: self.location.hasLocation,
             text: "Sunrise",
-            value: self.location.sunrise,
+            value: sunrise?.timeString() ?? "Unknown",
             status: .custom("sun.max")
         )
+
+        
+        if self.isPreview {
+            self.secondsUntilSunrise = 60*60*2.25
+            self.secondsUntilAstronomicalSunrise = 60*60*2
+            self.secondsUntilSunset = 60*60*0.1
+            self.secondsUntilAstronomicalSunset = secondsUntilSunset + 18*60
+            self.srSunrise!.value = Date().addingTimeInterval(TimeInterval(self.secondsUntilSunrise)).timeString()
+            self.location.hasLocation = true
+        }
 
 
         /*
@@ -709,6 +768,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         setValue(key: "Imager Agent | CCD_TEMPERATURE | TEMPERATURE", toValue: "-20", toState: "Ok")
 
         setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
+
     }
 
 
