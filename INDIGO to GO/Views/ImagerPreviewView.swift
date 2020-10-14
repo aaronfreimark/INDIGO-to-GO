@@ -22,7 +22,7 @@ struct ImagerPreviewView: View {
             isExpanded: $isPreviewShowing,
             content:
                 {
-                    URLImage(client.properties.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
+                    URLImage(client.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
                         Text("Loading...")
                     }, content: {
                         $0.image

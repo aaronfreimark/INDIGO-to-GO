@@ -145,7 +145,8 @@ extension Date {
 struct LocationProgressView_Previews: PreviewProvider {
     static var previews: some View {
         let client = IndigoClient(isPreview: true)
-        ContentView(client: client)
+        ContentView()
+            .environmentObject(client)
     }
 }
 

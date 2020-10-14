@@ -8,21 +8,21 @@
 import SwiftUI
 
 struct ContentView: View {
-    // The interesting stuff is in this object!
-    @ObservedObject var client: IndigoClient
+    /// The interesting stuff is in this object!
+    @EnvironmentObject var client: IndigoClient
         
-    // Set up a timer for periodic refresh
+    /// Set up a timer for periodic refresh
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State var isShowingServerNotice = false
     
-    // Keep track of whether a sheet is showing or not. This works much better as two booleans vs an enum
+    /// Keep track of whether a sheet is showing or not.
     @State private var isSettingsSheetShowing: Bool = false
     @State private var isAlertShowing: Bool = false
     
     var body: some View {
         
         List {
-            if !client.properties.isAnythingConnected {
+            if !client.isAnythingConnected {
                 if self.isShowingServerNotice {
                     Section {
                         Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
@@ -40,86 +40,60 @@ struct ContentView: View {
             
             // =================================================================== SEQUENCE
             
-            if client.properties.isImagerConnected || client.properties.isMountConnected {
+            if client.isImagerConnected || client.isMountConnected {
                 Section(header: Text("Sequence")) {
-                    if client.properties.isImagerConnected  { ImagerProgressView(client: client) }
+                    if client.isImagerConnected  { ImagerProgressView(client: client) }
 
-                    // =================================================================== COMPLETION
-
-                    if client.properties.isImagerConnected {
-                        StatusRow(description: "Estimated Completion", subtext: client.properties.imagerExpectedFinish, status: "clock")
-                    }
-                    if client.properties.isMountConnected && client.properties.isMountHALimitEnabled {
-                        StatusRow(description: "HA Limit", subtext: client.properties.mountHALimit, status: "exclamationmark.arrow.circlepath")
-                    }
-                    if client.properties.isMountConnected  {
-                        StatusRow(description: "Meridian Transit", subtext: client.properties.mountMeridian, status: "ellipsis.circle")
-                    }
-                    if client.location.hasLocation && client.properties.imagerFinish != nil {
-                        StatusRow(description: "Sunrise", subtext: client.location.sunrise, status: "sun.max")
-                    }
+                    StatusRowView(sr: client.srEstimatedCompletion)
+                    StatusRowView(sr: client.srHALimit)
+                    StatusRowView(sr: client.srMeridianTransit)
+                    StatusRowView(sr: client.srSunrise)
                 }
             }
-            
-            if client.properties.isImagerConnected {
+
+            if client.isImagerConnected {
                 ImagerPreviewView(client: client)
             }
-            
+
             // =================================================================== GUIDER
-            
-            if client.properties.isGuiderConnected {
+
+            if client.isGuiderConnected {
                 Section(header: Text("Guider")) {
-                    StatusRow(description: client.properties.guiderTrackingText, subtext: "\(client.properties.guiderDriftMax)", status: client.properties.guiderTrackingStatus)
-                    StatusRow(description: "RA Error (RSME)", subtext: "\(client.properties.guiderRSMERA)", status: client.properties.guiderRSMERAStatus)
-                    StatusRow(description: "DEC Error (RSME)", subtext: "\(client.properties.guiderRSMEDec)", status: client.properties.guiderRSMEDecStatus)
+                    StatusRowView(sr: client.srGuidingStatus)
+                    StatusRowView(sr: client.srRAError)
+                    StatusRowView(sr: client.srDecError)
                 }
             } else {
                 EmptyView()
             }
-            
+
             // =================================================================== HARDWARE
-            
-            if client.properties.isMountConnected || client.properties.isImagerConnected {
+
+            if client.isMountConnected || client.isImagerConnected {
                 Section(header: Text("Hardware")) {
-                    if client.properties.isImagerConnected {
-                        StatusRow(description: client.properties.imagerCoolingText, subtext: "\(client.properties.imagerCameraTemperature) °C", status: client.properties.imagerCoolingStatus)
-                    }
-                    if client.properties.isMountConnected {
-                        StatusRow(description: client.properties.mountTrackingText, status: client.properties.mountTrackingStatus)
-                    }
+                    StatusRowView(sr: client.srCoolingStatus)
+                    StatusRowView(sr: client.srMountStatus)
                 }
             }
             
             Section(footer:
                         VStack(alignment: .leading) {
-                            ForEach(self.client.connectedServers(), id: \.self ) { name in
+                            ForEach(client.connectedServers(), id: \.self ) { name in
                                 HStack {
                                     Image(systemName: "checkmark.circle")
                                     Text(name)
                                 }
                             }
                         }) {
+
                 //Button(action: { client.printProperties() } ) { Text("Properties") }
 
-                if client.properties.isMountConnected || client.properties.isImagerConnected {
-                    Button(action: { self.isAlertShowing = true }) {
-                        Text(client.properties.ParkandWarmButtonTitle)
-                    }
-                    .disabled(!client.properties.isPartAndWarmButtonEnabled)
-                    .alert(isPresented: $isAlertShowing, content: {
-                        Alert(
-                            title: Text(client.properties.ParkandWarmButtonTitle),
-                            message: Text(client.properties.ParkandWarmButtonDescription),
-                            primaryButton: .destructive(Text(client.properties.ParkandWarmButtonOK), action: {
-                                isAlertShowing = false
-                                client.emergencyStopAll()
-                            }),
-                            secondaryButton: .cancel(Text("Cancel"), action: {
-                                isAlertShowing = false
-                            })
-                        )
-                    })
+                /// Park & Warm Button
+                if client.isMountConnected || client.isImagerConnected {
+                    ParkAndWarmButton
                 }
+
+                /// Servers Button
                 Button(action: serversButton) {
                     Text("Servers")
                 }
@@ -164,6 +138,27 @@ struct ContentView: View {
 
     }
     
+    private var ParkAndWarmButton: some View {
+        Button(action: { self.isAlertShowing = true }) {
+            Text(client.parkButtonTitle)
+        }
+        .disabled(!client.isParkButtonEnabled)
+        .alert(isPresented: $isAlertShowing, content: {
+            Alert(
+                title: Text(client.parkButtonTitle),
+                message: Text(client.parkButtonDescription),
+                primaryButton: .destructive(Text(client.parkButtonOK), action: {
+                    isAlertShowing = false
+                    client.emergencyStopAll()
+                }),
+                secondaryButton: .cancel(Text("Cancel"), action: {
+                    isAlertShowing = false
+                })
+            )
+        })
+    }
+
+    
     private func serversButton() {
         self.isSettingsSheetShowing = true
     }
@@ -177,7 +172,8 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let client = IndigoClient(isPreview: true)
-        ContentView(client: client)
+        ContentView()
+            .environmentObject(client)
     }
 }
 

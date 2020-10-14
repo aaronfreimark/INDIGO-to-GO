@@ -21,10 +21,10 @@ struct ImagerProgressView: View {
     
     var body: some View {
         
-        let imagerTotalTime = CGFloat(client.properties.imagerTotalTime)
+        let imagerTotalTime = CGFloat(client.imagerTotalTime)
         
         Group {
-            StatusRow(description: client.properties.imagerSequenceText, subtext: "\(client.properties.imagerImagesTaken) / \(client.properties.imagerImagesTotal)", status: client.properties.imagerSequenceStatus)
+            StatusRowView(sr: client.srSequenceStatus)
             
             ZStack {
                 VStack {
@@ -33,7 +33,7 @@ struct ImagerProgressView: View {
                     
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
-                            ForEach(client.properties.sequences, id: \.self) { sequence in
+                            ForEach(client.sequences, id: \.self) { sequence in
                                 sequence.progressView(imagerTotalTime: imagerTotalTime, enclosingWidth: metrics.size.width)
                             }
                         }
@@ -42,7 +42,7 @@ struct ImagerProgressView: View {
 
                     // Progress Bar
 
-                    ProgressView(value: Float(client.properties.imagerElapsedTime), total: Float(client.properties.imagerTotalTime))
+                    ProgressView(value: Float(client.imagerElapsedTime), total: Float(client.imagerTotalTime))
                         .frame(height: 15.0)
             
                 }
@@ -52,13 +52,13 @@ struct ImagerProgressView: View {
                 // Meridian & HA Limit
                 
                 
-                if client.properties.isMountConnected && client.properties.mountIsTracking {
+                if client.isMountConnected && client.isMountTracking {
                     
-                    let proportionHa = CGFloat(client.properties.mountSecondsUntilHALimit) / imagerTotalTime
-                    let proportionMeridian = CGFloat(client.properties.mountSecondsUntilMeridian) / imagerTotalTime
+                    let proportionHa = CGFloat(client.mountSecondsUntilHALimit) / imagerTotalTime
+                    let proportionMeridian = CGFloat(client.mountSecondsUntilMeridian) / imagerTotalTime
                     
                     
-                    if client.properties.isMountHALimitEnabled {
+                    if client.isMountHALimitEnabled {
                         GeometryReader { metrics in
                             HStack(alignment: .center, spacing: 0) {
                                 let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionHa
@@ -96,10 +96,10 @@ struct ImagerProgressView: View {
                 
                 // Sunrise
 
-                if client.location.hasLocation && client.properties.imagerFinish != nil {
+                if client.location.hasLocation && client.imagerFinish != nil {
                     
-                    let adjustedSunrise: Float = client.location.secondsUntilSunrise + client.properties.elapsedTimeIfSequencing()
-                    let adjustedAstonomicalSunrise: Float = client.location.secondsUntilAstronomicalSunrise + client.properties.elapsedTimeIfSequencing()
+                    let adjustedSunrise: Float = client.location.secondsUntilSunrise + client.elapsedTimeIfSequencing()
+                    let adjustedAstonomicalSunrise: Float = client.location.secondsUntilAstronomicalSunrise + client.elapsedTimeIfSequencing()
                     let preSunrise: Float = adjustedSunrise - adjustedAstonomicalSunrise
                     
                     let proportionAstronomicalSunrise: CGFloat = CGFloat(adjustedAstonomicalSunrise) / imagerTotalTime
@@ -130,10 +130,10 @@ struct ImagerProgressView: View {
                 
                 // Sunset
 
-                if client.location.hasLocation && client.properties.imagerStart != nil {
+                if client.location.hasLocation && client.imagerStart != nil {
                     
-                    let adjustedSunset: Float = client.location.secondsUntilSunset  + client.properties.elapsedTimeIfSequencing()
-                    let adjustedAstonomicalSunset: Float = client.location.secondsUntilAstronomicalSunset + client.properties.elapsedTimeIfSequencing()
+                    let adjustedSunset: Float = client.location.secondsUntilSunset  + client.elapsedTimeIfSequencing()
+                    let adjustedAstonomicalSunset: Float = client.location.secondsUntilAstronomicalSunset + client.elapsedTimeIfSequencing()
                     let postSunset: Float = adjustedAstonomicalSunset - adjustedSunset
                     
                     let proportionSunset: CGFloat = CGFloat(adjustedSunset) / imagerTotalTime

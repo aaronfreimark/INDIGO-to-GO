@@ -11,15 +11,13 @@ import SwiftUI
 import Combine
 import Network
 
-class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDelegate {
+class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     var id = UUID()
     let queue = DispatchQueue(label: "Client connection Q")
 
-    @ObservedObject var bonjourBrowser: BonjourBrowser = BonjourBrowser()
-    @Published var properties: IndigoProperties
-    @Published var connections: [String: IndigoConnection] = [:]
-
     var location: LocationFeatures
+
+    private var properties: [String: IndigoItem] = [:]
 
     var defaultImager: String {
         didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") }
@@ -31,19 +29,64 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") }
     }
     
+    @Published var bonjourBrowser: BonjourBrowser = BonjourBrowser()
+    var connections: [String: IndigoConnection] = [:]
     var serversToDisconnect: [String] = []
     var serversToConnect: [String] = []
     var maxReconnectAttempts = 3
+
     var receivedRemainder = "" // partial text while receiving INDI
     
     var anyCancellable: AnyCancellable? = nil
 
+    /// Generally useful properties
+    @Published var isImagerConnected = false
+    @Published var isGuiderConnected = false
+    @Published var isMountConnected = false
+    @Published var isAnythingConnected = false
+    @Published var isMountTracking = false
+    @Published var isMountHALimitEnabled = false
+    var lastUpdate: Date?
     
- 
+    /// properties for the progress display
+    var imagerState = ImagerState.Stopped
+    enum ImagerState: String {
+        case Stopped, Sequencing, Paused
+    }
+    var imagerStart: Date?
+    var imagerFinish: Date?
+    @Published var sequences: [IndigoSequence] = []
+    @Published var imagerTotalTime: Float = 0
+    @Published var imagerElapsedTime: Float = 0
+    @Published var mountSecondsUntilMeridian: Float = 0
+    @Published var mountSecondsUntilHALimit: Float = 0
+    
+    /// properties for the Status Rows
+    @Published var srSequenceStatus: StatusRow?
+    @Published var srEstimatedCompletion: StatusRow?
+    @Published var srHALimit: StatusRow?
+    @Published var srMeridianTransit: StatusRow?
+    @Published var srSunrise: StatusRow?
+
+    @Published var srGuidingStatus: StatusRow?
+    @Published var srRAError: StatusRow?
+    @Published var srDecError: StatusRow?
+
+    @Published var srCoolingStatus: StatusRow?
+    @Published var srMountStatus: StatusRow?
+
+    /// properties for button
+    @Published var parkButtonTitle = "Park and Warm"
+    @Published var parkButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+    @Published var parkButtonOK = "Park"
+    @Published var isParkButtonEnabled = false
+    
+    /// Properties for the image preview
+    @Published var imagerLatestImageURL: URL = URL(string: "https://www.dropbox.com/s/wei6v5vir7adihc/Andromeda-RGB.jpg?raw=1")!
+
     
     init(isPreview: Bool = false) {
         
-        self.properties = IndigoProperties(queue: self.queue, isPreview: isPreview)
         self.location = LocationFeatures(isPreview: isPreview)
         
         self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
@@ -52,9 +95,9 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
 
         // Combine publishers into the main thread.
         // https://stackoverflow.com/questions/58437861/
-        anyCancellable = Publishers.CombineLatest(bonjourBrowser.objectWillChange, properties.objectWillChange).sink { [weak self] (_) in
-            self?.objectWillChange.send()
-        }
+//        anyCancellable = Publishers.CombineLatest(bonjourBrowser.objectWillChange, properties.objectWillChange).sink { [weak self] (_) in
+//            self?.objectWillChange.send()
+//        }
 
         if isPreview {
             self.updateUI()
@@ -110,22 +153,10 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
     }
 
     func updateUI() {
-        self.properties.updateUI()
-        self.location.updateUI(start: self.properties.imagerStart, finish: self.properties.imagerFinish)
+        self.updateProperties()
+        self.location.updateUI(start: self.imagerStart, finish: self.imagerFinish)
     }
     
-    
-    func printProperties() {
-        self.properties.printProperties()
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(properties)
-    }
-    
-    static func == (lhs: IndigoClient, rhs: IndigoClient) -> Bool {
-        return lhs.hashValue == rhs.hashValue
-    }
     
     
     // =============================================================================================
@@ -181,7 +212,7 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
                 if let dataFromString = message.data(using: .ascii, allowLossyConversion: false) {
                     do {
                         let json = try JSON(data: dataFromString)
-                        self.properties.injest(json: json, source: source)
+                        self.injest(json: json, source: source)
                     } catch {
                         print ("Really bad JSON error.")
                     }
@@ -255,26 +286,577 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
             }
         }
     }
-     
+
+    /// =============================================================================================
+
+    
+    private func updateProperties() {
+                        
+        let keys = self.getKeys()
+        self.isImagerConnected = keys.contains { $0.hasPrefix("Imager Agent") }
+        self.isGuiderConnected = keys.contains { $0.hasPrefix("Guider Agent") }
+        self.isMountConnected = keys.contains { $0.hasPrefix("Mount Agent") }
+        self.isAnythingConnected = self.isImagerConnected || self.isGuiderConnected || self.isMountConnected
+
+
+        // =================================================================== IMAGER
+        
+        /*
+         Imager Agent | AGENT_PAUSE_PROCESS | PAUSE
+         Imager Agent | AGENT_START_PROCESS | EXPOSURE: false
+         Imager Agent | AGENT_START_PROCESS | FOCUSING: false
+         Imager Agent | AGENT_START_PROCESS | PREVIEW: false
+         Imager Agent | AGENT_START_PROCESS | SEQUENCE: true
+        */
+
+        let sequence = "Imager Agent | AGENT_START_PROCESS | SEQUENCE"
+        let pause = "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE"
+
+        /// imageState & sequence status
+        if getValue(pause) == "false" && getState(pause) == .Busy {
+            self.imagerState = .Paused
+            self.srSequenceStatus = StatusRow(
+                text: "Sequence Paused",
+                status: .custom("pause.circle.fill")
+            )
+        } else if getValue(sequence) == "true" && getState(sequence) == .Busy {
+            self.imagerState = .Sequencing
+            self.srSequenceStatus = StatusRow(
+                text: "Sequence in Progress",
+                status: .ok
+            )
+        } else {
+            self.imagerState = .Stopped
+            self.srSequenceStatus = StatusRow(
+                text: "Sequence Stopped",
+                status: .alert
+            )
+        }
+
+        /// filename of last image
+//        self.imagerImageLatest = getValue("Imager Agent | CCD_IMAGE_FILE | FILE") ?? ""
+
+        /// cooler status
+        let coolerTemperature = getValue("Imager Agent | CCD_TEMPERATURE | TEMPERATURE") ?? ""
+        let isCoolerOn = getValue("Imager Agent | CCD_COOLER | ON") == "true"
+        let isAtTemperature = getState("Imager Agent | CCD_TEMPERATURE | TEMPERATURE") == .Ok
+
+        if !isCoolerOn {
+            self.srCoolingStatus = StatusRow(
+                text: "Cooling Off",
+                status: .alert
+            )
+        } else if isAtTemperature {
+            self.srCoolingStatus = StatusRow(
+                text: "Cooling",
+                status: .ok
+            )
+        } else {
+            self.srCoolingStatus = StatusRow(
+                text: "Cooling In Progress",
+                status: .warn
+            )
+        }
+        self.srCoolingStatus!.value = "\(coolerTemperature) °C"
+        self.srCoolingStatus!.isSet = self.isImagerConnected
+
+
+        /// sequence times
+        var imagerDitherDelay: Float = 0
+        if let imagerDitherDelayString = getValue("Imager Agent | AGENT_IMAGER_DITHERING | DELAY") {
+            imagerDitherDelay = Float(imagerDitherDelayString) ?? 0
+        }
+        
+        var imagerBatchInProgress = 0
+        if let imagerBatchInProgressString = getValue("Imager Agent | AGENT_IMAGER_STATS | BATCH") {
+            imagerBatchInProgress = Int(imagerBatchInProgressString) ?? 0
+        }
+        
+        var imagerFrameInProgress: Float = 0
+        if let imagerFrameInProgressString = getValue("Imager Agent | AGENT_IMAGER_STATS | FRAME") {
+            imagerFrameInProgress = Float(imagerFrameInProgressString) ?? 0
+        }
+        
+        var totalTime: Float = 0
+        var elapsedTime: Float = 0
+        var thisBatch = 1
+        var imagesTotal = 0
+        var imagesTaken = 0
+        
+        // Sequences can "Keep" the same exposure and count settings as the prior sequence, so we do not reset then between sequences.
+        var exposure: Float = 0;
+        var count: Float = 0;
+        var filter: String = "";
+        var imageTimes: [IndigoSequence] = []
+
+        if let sequences = getValue("Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE") {
+            for seq in sequences.components(separatedBy: ";") {
+                if let seqNum = Int(seq) {
+                    if let sequence = getValue("Imager Agent | AGENT_IMAGER_SEQUENCE | " + String(format: "%02d",seqNum)) {
+                        for prop in sequence.components(separatedBy: ";") {
+                            if prop.prefix(9) == "exposure=" { exposure = Float(prop.replacingOccurrences(of: "exposure=", with: ""))! }
+                            if prop.prefix(6) == "count=" { count = Float(prop.replacingOccurrences(of: "count=", with: ""))! }
+                            if prop.prefix(7) == "filter=" { filter = prop.replacingOccurrences(of: "filter=", with: "") }
+                        }
+                        
+                        imageTimes.append(IndigoSequence(count: count, seconds: exposure + imagerDitherDelay, filter: filter))
+                        //imageTimes.indices.last.map { imageTimes[$0].seconds -= imagerDitherDelay } // no dithering on the last item
+                        
+                        //let sequenceTime = exposure * count  +  imagerDitherDelay * (count - 1)
+
+                        let sequenceTime = (exposure + imagerDitherDelay ) * count
+                        totalTime += sequenceTime
+                        imagesTotal += Int(count)
+
+                        if thisBatch < imagerBatchInProgress {
+                            elapsedTime += sequenceTime
+                            imagesTaken += Int(count)
+                        }
+                        if thisBatch == imagerBatchInProgress {
+
+                            let remainingTime = getValue("Imager Agent | AGENT_IMAGER_STATS | EXPOSURE")
+                            let imagerFrameInProgressTimeElapsed = exposure - (Float(remainingTime ?? "0") ?? 0)
+
+                            let partialTime = exposure * (imagerFrameInProgress - 1.0)  +  imagerDitherDelay * (imagerFrameInProgress - 1.0) + imagerFrameInProgressTimeElapsed
+
+                            elapsedTime += partialTime
+                            imagesTaken += Int(imagerFrameInProgress)
+                        }
+                    }
+                }
+                thisBatch += 1
+            }
+        }
+        
+        self.sequences = imageTimes
+        self.imagerTotalTime = totalTime > 0 ? totalTime : 1.0
+
+        let timeRemaining = totalTime - elapsedTime
+        
+        self.imagerElapsedTime = elapsedTime
+        self.srSequenceStatus?.value = "\(imagesTaken) / \(imagesTotal)"
+        
+        if totalTime == 0 {
+            self.imagerStart = Date()
+            self.imagerFinish = nil
+        } else if self.imagerState == .Stopped {
+            self.imagerStart = Date()
+            self.imagerFinish = Date().addingTimeInterval(TimeInterval(totalTime))
+        } else {
+            self.imagerStart = Date().addingTimeInterval(TimeInterval(-1.0 * elapsedTime))
+            self.imagerFinish = Date().addingTimeInterval(TimeInterval(timeRemaining))
+        }
+
+        
+        let completionTimeString = totalTime > 0 ? self.imagerFinish!.timeString() : "–"
+        self.srEstimatedCompletion = StatusRow(
+            isSet: self.isImagerConnected,
+            text: "Estimated Completion",
+            value: completionTimeString,
+            status: .custom("clock")
+        )
+
+        // =================================================================== GUIDER
+        
+        let isGuiding = getValue("Guider Agent | AGENT_START_PROCESS | GUIDING") == "true"
+        let isDithering = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DITHERING") ?? "0") ?? 0 > 0
+        let isCalibrating = getValue("Guider Agent | AGENT_START_PROCESS | CALIBRATION") == "true"
+        
+        var guiderTrackingText = ""
+        var guiderTrackingStatus = StatusRow.Status.unknown
+
+        if isGuiding && isDithering {
+            guiderTrackingText = "Dithering"
+            guiderTrackingStatus = .ok
+        } else if isGuiding {
+            guiderTrackingText = "Guiding"
+            guiderTrackingStatus = .ok
+        } else if isCalibrating {
+            guiderTrackingText = "Calibrating"
+            guiderTrackingStatus = .warn
+        } else {
+            guiderTrackingText = "Guiding Off"
+            guiderTrackingStatus = .alert
+        }
+        
+        let guiderDriftX = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DRIFT_X") ?? "0") ?? 0
+        let guiderDriftY = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | DRIFT_Y") ?? "0") ?? 0
+        let guiderDriftMaximum = max(abs(guiderDriftX),abs(guiderDriftY))
+        let guiderDriftMax = String(format: "%.2f px", guiderDriftMaximum)
+        
+        if isGuiding && guiderDriftMaximum > 1.5 {
+            guiderTrackingStatus = .warn
+        }
+
+        self.srGuidingStatus = StatusRow(
+            text: guiderTrackingText,
+            value: guiderDriftMax,
+            status: guiderTrackingStatus
+        )
+
+        /// RA & Dec Error
+        let guiderRSMERA = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | RMSE_RA") ?? "0") ?? 0
+        let guiderRSMEDec = Float(getValue("Guider Agent | AGENT_GUIDER_STATS | RMSE_DEC") ?? "0") ?? 0
+        let guiderRSMERAStatus = guiderRSMERA < 0.2 ? StatusRow.Status.ok : StatusRow.Status.warn
+        let guiderRSMEDecStatus = guiderRSMEDec < 0.2 ? StatusRow.Status.ok : StatusRow.Status.warn
+        
+        self.srRAError = StatusRow(
+            text: "RA Error (RSME)",
+            value: String(guiderRSMERA),
+            status: guiderRSMERAStatus
+        )
+        self.srDecError = StatusRow(
+            text: "DEC Error (RSME)",
+            value: String(guiderRSMEDec),
+            status: guiderRSMEDecStatus
+        )
+
+
+        //    Guider Agent | AGENT_GUIDER_STATS | RMSE_DEC: 0.077
+        //    Guider Agent | AGENT_GUIDER_STATS | RMSE_RA: 0.171
+
+
+        // =================================================================== MOUNT
+
+        var isMountParked = false
+
+        if getValue("Mount Agent | MOUNT_PARK | PARKED") == "true" {
+            self.srMountStatus = StatusRow(
+                text: "Mount Parked",
+                status: .alert
+            )
+            isMountParked = true
+        } else if getValue("Mount Agent | MOUNT_TRACKING | ON") == "true" {
+            self.srMountStatus = StatusRow(
+                text: "Mount Tracking",
+                status: .ok
+            )
+            isMountTracking = true
+        } else if getValue("Mount Agent | MOUNT_TRACKING | OFF") == "true" {
+            self.srMountStatus = StatusRow(
+                text: "Mount Not Tracking",
+                status: .warn
+            )
+        } else {
+            self.srMountStatus = StatusRow(
+                text: "Mount State Unknown",
+                status: .unknown
+            )
+            isMountParked = true
+        }
+        self.srMountStatus!.isSet = self.isMountConnected
+
+        let secondsInDay = Float(24 * 60 * 60)
+        
+        
+        /// Meridian Time
+        
+        let hourAngle = Float(getValue("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0")!
+        var timeUntilMeridianSeconds = 3600 * (24.0 - hourAngle)
+        
+        /// Too far in advance? Rewind the clock.
+        while timeUntilMeridianSeconds >= secondsInDay { timeUntilMeridianSeconds -= secondsInDay }
+        
+        let mountMeridianTime = Date().addingTimeInterval(TimeInterval(timeUntilMeridianSeconds))
+        
+        /// If sequencing, add the elapsed time so it displays as expected.
+        timeUntilMeridianSeconds += elapsedTimeIfSequencing()
+        
+        self.mountSecondsUntilMeridian = timeUntilMeridianSeconds
+        let meridianValue = isMountTracking ? mountMeridianTime.timeString() : "Not tracking"
+
+        self.srMeridianTransit = StatusRow(
+            isSet: self.isMountConnected,
+            text: "Meridian Transit",
+            value: meridianValue,
+            status: .custom("ellipsis.circle")
+        )
+        
+        
+        /// HA Limit
+
+        let HALimit = Float(getTarget("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0")!
+        self.isMountHALimitEnabled = self.isMountConnected && (HALimit != 24.0 && HALimit != 0)
+        
+        var timeUntilHALimitSeconds = 3600 * (HALimit - hourAngle)
+
+        /// Too far in advance? Rewind the clock.
+        while timeUntilHALimitSeconds >= secondsInDay { timeUntilHALimitSeconds -= secondsInDay }
+        
+        let mountHALimitTime = Date().addingTimeInterval(TimeInterval(timeUntilHALimitSeconds))
+
+        /// If sequencing, add the elapsed time so it displays as expected.
+        timeUntilHALimitSeconds += elapsedTimeIfSequencing()
+
+        self.mountSecondsUntilHALimit = timeUntilHALimitSeconds
+        let mountHALimit = isMountTracking ? mountHALimitTime.timeString() : "Not tracking"
+
+        self.srHALimit = StatusRow(
+            isSet: isMountHALimitEnabled,
+            text: "HA Limit",
+            value: mountHALimit,
+            status: .custom("exclamationmark.arrow.circlepath")
+        )
+
+        
+        if self.isMountConnected && self.isImagerConnected {
+            self.parkButtonTitle = "Park and Warm"
+            self.parkButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+            self.isParkButtonEnabled = !isMountParked || isCoolerOn
+
+        } else if self.isMountConnected && !self.isImagerConnected {
+            self.parkButtonTitle = "Park Mount"
+            self.parkButtonDescription = "Immediately park the mount, if possible."
+            self.isParkButtonEnabled = !isMountParked
+
+        } else if !self.isMountConnected && self.isImagerConnected {
+            self.parkButtonTitle = "Warm Cooler"
+            self.parkButtonDescription = "Immediately turn off imager cooling, if possible."
+            self.parkButtonOK = "Warm"
+            self.isParkButtonEnabled = isCoolerOn
+
+        } else {
+            self.parkButtonTitle = "Park and Warm"
+            self.parkButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+            self.isParkButtonEnabled = false
+        }
+        
+        
+        /// Sunrise
+        self.srSunrise = StatusRow(
+            isSet: self.location.hasLocation && self.imagerFinish != nil,
+            text: "Sunrise",
+            value: self.location.sunrise,
+            status: .custom("sun.max")
+        )
+
+
+        /*
+
+
+         "Imager Agent | AGENT_IMAGER_STATS | BATCH": "1" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | BATCHES": "3" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | DELAY": "28" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | DRIFT_X": "0" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | DRIFT_Y": "0" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | EXPOSURE": "0" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | FRAME": "5" --- Busy
+         "Imager Agent | AGENT_IMAGER_STATS | FRAMES": "20" --- Busy
+
+         "Imager Agent | CCD_IMAGE | IMAGE": "/blob/0xb1166c50.fits" --- Ok
+         "Imager Agent | CCD_IMAGE_FILE | FILE": "/home/indigo/Eagle_Light_Ha_-20_600s_012.fits" --- Ok
+
+         "Mount Agent | MOUNT_PARK | PARKED": "false" --- Ok
+
+         "Mount Agent | AGENT_LIMITS | HA_TRACKING": "1.61624" --- Ok
+         "Mount Agent | AGENT_LIMITS | LOCAL_TIME": "21.1617" --- Ok
+
+         "Mount Agent | MOUNT_LST_TIME | TIME": "19.9318" --- Ok
+         */
+        
+    }
+    
+    func setUpPreview() {
+        
+        /*
+         *  Preview has HA = 22:00, HA_LIMIT = 23:40
+         *  Sequence has dots every 10 minutes, 1 hour per filter, 3 hours total
+         *
+         *  If start time is midnight:
+         *      meridian = 2AM
+         *      HA Limit = 1:45AM
+         *      End Time = 3AM
+         *
+         *  Stopped: Count time from Date() i.e. NOW
+         *  Sequencing: Count time from Date() - Elapsed Time = sequence start time
+         *  Paused: Same as sequencing! Date() will increase with each second, but Elapsed Time will NOT
+         *
+         */
+        
+        self.imagerState = .Stopped
+
+        
+        setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
+        setValue(key: "Mount Agent | MOUNT_TRACKING | ON", toValue: "true", toState: "Ok")
+        setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "23.0", toState: "Ok", toTarget: "23.66666666")
+        
+        switch self.imagerState {
+        case .Sequencing:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "true", toState: "Busy")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Ok")
+            break
+        case .Paused:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "false", toState: "Ok")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Busy")
+            break
+        case .Stopped:
+            setValue(key: "Imager Agent | AGENT_START_PROCESS | SEQUENCE", toValue: "false", toState: "Ok")
+            setValue(key: "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE", toValue: "false", toState: "Ok")
+            break
+        }
+            
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", toValue: "exposure=600.0;count=6.0;filter=R;", toState: "Ok")
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", toValue: "filter=B;", toState: "Ok")
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", toValue: "filter=G;", toState: "Ok")
+        
+        setValue(key: "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", toValue: "1;2;3;", toState: "Ok")
+        
+        setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCH", toValue: "1", toState: "Busy")
+        setValue(key: "Imager Agent | AGENT_IMAGER_STATS | BATCHES", toValue: "3", toState: "Busy")
+        setValue(key: "Imager Agent | AGENT_IMAGER_STATS | FRAME", toValue: "3", toState: "Busy")
+
+        setValue(key: "Imager Agent | CCD_COOLER | ON", toValue: "true", toState: "Ok")
+        setValue(key: "Imager Agent | CCD_TEMPERATURE | TEMPERATURE", toValue: "-20", toState: "Ok")
+
+        setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
+    }
+
+
+    func getKeys() -> [String] {
+        return self.queue.sync {
+            return Array(self.properties.keys)
+        }
+    }
+    
+    func getValue(_ key: String) -> String? {
+        return self.queue.sync {
+            if let item = self.properties[key] {
+                return item.value
+            }
+            return nil
+        }
+    }
+    
+    func getTarget(_ key: String) -> String? {
+        return self.queue.sync {
+            if let item = self.properties[key] {
+                return item.target
+            }
+            return nil
+        }
+    }
+
+    func getState(_ key: String) -> StateValue? {
+        return self.queue.sync {
+            if let item = properties[key] {
+                if let state = item.state {
+                    return state
+                }
+            }
+            return nil
+        }
+    }
+
+    func setValue(key:String, toValue value:String, toState state:String, toTarget target:String? = nil) {
+        let newItem = IndigoItem(theValue: value, theState: state, theTarget: target)
+        self.queue.async {
+            self.properties[key] = newItem
+        }
+    }
+    
+    func delValue(_ key: String) {
+        self.queue.async {
+            self.properties.removeValue(forKey: key)
+        }
+    }
+
+    
+    /// Shifts times for Meridian & HA Limit over if sequence is running, so these count from start of sequence instead of now()
+    func elapsedTimeIfSequencing() -> Float {
+        if self.imagerState != .Stopped {
+            return self.imagerElapsedTime
+        } else {
+            return 0.0
+        }
+    }
+
+    
+    
+    
+    
+    
+    func injest(json: JSON, source: IndigoConnection) {
+        // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
+
+        for (type, subJson):(String, JSON) in json {
+            
+            // Is the is "def" or "set" Indigo types?
+            if (type.prefix(3) == "def") || (type.prefix(3) == "set") || type.prefix(3) == "del" {
+                let device = subJson["device"].stringValue
+                //let group = subJson["group"].stringValue
+                let name = subJson["name"].stringValue
+                let state = subJson["state"].stringValue
+                
+                // make sure we records only the devices we care about
+                if ["Imager Agent", "Guider Agent", "Mount Agent", "Server"].contains(device) {
+                    if subJson["items"].exists() {
+                        for (_, itemJson):(String, JSON) in subJson["items"] {
+                            
+                            let itemName = itemJson["name"].stringValue
+                            let key = "\(device) | \(name) | \(itemName)"
+
+                            let itemValue = itemJson["value"].stringValue
+                            let itemTarget = itemJson["target"].stringValue
+
+                            switch type.prefix(3) {
+                            case "def", "set":
+                                if !itemName.isEmpty && itemJson["value"].exists() {
+                                    self.setValue(key: key, toValue: itemValue, toState: state, toTarget: itemTarget)
+                                }
+                                
+                                // handle special cases
+                                if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
+                                    if let urlprefix = source.url {
+                                        let url = URL(string: urlprefix + itemValue)!
+                                        let placeholder = Bundle.main.url(forResource: "1x1", withExtension: "png")!
+                                        DispatchQueue.main.async { self.imagerLatestImageURL = placeholder }
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.imagerLatestImageURL = url }
+                                        print("imagerLatestImageURL: \(url)")
+                                    }
+                                }
+                                
+                                break
+                            case "del":
+                                self.delValue(key)
+                                break
+                            default:
+                                break
+                            }
+                        }
+                    }
+                    self.lastUpdate = Date()
+                }
+            }
+        }
+        
+    }
+    
+    func printProperties() {
+        let sortedKeys = Array(self.getKeys()).sorted(by: <)
+        for k in sortedKeys {
+            print("\(k): \(self.getValue(k) ?? "nil") - \(String(describing: self.getState(k)))")
+        }
+    }
+    
+    func removeAll() {
+        self.queue.async {
+            self.properties.removeAll()
+        }
+    }
+
+    
+    
+
 }
+
 
 struct IndigoClient_Previews: PreviewProvider {
     static var previews: some View {
         let client = IndigoClient(isPreview: true)
-        ContentView(client: client)
+        ContentView()
+            .environmentObject(client)
     }
 }
 
-extension Array where Element: Hashable {
-    func removingDuplicates() -> [Element] {
-        var addedDict = [Element: Bool]()
 
-        return filter {
-            addedDict.updateValue(true, forKey: $0) == nil
-        }
-    }
 
-    mutating func removeDuplicates() {
-        self = self.removingDuplicates()
-    }
-}

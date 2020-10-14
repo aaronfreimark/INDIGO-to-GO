@@ -13,7 +13,8 @@ struct IndigoToGoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(client: client)
+            ContentView()
+                .environmentObject(client)
         }
     }
 }
