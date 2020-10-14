@@ -142,7 +142,7 @@ struct ContentView: View {
             })
 
             /// after 2 second ssearch for whatever is in serverSettings.servers to try to reconnect
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 self.isShowingServerNotice = true
                 client.reinitSavedServers()
             }

@@ -201,8 +201,10 @@ class IndigoClient: Hashable, Identifiable, ObservableObject, IndigoConnectionDe
         
         switch state {
         case .ready:
-            connection.hello()
-            connection.enablePreviews()
+            self.queue.asyncAfter(deadline: .now() + 1.0) {
+                connection.hello()
+                connection.enablePreviews()
+            }
         case .setup:
             break
         case .waiting:
