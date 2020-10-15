@@ -640,7 +640,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         var astronomicalSunrise: Date?
         var astronomicalSunset: Date?
 
-        if let finishSolar = Solar(for: self.imagerFinish ?? Date(), coordinate: self.location.location!.coordinate) {
+        if let location = self.location.location, let finishSolar = Solar(for: self.imagerFinish ?? Date(), coordinate: location.coordinate) {
             sunrise = finishSolar.sunrise
             astronomicalSunrise = finishSolar.astronomicalSunrise
             
@@ -651,7 +651,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
             self.secondsUntilAstronomicalSunrise = -1000000
         }
 
-        if let startSolar = Solar(for: self.imagerStart ?? Date(), coordinate: self.location.location!.coordinate) {
+        if let location = self.location.location, let startSolar = Solar(for: self.imagerStart ?? Date(), coordinate: location.coordinate) {
             sunset = startSolar.sunset!
             astronomicalSunset = startSolar.astronomicalSunset!
             
