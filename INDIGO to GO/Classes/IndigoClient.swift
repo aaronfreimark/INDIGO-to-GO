@@ -401,42 +401,42 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         var exposure: Float = 0;
         var count: Float = 0;
         var filter: String = "";
-        var imageTimes: [IndigoSequence] = []
+        var imagePlans: [Int:IndigoSequence] = [:]   /// Used to hold the sequences 01...16 in the Agent
+        var imageTimes: [IndigoSequence] = []   /// Used to hold the specific sequences we are using in this image run, including repititions
 
+        /// Read all "Imager Agent | AGENT_IMAGER_SEQUENCE | XX" routines, then parse the intended sequence.
+        for seqNum in 1...16 {
+            if let sequence = getValue("Imager Agent | AGENT_IMAGER_SEQUENCE | " + String(format: "%02d",seqNum)) {
+                for prop in sequence.components(separatedBy: ";") {
+                    if prop.prefix(9) == "exposure=" { exposure = Float(prop.replacingOccurrences(of: "exposure=", with: ""))! }
+                    if prop.prefix(6) == "count=" { count = Float(prop.replacingOccurrences(of: "count=", with: ""))! }
+                    if prop.prefix(7) == "filter=" { filter = prop.replacingOccurrences(of: "filter=", with: "") }
+                }
+                imagePlans[seqNum] = IndigoSequence(count: count, seconds: exposure, filter: filter)
+            }
+        }
         
         if let sequences = getValue("Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE") {
             for seq in sequences.components(separatedBy: ";") {
                 if let seqNum = Int(seq) {
-                    if let sequence = getValue("Imager Agent | AGENT_IMAGER_SEQUENCE | " + String(format: "%02d",seqNum)) {
-                        for prop in sequence.components(separatedBy: ";") {
-                            if prop.prefix(9) == "exposure=" { exposure = Float(prop.replacingOccurrences(of: "exposure=", with: ""))! }
-                            if prop.prefix(6) == "count=" { count = Float(prop.replacingOccurrences(of: "count=", with: ""))! }
-                            if prop.prefix(7) == "filter=" { filter = prop.replacingOccurrences(of: "filter=", with: "") }
-                        }
+                    imageTimes.append(imagePlans[seqNum]!)
+                    let sequenceTime = imagePlans[seqNum]!.totalTime
+                    totalTime += sequenceTime
+                    imagesTotal += Int(imagePlans[seqNum]!.count)
+                    
+                    if thisBatch < imagerBatchInProgress {
+                        elapsedTime += sequenceTime
+                        imagesTaken += Int(count)
+                    }
+                    if thisBatch == imagerBatchInProgress {
                         
-                        imageTimes.append(IndigoSequence(count: count, seconds: exposure + imagerDitherDelay, filter: filter))
-                        //imageTimes.indices.last.map { imageTimes[$0].seconds -= imagerDitherDelay } // no dithering on the last item
+                        let remainingTime = getValue("Imager Agent | AGENT_IMAGER_STATS | EXPOSURE")
+                        let imagerFrameInProgressTimeElapsed = imagePlans[seqNum]!.seconds - (Float(remainingTime ?? "0") ?? 0)
                         
-                        //let sequenceTime = exposure * count  +  imagerDitherDelay * (count - 1)
-
-                        let sequenceTime = (exposure + imagerDitherDelay ) * count
-                        totalTime += sequenceTime
-                        imagesTotal += Int(count)
-
-                        if thisBatch < imagerBatchInProgress {
-                            elapsedTime += sequenceTime
-                            imagesTaken += Int(count)
-                        }
-                        if thisBatch == imagerBatchInProgress {
-
-                            let remainingTime = getValue("Imager Agent | AGENT_IMAGER_STATS | EXPOSURE")
-                            let imagerFrameInProgressTimeElapsed = exposure - (Float(remainingTime ?? "0") ?? 0)
-
-                            let partialTime = exposure * (imagerFrameInProgress - 1.0)  +  imagerDitherDelay * (imagerFrameInProgress - 1.0) + imagerFrameInProgressTimeElapsed
-
-                            elapsedTime += partialTime
-                            imagesTaken += Int(imagerFrameInProgress)
-                        }
+                        let partialTime = imagePlans[seqNum]!.seconds * (imagerFrameInProgress - 1.0) + imagerFrameInProgressTimeElapsed
+                        
+                        elapsedTime += partialTime
+                        imagesTaken += Int(imagerFrameInProgress)
                     }
                 }
                 thisBatch += 1
