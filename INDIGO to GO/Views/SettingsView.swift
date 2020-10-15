@@ -10,22 +10,14 @@ import Combine
 
 struct SettingsView: View {
 
-    @ObservedObject var client: IndigoClient
+    @EnvironmentObject var client: IndigoClient
 
-    @State var imager: String
-    @State var guider: String
-    @State var mount: String
+    @State var imager: String = "None"
+    @State var guider: String = "None"
+    @State var mount: String = "None"
 
     @Environment(\.presentationMode)
     var presentationMode: Binding<PresentationMode>
-
-    init(client: IndigoClient) {
-        self.client = client
-        _imager = State(initialValue: client.defaultImager)
-        _guider = State(initialValue: client.defaultGuider)
-        _mount = State(initialValue: client.defaultMount)
-        
-    }
     
     var body: some View {
         NavigationView {
@@ -88,15 +80,15 @@ struct SettingsView: View {
             //.listStyle(GroupedListStyle())
             .navigationBarTitle("Servers")
             .onAppear(perform: {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    if !client.bonjourBrowser.names().contains(self.imager) { self.imager = "None" }
-                    if !client.bonjourBrowser.names().contains(self.guider) { self.guider = "None" }
-                    if !client.bonjourBrowser.names().contains(self.mount) { self.mount = "None" }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    if !client.bonjourBrowser.names().contains(client.defaultImager) { self.imager = "None" } else {self.imager = client.defaultImager }
+                    if !client.bonjourBrowser.names().contains(client.defaultGuider) { self.guider = "None" } else {self.guider = client.defaultGuider }
+                    if !client.bonjourBrowser.names().contains(client.defaultMount) { self.mount = "None" } else {self.mount = client.defaultMount }
                 }
             })
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
                 client.bonjourBrowser.seek()
             }
         }
@@ -104,10 +96,6 @@ struct SettingsView: View {
     }
     
     func saveServers() {
-        DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-            self.client.bonjourBrowser.cancel()
-        })
-
         self.client.defaultImager = imager
         self.client.defaultGuider = guider
         self.client.defaultMount = mount
@@ -122,7 +110,8 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         let client = IndigoClient(isPreview: true)
-        SettingsView(client: client)
+        SettingsView()
+            .environmentObject(client)
     }
 }
 

@@ -83,7 +83,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     @Published var isParkButtonEnabled = false
     
     /// Properties for the image preview
-    @Published var imagerLatestImageURL: URL = URL(string: "https://www.dropbox.com/s/wei6v5vir7adihc/Andromeda-RGB.jpg?raw=1")!
+    @Published var imagerLatestImageURL: URL?
 
     /// Properties for sunrise & sunset
     var hasLocation: Bool {
@@ -108,9 +108,10 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
 
         // Combine publishers into the main thread.
         // https://stackoverflow.com/questions/58437861/
-//        anyCancellable = Publishers.CombineLatest(bonjourBrowser.objectWillChange, properties.objectWillChange).sink { [weak self] (_) in
-//            self?.objectWillChange.send()
-//        }
+        // https://stackoverflow.com/questions/58406287
+        anyCancellable = bonjourBrowser.objectWillChange.sink { [weak self] (_) in
+            self?.objectWillChange.send()
+        }
 
         if isPreview {
             self.updateUI()
@@ -402,6 +403,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         var filter: String = "";
         var imageTimes: [IndigoSequence] = []
 
+        
         if let sequences = getValue("Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE") {
             for seq in sequences.components(separatedBy: ";") {
                 if let seqNum = Int(seq) {
@@ -867,10 +869,8 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
                                 // handle special cases
                                 if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
                                     if let urlprefix = source.url {
-                                        let url = URL(string: urlprefix + itemValue)!
-                                        let placeholder = Bundle.main.url(forResource: "1x1", withExtension: "png")!
-                                        DispatchQueue.main.async { self.imagerLatestImageURL = placeholder }
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.imagerLatestImageURL = url }
+                                        let url = URL(string: "\(urlprefix)\(itemValue)?nonce=\(UUID())")!
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { self.imagerLatestImageURL = url }
                                         print("imagerLatestImageURL: \(url)")
                                     }
                                 }

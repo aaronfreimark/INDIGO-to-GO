@@ -13,7 +13,7 @@ struct ContentView: View {
         
     /// Set up a timer for periodic refresh
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State var isShowingServerNotice = false
+    @State var isShowingSpinner = true
     
     /// Keep track of whether a sheet is showing or not.
     @State private var isSettingsSheetShowing: Bool = false
@@ -23,26 +23,25 @@ struct ContentView: View {
         
         List {
             if !client.isAnythingConnected {
-                if self.isShowingServerNotice {
-                    Section {
-                        Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
-                            .padding(30)
-                    }
-                } else {
+                if self.isShowingSpinner {
                     HStack {
                         Spacer()
                         ProgressView()
                         Spacer()
                     }
+                } else {
+                    Section {
+                        Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
+                            .padding(30)
+                    }
                 }
-                
             }
-            
+
             // =================================================================== SEQUENCE
-            
+
             if client.isImagerConnected || client.isMountConnected {
                 Section(header: Text("Sequence")) {
-                    if client.isImagerConnected  { ImagerProgressView(client: client) }
+                    if client.isImagerConnected  { ImagerProgressView().environmentObject(client) }
 
                     StatusRowView(sr: client.srEstimatedCompletion)
                     StatusRowView(sr: client.srHALimit)
@@ -52,7 +51,7 @@ struct ContentView: View {
             }
 
             if client.isImagerConnected {
-                ImagerPreviewView(client: client)
+                ImagerPreviewView().environmentObject(client)
             }
 
             // =================================================================== GUIDER
@@ -97,7 +96,7 @@ struct ContentView: View {
                 Button(action: serversButton) {
                     Text("Servers")
                 }
-                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView(client: self.client) })
+                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView().environmentObject(client) })
             }
             
         }
@@ -108,30 +107,22 @@ struct ContentView: View {
             }
         }
         .onAppear(perform: {
-            
             /// Start up Bonjour, let stuff populate
+            self.showSpinner()
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                self.isShowingServerNotice = false
                 client.bonjourBrowser.seek()
             })
-
-            /// after 2 second ssearch for whatever is in serverSettings.servers to try to reconnect
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                self.isShowingServerNotice = true
-                client.reinitSavedServers()
-            }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             
             /// Start up Bonjour, let stuff populate
+            self.showSpinner()
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                self.isShowingServerNotice = false
                 client.bonjourBrowser.seek()
             })
             
             /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.isShowingServerNotice = true
                 client.reinitSavedServers()
             }
         }
@@ -158,6 +149,14 @@ struct ContentView: View {
         })
     }
 
+    func showSpinner() {
+        let duration = 5.0
+        
+        self.isShowingSpinner = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            self.isShowingSpinner = false
+        }
+    }
     
     private func serversButton() {
         self.isSettingsSheetShowing = true

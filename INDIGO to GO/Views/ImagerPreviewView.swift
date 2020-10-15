@@ -10,26 +10,26 @@ import URLImage
 
 struct ImagerPreviewView: View {
 
-    @ObservedObject var client: IndigoClient
+    @EnvironmentObject var client: IndigoClient
     @State private var isPreviewShowing: Bool = false
 
-    init(client: IndigoClient) {
-        self.client = client
-    }
-    
     var body: some View {
         DisclosureGroup(
             isExpanded: $isPreviewShowing,
             content:
                 {
-                    URLImage(client.imagerLatestImageURL, delay: 0.5, placeholder: { _ in
-                        Text("Loading...")
-                    }, content: {
-                        $0.image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .clipped()
-                    })
+                    if let url = client.imagerLatestImageURL {
+                        URLImage(url, delay: 0.5, placeholder: { _ in
+                            Text("Loading...")
+                        }, content: {
+                            $0.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .clipped()
+                        })
+                    } else {
+                        Image(systemName: "square.split.diagonal.2x2")
+                    }
                 }, label:
                     {
                         HStack
@@ -52,7 +52,8 @@ struct ImagerPreviewView_Previews: PreviewProvider {
         List {
             Section {
                 let client = IndigoClient(isPreview: true)
-                ImagerPreviewView(client: client)
+                ImagerPreviewView()
+                    .environmentObject(client)
             }
         }
         .listStyle(GroupedListStyle())

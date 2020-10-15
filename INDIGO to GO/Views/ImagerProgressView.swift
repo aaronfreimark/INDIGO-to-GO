@@ -9,15 +9,11 @@ import SwiftUI
 
 struct ImagerProgressView: View {
 
-    @ObservedObject var client: IndigoClient
+    @EnvironmentObject var client: IndigoClient
 
     let sunColor = Color.yellow.opacity(0.3)
     let meridianColor = Color.orange
     let haColor = Color.orange.opacity(0.3)
-
-    init(client: IndigoClient) {
-        self.client = client
-    }
     
     var body: some View {
         
@@ -181,7 +177,8 @@ struct ProgressView_Previews: PreviewProvider {
         List {
             Section {
                 let client = IndigoClient(isPreview: true)
-                ImagerProgressView(client: client)
+                ImagerProgressView()
+                    .environmentObject(client)
             }
         }
         .listStyle(GroupedListStyle())

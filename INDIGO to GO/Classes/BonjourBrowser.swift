@@ -11,11 +11,7 @@ final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     
     var browser: NWBrowser!
     
-    @Published var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
-        willSet {
-            objectWillChange.send()
-        }
-    }
+    @Published var discovered: [BonjourEndpoint] = [BonjourEndpoint()]
         
     func endpoint(name: String) -> NWEndpoint? {
         for endpoint in self.discovered {
