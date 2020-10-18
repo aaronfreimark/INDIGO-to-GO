@@ -42,7 +42,7 @@ struct ImagerProgressView: View {
                         .frame(height: 15.0)
                     
                 }
-                .padding()
+                .padding(.vertical)
                 
                 
                 // Meridian & HA Limit
@@ -65,7 +65,6 @@ struct ImagerProgressView: View {
                                 Spacer()
                             }
                         }
-                        .padding(.horizontal)
                     }
                     
                     GeometryReader { metrics in
@@ -80,7 +79,6 @@ struct ImagerProgressView: View {
                             Spacer()
                         }
                     }
-                    .padding(.horizontal)
                 }
                 
                 // Sunrise & Sunset
@@ -123,7 +121,7 @@ struct ImagerProgressView: View {
                 
                 
             }
-            .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous).padding(.horizontal))
+            .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous))
         }
         
     }

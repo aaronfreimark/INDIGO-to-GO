@@ -61,7 +61,7 @@ struct DaylightView: View {
             }
             .offset(x: metrics.size.width * offset)
         }
-        .padding(.horizontal)
+//        .padding(.horizontal)
     }
 }
 
