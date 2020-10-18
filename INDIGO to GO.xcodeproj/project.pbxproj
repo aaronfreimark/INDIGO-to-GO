@@ -20,6 +20,7 @@
 		931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF663250A564900EE6300 /* BonjourBrowser.swift */; };
 		931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 931D1E0C250C01AF00BFFA6B /* SwiftyJSON */; };
 		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
+		935431FD253C0D7D008D3F17 /* DaylightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935431FC253C0D7D008D3F17 /* DaylightView.swift */; };
 		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
 		9364A3C6253546E200489AC0 /* Solar in Frameworks */ = {isa = PBXBuildFile; productRef = 9364A3C5253546E200489AC0 /* Solar */; };
 		9364A3C7253546E200489AC0 /* Solar in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9364A3C5253546E200489AC0 /* Solar */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -78,6 +79,7 @@
 		931AF63F2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		931AF663250A564900EE6300 /* BonjourBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourBrowser.swift; sourceTree = "<group>"; };
 		931E89D5252472B800FCFAB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		935431FC253C0D7D008D3F17 /* DaylightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaylightView.swift; sourceTree = "<group>"; };
 		93577355252A526E005670B3 /* BonjourEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourEndpoint.swift; sourceTree = "<group>"; };
 		93729242253723E5000DF0A6 /* StatusRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRow.swift; sourceTree = "<group>"; };
 		9372924625373D36000DF0A6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				93BFF7D72524F3C300B733CE /* StatusRowView.swift */,
 				930C34B72533DBAE0014A186 /* ImagerProgressView.swift */,
 				93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */,
+				935431FC253C0D7D008D3F17 /* DaylightView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -356,6 +359,7 @@
 			files = (
 				93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */,
 				93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */,
+				935431FD253C0D7D008D3F17 /* DaylightView.swift in Sources */,
 				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
 				93EC16FA2534BCD200392AC9 /* LocationFeatures.swift in Sources */,
 				93BFF7D82524F3C300B733CE /* StatusRowView.swift in Sources */,

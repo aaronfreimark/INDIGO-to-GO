@@ -643,7 +643,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
             self.location.hasLocation = true
         } else if let start = self.imagerStart, let end = self.imagerFinish {
             let sequenceInterval = DateInterval(start: start, end: end)
-            self.daylight = self.location.daylight(sequenceInterval: sequenceInterval, offset: elapsedTimeIfSequencing())
+            self.daylight = self.location.daylight(sequenceInterval: sequenceInterval)
         } else {
             self.daylight = nil
         }

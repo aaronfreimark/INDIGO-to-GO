@@ -87,35 +87,36 @@ struct ImagerProgressView: View {
                 
                 if client.hasDaylight {
                     let daylight = client.daylight!
+                    let offsetTime = client.elapsedTimeIfSequencing()
 
                     if daylight.start.hasDawn {
                         let dawn = daylight.start.dawn!
-                        DaylightView(span: dawn, time: imagerTotalTime, type: .dawn)
+                        DaylightView(span: dawn, time: imagerTotalTime, type: .dawn, offsetTime: offsetTime)
                     }
 
                     if daylight.start.hasDay {
                         let day = daylight.start.day!
-                        DaylightView(span: day, time: imagerTotalTime, type: .day)
+                        DaylightView(span: day, time: imagerTotalTime, type: .day, offsetTime: offsetTime)
                     }
 
                     if daylight.start.hasTwilight {
                         let twilight = daylight.start.twilight!
-                        DaylightView(span: twilight, time: imagerTotalTime, type: .twilight)
+                        DaylightView(span: twilight, time: imagerTotalTime, type: .twilight, offsetTime: offsetTime)
                     }
 
                     if daylight.end.hasDawn {
                         let dawn = daylight.end.dawn!
-                        DaylightView(span: dawn, time: imagerTotalTime, type: .dawn)
+                        DaylightView(span: dawn, time: imagerTotalTime, type: .dawn, offsetTime: offsetTime)
                     }
 
                     if daylight.end.hasDay {
                         let day = daylight.end.day!
-                        DaylightView(span: day, time: imagerTotalTime, type: .day)
+                        DaylightView(span: day, time: imagerTotalTime, type: .day, offsetTime: offsetTime)
                     }
 
                     if daylight.end.hasTwilight {
                         let twilight = daylight.end.twilight!
-                        DaylightView(span: twilight, time: imagerTotalTime, type: .twilight)
+                        DaylightView(span: twilight, time: imagerTotalTime, type: .twilight, offsetTime: offsetTime)
                     }
 
                 }
@@ -129,61 +130,6 @@ struct ImagerProgressView: View {
     
 }
 
-
-struct DaylightView: View {
-    var span: DateInterval
-    var time: CGFloat
-    enum DayParts { case dawn, day, twilight }
-    var type: DayParts
-
-    var width: CGFloat = 0
-    var offset: CGFloat = 0
-    let sunColor = Color.yellow.opacity(0.3)
-        
-    private var filledRectangle: some View {
-        switch type {
-        case .dawn:
-            return AnyView(Rectangle()
-                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor.opacity(0.0), self.sunColor]), startPoint: .leading, endPoint: .trailing)))
-        case .day:
-            return AnyView(
-                Rectangle()
-                .fill(sunColor))
-        case .twilight:
-            return AnyView(Rectangle()
-                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing)))
-        }
-    }
-
-    private var coloredLine: some View {
-        switch type {
-        case .dawn:
-            return AnyView(EmptyView())
-        case .day:
-            return AnyView(Rectangle().fill(Color.yellow))
-        case .twilight:
-            return AnyView(Rectangle().fill(Color.yellow))
-        }
-    }
-
-    var body: some View {
-        let width = CGFloat(span.duration) / time
-        let offset = CGFloat(span.start.timeIntervalSinceNow) / time
-        
-        
-        GeometryReader { metrics in
-            HStack(alignment: .center, spacing: 0) {
-                coloredLine
-                    .frame(width: 1)
-                filledRectangle
-                    .frame(width: metrics.size.width * width)
-                Spacer()
-            }
-            .offset(x: metrics.size.width * offset)
-        }
-        .padding(.horizontal)
-    }
-}
 
 struct ProgressView_Previews: PreviewProvider {
     static var previews: some View {
