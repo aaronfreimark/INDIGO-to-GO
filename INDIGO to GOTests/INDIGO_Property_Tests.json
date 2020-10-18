@@ -1,0 +1,51 @@
+[
+	{
+        "properties": [
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", "value": "exposure=600.0;count=6.0;filter=R;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", "value": "filter=B;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", "value": "filter=G;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", "value": "1;2;3;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | BATCH", "value": "1", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | BATCHES", "value": "3", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | FRAME", "value": "3", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | EXPOSURE", "value": "0", "State": "Ok" }
+        ],
+        "totalImages": 18,
+        "totalTime": 10800,
+        "currentImage": 3,
+        "elapsedTime": 1800
+    },{
+        "properties": [
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", "value": "exposure=600.0;count=6.0;filter=R;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", "value": "filter=B;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", "value": "filter=G;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", "value": "2;2;2;2;", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | BATCH", "value": "1", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | BATCHES", "value": "3", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | FRAME", "value": "3", "State": "Ok" },
+            { "key": "Imager Agent | AGENT_IMAGER_STATS | EXPOSURE", "value": "0", "State": "Ok" }
+        ],
+        "totalImages": 24,
+        "totalTime": 14400,
+        "currentImage": 3,
+        "elapsedTime": 1800
+    },{
+		"properties": [
+			{ "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 01", "value": "exposure=600.0;count=13.0;_name=NGC7822-1017;mode=RAW 16 4656x3520;filter=Ha;name=NGC7822-1017_Light_Ha_-20_600s_XXX;", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 02", "value": "count=22.0;filter=OIII;name=NGC7822-1017_Light_OIII_-20_600s_XXX;", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 03", "value": "filter=G;name=NGC7822-1017_Light_G_-20_600s_XXX;", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 04", "value": "focus=3.0;filter=B;name=NGC7822-1017_Light_B_-20_600s_XXX;", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | 05", "value": "focus=2.0;exposure=60.0;filter=G;name=NGC7822-1017_Light_G_-20_60s_XXX;", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE", "value": "1;2;cooler=off;park;", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_STATS | BATCH", "value": "2", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_STATS | BATCHES", "value": "2", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_STATS | FRAME", "value": "15", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_STATS | FRAMES", "value": "22", "State": "Ok" },
+			{ "key": "Imager Agent | AGENT_IMAGER_STATS | EXPOSURE", "value": "30", "State": "Ok" }
+		],
+		"totalImages": 35,
+		"totalTime": 21000,
+		"currentImage": 28,
+		"elapsedTime": 16770
+	}
+]

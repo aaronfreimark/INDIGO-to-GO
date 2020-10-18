@@ -415,16 +415,18 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
                     
                     if thisBatch < imagerBatchInProgress {
                         elapsedTime += sequenceTime
-                        imagesTaken += Int(count)
+                        imagesTaken += Int(imagePlans[seqNum]!.count)
                     }
                     if thisBatch == imagerBatchInProgress {
                         
-                        let remainingTime = getValue("Imager Agent | AGENT_IMAGER_STATS | EXPOSURE")
-                        let imagerFrameInProgressTimeElapsed = imagePlans[seqNum]!.seconds - (Float(remainingTime ?? "0") ?? 0)
-                        
-                        let partialTime = imagePlans[seqNum]!.seconds * (imagerFrameInProgress - 1.0) + imagerFrameInProgressTimeElapsed
-                        
-                        elapsedTime += partialTime
+                        let imagesCompletedThisBatch = imagerFrameInProgress - 1.0
+                        let secondsCompletedThisBatch = imagePlans[seqNum]!.seconds * imagesCompletedThisBatch
+                        let secondsRemainingThisFrame = getValue("Imager Agent | AGENT_IMAGER_STATS | EXPOSURE") ?? "0"
+                        let secondsCompletedThisFrame = imagePlans[seqNum]!.seconds - (Float(secondsRemainingThisFrame) ?? 0)
+                                                
+                        elapsedTime += secondsCompletedThisBatch
+                        elapsedTime += secondsCompletedThisFrame
+
                         imagesTaken += Int(imagerFrameInProgress)
                     }
                 }
