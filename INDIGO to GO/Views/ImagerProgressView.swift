@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct ImagerProgressView: View {
-
+    
     @EnvironmentObject var client: IndigoClient
-
+    
     let meridianColor = Color.orange
     let haColor = Color.orange.opacity(0.3)
     let sunColor: Color = Color.yellow.opacity(0.3)
-
+    
     var body: some View {
         
         let imagerTotalTime = CGFloat(client.imagerTotalTime)
@@ -35,28 +35,28 @@ struct ImagerProgressView: View {
                         }
                         .frame(height: 5.0)
                     }
-
+                    
                     // Progress Bar
-
+                    
                     ProgressView(value: Float(client.imagerElapsedTime), total: Float(client.imagerTotalTime))
                         .frame(height: 15.0)
-            
+                    
                 }
                 .padding()
                 
                 
                 // Meridian & HA Limit
-
+                
                 if client.isMountConnected && client.isMountTracking {
-
+                    
                     let proportionHa = CGFloat(client.mountSecondsUntilHALimit) / imagerTotalTime
                     let proportionMeridian = CGFloat(client.mountSecondsUntilMeridian) / imagerTotalTime
-
+                    
                     if client.isMountHALimitEnabled {
                         GeometryReader { metrics in
                             HStack(alignment: .center, spacing: 0) {
                                 let spacerWidth: CGFloat? = metrics.size.width * proportionHa
-
+                                
                                 Spacer()
                                     .frame(width: spacerWidth)
                                 Rectangle()
@@ -67,11 +67,11 @@ struct ImagerProgressView: View {
                         }
                         .padding(.horizontal)
                     }
-
+                    
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
                             let spacerWidth: CGFloat? = metrics.size.width * proportionMeridian
-
+                            
                             Spacer()
                                 .frame(width: spacerWidth)
                             Rectangle()
@@ -88,43 +88,43 @@ struct ImagerProgressView: View {
                 if client.hasDaylight {
                     let daylight = client.daylight!
                     let offsetTime = client.elapsedTimeIfSequencing()
-
+                    
                     if daylight.start.hasDawn {
                         let dawn = daylight.start.dawn!
                         DaylightView(span: dawn, time: imagerTotalTime, type: .dawn, offsetTime: offsetTime)
                     }
-
+                    
                     if daylight.start.hasDay {
                         let day = daylight.start.day!
                         DaylightView(span: day, time: imagerTotalTime, type: .day, offsetTime: offsetTime)
                     }
-
+                    
                     if daylight.start.hasTwilight {
                         let twilight = daylight.start.twilight!
                         DaylightView(span: twilight, time: imagerTotalTime, type: .twilight, offsetTime: offsetTime)
                     }
-
+                    
                     if daylight.end.hasDawn {
                         let dawn = daylight.end.dawn!
                         DaylightView(span: dawn, time: imagerTotalTime, type: .dawn, offsetTime: offsetTime)
                     }
-
+                    
                     if daylight.end.hasDay {
                         let day = daylight.end.day!
                         DaylightView(span: day, time: imagerTotalTime, type: .day, offsetTime: offsetTime)
                     }
-
+                    
                     if daylight.end.hasTwilight {
                         let twilight = daylight.end.twilight!
                         DaylightView(span: twilight, time: imagerTotalTime, type: .twilight, offsetTime: offsetTime)
                     }
-
+                    
                 }
-
-
+                
+                
             }
+            .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous).padding(.horizontal))
         }
-        .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous).padding(.horizontal))
         
     }
     
