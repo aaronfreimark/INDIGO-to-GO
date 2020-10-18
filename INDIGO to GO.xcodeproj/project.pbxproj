@@ -27,7 +27,10 @@
 		9372924725373D36000DF0A6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9372924625373D36000DF0A6 /* Utilities.swift */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
+		939BC329253B29800087F325 /* INDIGO_to_GOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */; };
+		939BC331253B29950087F325 /* LocationFeaturesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BC320253B1F8A0087F325 /* LocationFeaturesTests.swift */; };
 		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
+		93A9CB2E253BCA34004FF29A /* Daylight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A9CB2D253BCA34004FF29A /* Daylight.swift */; };
 		93BFF7D82524F3C300B733CE /* StatusRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRowView.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
 		93EC16F12534903A00392AC9 /* ImagerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */; };
@@ -36,6 +39,16 @@
 		93EC17042534E2F700392AC9 /* screen-main.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17022534E2F700392AC9 /* screen-main.png */; };
 		93EC17052534E2F700392AC9 /* screen-servers.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17032534E2F700392AC9 /* screen-servers.png */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		939BC32B253B29800087F325 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931AF62B2509B96F00EE6300 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 931AF6322509B96F00EE6300;
+			remoteInfo = "INDIGO to GO";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9364A3C8253546E200489AC0 /* Embed Frameworks */ = {
@@ -70,8 +83,13 @@
 		9372924625373D36000DF0A6 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
 		938F010625114B2D00599096 /* IndigoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoItem.swift; sourceTree = "<group>"; };
+		939BC320253B1F8A0087F325 /* LocationFeaturesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFeaturesTests.swift; sourceTree = "<group>"; };
+		939BC326253B29800087F325 /* INDIGO to GOTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "INDIGO to GOTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOTests.swift; sourceTree = "<group>"; };
+		939BC32A253B29800087F325 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		939F157D250AAB63004A09D7 /* IndigoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClient.swift; sourceTree = "<group>"; };
 		93A6047A250D361600E93EA4 /* indigo-response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "indigo-response.json"; sourceTree = "<group>"; };
+		93A9CB2D253BCA34004FF29A /* Daylight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daylight.swift; sourceTree = "<group>"; };
 		93BFF7D72524F3C300B733CE /* StatusRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRowView.swift; sourceTree = "<group>"; };
 		93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "INDIGO to GO.entitlements"; sourceTree = "<group>"; };
 		93E4107D2514E5050027A62D /* IndigoConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoConnection.swift; sourceTree = "<group>"; };
@@ -93,6 +111,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		939BC323253B29800087F325 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -105,6 +130,7 @@
 				930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */,
 				930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */,
 				931AF6352509B96F00EE6300 /* INDIGO to GO */,
+				939BC327253B29800087F325 /* INDIGO to GOTests */,
 				931AF6342509B96F00EE6300 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,6 +139,7 @@
 			isa = PBXGroup;
 			children = (
 				931AF6332509B96F00EE6300 /* INDIGO to GO.app */,
+				939BC326253B29800087F325 /* INDIGO to GOTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,6 +168,16 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		939BC327253B29800087F325 /* INDIGO to GOTests */ = {
+			isa = PBXGroup;
+			children = (
+				939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */,
+				939BC320253B1F8A0087F325 /* LocationFeaturesTests.swift */,
+				939BC32A253B29800087F325 /* Info.plist */,
+			);
+			path = "INDIGO to GOTests";
+			sourceTree = "<group>";
+		};
 		93BF080B2513EA160018DEC0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -165,6 +202,7 @@
 				93EC16F92534BCD200392AC9 /* LocationFeatures.swift */,
 				93729242253723E5000DF0A6 /* StatusRow.swift */,
 				9372924625373D36000DF0A6 /* Utilities.swift */,
+				93A9CB2D253BCA34004FF29A /* Daylight.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -205,17 +243,39 @@
 			productReference = 931AF6332509B96F00EE6300 /* INDIGO to GO.app */;
 			productType = "com.apple.product-type.application";
 		};
+		939BC325253B29800087F325 /* INDIGO to GOTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 939BC32D253B29800087F325 /* Build configuration list for PBXNativeTarget "INDIGO to GOTests" */;
+			buildPhases = (
+				939BC322253B29800087F325 /* Sources */,
+				939BC323253B29800087F325 /* Frameworks */,
+				939BC324253B29800087F325 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				939BC32C253B29800087F325 /* PBXTargetDependency */,
+			);
+			name = "INDIGO to GOTests";
+			productName = "INDIGO to GOTests";
+			productReference = 939BC326253B29800087F325 /* INDIGO to GOTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		931AF62B2509B96F00EE6300 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1200;
+				LastSwiftUpdateCheck = 1220;
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
 					931AF6322509B96F00EE6300 = {
 						CreatedOnToolsVersion = 12.0;
+					};
+					939BC325253B29800087F325 = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 931AF6322509B96F00EE6300;
 					};
 				};
 			};
@@ -238,6 +298,7 @@
 			projectRoot = "";
 			targets = (
 				931AF6322509B96F00EE6300 /* INDIGO to GO */,
+				939BC325253B29800087F325 /* INDIGO to GOTests */,
 			);
 		};
 /* End PBXProject section */
@@ -256,6 +317,13 @@
 				93EC17052534E2F700392AC9 /* screen-servers.png in Resources */,
 				93EC16FF2534DCA500392AC9 /* README.md in Resources */,
 				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		939BC324253B29800087F325 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,10 +369,28 @@
 				938F010725114B2D00599096 /* IndigoItem.swift in Sources */,
 				931AF6372509B96F00EE6300 /* IndigoToGo.swift in Sources */,
 				93729243253723E5000DF0A6 /* StatusRow.swift in Sources */,
+				93A9CB2E253BCA34004FF29A /* Daylight.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		939BC322253B29800087F325 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				939BC329253B29800087F325 /* INDIGO_to_GOTests.swift in Sources */,
+				939BC331253B29950087F325 /* LocationFeaturesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		939BC32C253B29800087F325 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 931AF6322509B96F00EE6300 /* INDIGO to GO */;
+			targetProxy = 939BC32B253B29800087F325 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		931AF6562509B97000EE6300 /* Debug */ = {
@@ -344,6 +430,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_TESTING_SEARCH_PATHS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -479,6 +566,49 @@
 			};
 			name = Release;
 		};
+		939BC32E253B29800087F325 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QLSSS38HN8;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
+				INFOPLIST_FILE = "INDIGO to GOTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iosian.INDIGO-to-GOTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/INDIGO to GO.app/INDIGO to GO";
+			};
+			name = Debug;
+		};
+		939BC32F253B29800087F325 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = QLSSS38HN8;
+				INFOPLIST_FILE = "INDIGO to GOTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.iosian.INDIGO-to-GOTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/INDIGO to GO.app/INDIGO to GO";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -496,6 +626,15 @@
 			buildConfigurations = (
 				931AF6592509B97000EE6300 /* Debug */,
 				931AF65A2509B97000EE6300 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		939BC32D253B29800087F325 /* Build configuration list for PBXNativeTarget "INDIGO to GOTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				939BC32E253B29800087F325 /* Debug */,
+				939BC32F253B29800087F325 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

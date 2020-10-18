@@ -48,6 +48,16 @@
                ReferencedContainer = "container:INDIGO to GO.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "939BC325253B29800087F325"
+               BuildableName = "INDIGO to GOTests.xctest"
+               BlueprintName = "INDIGO to GOTests"
+               ReferencedContainer = "container:INDIGO to GO.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

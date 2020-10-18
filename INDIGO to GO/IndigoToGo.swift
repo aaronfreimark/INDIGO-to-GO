@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct IndigoToGoApp: App {
+struct INDIGO_to_GO: App {
     @StateObject private var client = IndigoClient()
     
     var body: some Scene {

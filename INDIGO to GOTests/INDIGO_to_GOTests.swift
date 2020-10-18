@@ -1,12 +1,11 @@
 //
-//  INDIGO_StatusTests.swift
-//  INDIGO StatusTests
+//  INDIGO_to_GOTests.swift
+//  INDIGO to GOTests
 //
-//  Created by Aaron Freimark on 9/9/20.
+//  Created by Aaron Freimark on 10/17/20.
 //
 
 import XCTest
-@testable import INDIGO_To_Go
 
 class INDIGO_to_GOTests: XCTestCase {
 
@@ -25,7 +24,7 @@ class INDIGO_to_GOTests: XCTestCase {
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
-        self.measure {
+        measure {
             // Put the code you want to measure the time of here.
         }
     }
