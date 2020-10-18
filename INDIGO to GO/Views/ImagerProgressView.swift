@@ -11,10 +11,10 @@ struct ImagerProgressView: View {
 
     @EnvironmentObject var client: IndigoClient
 
-    let sunColor = Color.yellow.opacity(0.3)
     let meridianColor = Color.orange
     let haColor = Color.orange.opacity(0.3)
-    
+    let sunColor: Color = Color.yellow.opacity(0.3)
+
     var body: some View {
         
         let imagerTotalTime = CGFloat(client.imagerTotalTime)
@@ -46,34 +46,32 @@ struct ImagerProgressView: View {
                 
                 
                 // Meridian & HA Limit
-                
-                
+
                 if client.isMountConnected && client.isMountTracking {
-                    
+
                     let proportionHa = CGFloat(client.mountSecondsUntilHALimit) / imagerTotalTime
                     let proportionMeridian = CGFloat(client.mountSecondsUntilMeridian) / imagerTotalTime
-                    
-                    
+
                     if client.isMountHALimitEnabled {
                         GeometryReader { metrics in
                             HStack(alignment: .center, spacing: 0) {
-                                let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionHa
-                                
+                                let spacerWidth: CGFloat? = metrics.size.width * proportionHa
+
                                 Spacer()
                                     .frame(width: spacerWidth)
                                 Rectangle()
                                     .fill(self.haColor)
-                                    .frame(width: CGFloat(metrics.size.width) * (proportionMeridian - proportionHa))
+                                    .frame(width: metrics.size.width * (proportionMeridian - proportionHa))
                                 Spacer()
                             }
                         }
                         .padding(.horizontal)
                     }
-                    
+
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
-                            let spacerWidth: CGFloat? = CGFloat(metrics.size.width) * proportionMeridian
-                            
+                            let spacerWidth: CGFloat? = metrics.size.width * proportionMeridian
+
                             Spacer()
                                 .frame(width: spacerWidth)
                             Rectangle()
@@ -83,95 +81,108 @@ struct ImagerProgressView: View {
                         }
                     }
                     .padding(.horizontal)
-                    
-                } else {
-                    EmptyView()
                 }
-
                 
+                // Sunrise & Sunset
                 
-                // Sunrise
+                if client.hasDaylight {
+                    let daylight = client.daylight!
 
-                if let secondsUntilSunrise = client.secondsUntilSunrise,
-                   let secondsUntilAstronomicalSunrise = client.secondsUntilAstronomicalSunrise {
-
-                    let preSunrise: Int = secondsUntilSunrise - secondsUntilAstronomicalSunrise
-
-                    let proportionAstronomicalSunrise: CGFloat = CGFloat(secondsUntilAstronomicalSunrise) / imagerTotalTime
-                    let proportionPreSunrise: CGFloat = CGFloat(preSunrise) / imagerTotalTime
-
-
-                    GeometryReader { metrics in
-                        HStack(alignment: .center, spacing: 0) {
-
-                            Spacer()
-                                .frame(width: CGFloat(metrics.size.width) * proportionAstronomicalSunrise)
-                            Rectangle()
-                                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor.opacity(0.0), self.sunColor]), startPoint: .leading, endPoint: .trailing))
-                                .frame(width: CGFloat(metrics.size.width) * proportionPreSunrise)
-                            Rectangle()
-                                .fill(Color.yellow)
-                                .frame(width: 1)
-                            Rectangle()
-                                .fill(self.sunColor)
-                        }
+                    if daylight.start.hasDawn {
+                        let dawn = daylight.start.dawn!
+                        DaylightView(span: dawn, time: imagerTotalTime, type: .dawn)
                     }
-                    .padding(.horizontal)
 
-                } else {
-                    EmptyView()
-                }
-
-
-                // Sunset
-
-                if let secondsUntilSunset = client.secondsUntilSunset,
-                    let secondsUntilAstronomicalSunset = client.secondsUntilAstronomicalSunset {
-
-                    let postSunset: Int = secondsUntilAstronomicalSunset - secondsUntilSunset
-
-                    let proportionSunset: CGFloat = CGFloat(secondsUntilSunset) / imagerTotalTime
-                    let proportionPostSunset: CGFloat = CGFloat(postSunset) / imagerTotalTime
-
-                    GeometryReader { metrics in
-                        HStack(alignment: .center, spacing: 0) {
-
-                            if secondsUntilSunset > 0 {
-                                Rectangle()
-                                    .fill(self.sunColor)
-                                    .frame(width: CGFloat(metrics.size.width) * proportionSunset)
-                                Rectangle()
-                                    .fill(Color.yellow)
-                                    .frame(width: 1)
-                            }
-
-                            if secondsUntilAstronomicalSunset > 0 {
-
-                                /// sunsetOffset will be negative
-                                let sunsetOffset: CGFloat = secondsUntilSunset < 0 ? CGFloat(metrics.size.width) * proportionSunset : 0
-
-                                Rectangle()
-                                    .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing))
-                                    .frame(width: CGFloat(metrics.size.width) * proportionPostSunset - sunsetOffset)
-                                    .offset(x: sunsetOffset)
-                                Spacer()
-                            }
-                        }
+                    if daylight.start.hasDay {
+                        let day = daylight.start.day!
+                        DaylightView(span: day, time: imagerTotalTime, type: .day)
                     }
-                    .padding(.horizontal)
 
-                } else {
-                    EmptyView()
+                    if daylight.start.hasTwilight {
+                        let twilight = daylight.start.twilight!
+                        DaylightView(span: twilight, time: imagerTotalTime, type: .twilight)
+                    }
+
+                    if daylight.end.hasDawn {
+                        let dawn = daylight.end.dawn!
+                        DaylightView(span: dawn, time: imagerTotalTime, type: .dawn)
+                    }
+
+                    if daylight.end.hasDay {
+                        let day = daylight.end.day!
+                        DaylightView(span: day, time: imagerTotalTime, type: .day)
+                    }
+
+                    if daylight.end.hasTwilight {
+                        let twilight = daylight.end.twilight!
+                        DaylightView(span: twilight, time: imagerTotalTime, type: .twilight)
+                    }
+
                 }
 
 
             }
-            .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous).padding(.horizontal))
         }
+        .mask(RoundedRectangle(cornerRadius: 9.0, style: .continuous).padding(.horizontal))
         
     }
     
-    
+}
+
+
+struct DaylightView: View {
+    var span: DateInterval
+    var time: CGFloat
+    enum DayParts { case dawn, day, twilight }
+    var type: DayParts
+
+    var width: CGFloat = 0
+    var offset: CGFloat = 0
+    let sunColor = Color.yellow.opacity(0.3)
+        
+    private var filledRectangle: some View {
+        switch type {
+        case .dawn:
+            return AnyView(Rectangle()
+                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor.opacity(0.0), self.sunColor]), startPoint: .leading, endPoint: .trailing)))
+        case .day:
+            return AnyView(
+                Rectangle()
+                .fill(sunColor))
+        case .twilight:
+            return AnyView(Rectangle()
+                .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing)))
+        }
+    }
+
+    private var coloredLine: some View {
+        switch type {
+        case .dawn:
+            return AnyView(EmptyView())
+        case .day:
+            return AnyView(Rectangle().fill(Color.yellow))
+        case .twilight:
+            return AnyView(Rectangle().fill(Color.yellow))
+        }
+    }
+
+    var body: some View {
+        let width = CGFloat(span.duration) / time
+        let offset = CGFloat(span.start.timeIntervalSinceNow) / time
+        
+        
+        GeometryReader { metrics in
+            HStack(alignment: .center, spacing: 0) {
+                coloredLine
+                    .frame(width: 1)
+                filledRectangle
+                    .frame(width: metrics.size.width * width)
+                Spacer()
+            }
+            .offset(x: metrics.size.width * offset)
+        }
+        .padding(.horizontal)
+    }
 }
 
 struct ProgressView_Previews: PreviewProvider {

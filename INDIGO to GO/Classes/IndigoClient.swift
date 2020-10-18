@@ -87,6 +87,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     /// Properties for sunrise & sunset
     let secondsInDay: Int = 24 * 60 * 60
     @Published var daylight: (start: Daylight, end: Daylight)?
+    var hasDaylight: Bool { daylight != nil }
     
     
     init(isPreview: Bool = false) {
@@ -106,6 +107,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         }
 
         if isPreview {
+            self.setUpPreview()
             self.updateUI()
         } else {
             // after 1 second search for whatever is in serverSettings.servers to try to reconnect
@@ -623,18 +625,25 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         
         // Sunrise, Sunset
         
-//        if self.isPreview {
-//            self.secondsUntilSunrise = Int(60*60*2.25)
-//            self.secondsUntilAstronomicalSunrise = Int(60*60*2)
-//            self.secondsUntilSunset = Int(60*60*0.1)
-//            self.secondsUntilAstronomicalSunset = secondsUntilSunset! + 18*60
-//            self.srSunrise!.value = Date().addingTimeInterval(TimeInterval(self.secondsUntilSunrise!)).timeString()
-//            self.location.hasLocation = true
-//        }
-        
-        if let start = self.imagerStart, let end = self.imagerFinish {
+        if self.isPreview {
+            self.daylight = (
+                start: Daylight(
+                    asr: nil,
+                    sr: Date().addingTimeInterval(-60*60*5),
+                    ss: Date().addingTimeInterval(60*5),
+                    ass: Date().addingTimeInterval(60*25)
+                ),
+                end: Daylight(
+                    asr: Date().addingTimeInterval(60*60*2),
+                    sr: Date().addingTimeInterval(60*60*2.25),
+                    ss: Date().addingTimeInterval(60*60*6),
+                    ass: nil
+                )
+            )
+            self.location.hasLocation = true
+        } else if let start = self.imagerStart, let end = self.imagerFinish {
             let sequenceInterval = DateInterval(start: start, end: end)
-            self.daylight = self.location.daylight(sequenceInterval: sequenceInterval)
+            self.daylight = self.location.daylight(sequenceInterval: sequenceInterval, offset: elapsedTimeIfSequencing())
         } else {
             self.daylight = nil
         }
@@ -645,93 +654,6 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
             value: self.daylight?.end.dawn?.end.timeString() ?? self.daylight?.start.dawn?.end.timeString() ?? "Unknown",
             status: .custom("sun.max")
         )
-
-        
-//        /// Sunrise
-//        var sunrise: Date?
-//        var sunset: Date?
-//        var astronomicalSunrise: Date?
-//        var astronomicalSunset: Date?
-//        
-//        let endDate = self.imagerFinish ?? Date()
-//        let tz = TimeZone.current
-//
-//        if let location = self.location.location, let finishSolar = Solar(for: endDate, coordinate: location.coordinate, timezone: tz) {
-//            sunrise = finishSolar.sunrise
-//            astronomicalSunrise = finishSolar.astronomicalSunrise
-//        }
-//        
-//        if let location = self.location.location, let startSolar = Solar(for: endDate, coordinate: location.coordinate, timezone: tz) {
-//            sunset = startSolar.sunset
-//            astronomicalSunset = startSolar.astronomicalSunset
-//        }
-//        
-//        
-//        self.srSunrise = StatusRow(
-//            isSet: self.location.hasLocation,
-//            text: "Sunrise",
-//            value: sunrise?.timeString() ?? "Unknown",
-//            status: .custom("sun.max")
-//        )
-//
-//        /// Calculate secondsUntil various events
-//
-//        if
-//            let beginDate = self.imagerStart,
-//            let endDate = self.imagerFinish,
-//            let sunrise = sunrise,
-//            let astronomicalSunrise = astronomicalSunrise,
-//            let sunset = sunset,
-//            let astronomicalSunset = astronomicalSunset {
-//            
-//            let sequenceInterval = DateInterval(start: beginDate, end: endDate)
-//            
-//            var secondsUntilSunrise = 0
-//            if sequenceInterval.contains(sunrise) {
-//                secondsUntilSunrise = Int(sunrise.timeIntervalSinceNow)
-//                secondsUntilSunrise += elapsedTimeIfSequencing()
-//            }
-//            self.secondsUntilSunrise = secondsUntilSunrise
-//
-//            var secondsUntilAstroSunrise = 0
-//            if sequenceInterval.contains(astronomicalSunrise) {
-//                secondsUntilAstroSunrise = Int(astronomicalSunrise.timeIntervalSinceNow)
-//                secondsUntilAstroSunrise += elapsedTimeIfSequencing()
-//            }
-//            self.secondsUntilAstronomicalSunrise = secondsUntilAstroSunrise
-//
-//            var secondsUntilSunset = 0
-//            if sequenceInterval.contains(sunset) {
-//                secondsUntilSunset = Int(sunset.timeIntervalSinceNow)
-//                secondsUntilSunset += elapsedTimeIfSequencing()
-//            }
-//            self.secondsUntilSunset = secondsUntilSunrise
-//
-//            var secondsUntilAstroSunset = 0
-//            if sequenceInterval.contains(astronomicalSunset) {
-//                secondsUntilAstroSunset = Int(astronomicalSunrise.timeIntervalSinceNow)
-//                secondsUntilAstroSunset += elapsedTimeIfSequencing()
-//            }
-//            self.secondsUntilAstronomicalSunset = secondsUntilAstroSunrise
-//
-//        } else {
-//            self.secondsUntilSunrise = nil
-//            self.secondsUntilAstronomicalSunrise = nil
-//            self.secondsUntilSunset = nil
-//            self.secondsUntilAstronomicalSunset = nil
-//        }
-//        
-//        if self.isPreview {
-//            self.secondsUntilSunrise = Int(60*60*2.25)
-//            self.secondsUntilAstronomicalSunrise = Int(60*60*2)
-//            self.secondsUntilSunset = Int(60*60*0.1)
-//            self.secondsUntilAstronomicalSunset = secondsUntilSunset! + 18*60
-//            self.srSunrise!.value = Date().addingTimeInterval(TimeInterval(self.secondsUntilSunrise!)).timeString()
-//            self.location.hasLocation = true
-//        }
-
-//        print("Sunrise in \(self.secondsUntilSunrise!/3600), Astronomical in \(self.secondsUntilAstronomicalSunrise!/3600)")
-//        print("Sunset in \(self.secondsUntilSunset!/3600), Sunset in \(self.secondsUntilAstronomicalSunset!/3600)")
 
 
     }
@@ -755,7 +677,6 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         
         self.imagerState = .Stopped
 
-        
         setValue(key: "Mount Agent | MOUNT_PARK | PARKED", toValue: "false", toState: "Ok")
         setValue(key: "Mount Agent | MOUNT_TRACKING | ON", toValue: "true", toState: "Ok")
         setValue(key: "Mount Agent | AGENT_LIMITS | HA_TRACKING", toValue: "23.0", toState: "Ok", toTarget: "23.66666666")

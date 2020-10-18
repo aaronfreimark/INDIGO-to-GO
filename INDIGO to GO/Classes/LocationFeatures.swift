@@ -46,11 +46,12 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
         self.hasLocation = false
     }
         
-    func daylight(sequenceInterval: DateInterval) -> (start: Daylight, end: Daylight) {
+    func daylight(sequenceInterval: DateInterval, offset: Int = 0) -> (start: Daylight, end: Daylight) {
         let tz = TimeZone.current
         var start = Daylight()
         var end = Daylight()
         let maxDuration: TimeInterval = 60*60*24
+        let off = Double(offset)
 
         // longer than 24 hours not allowed
         if sequenceInterval.duration > maxDuration { return (start: start, end: end) }
@@ -61,19 +62,21 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
         if let location = self.location {
             if let solar = Solar(for: sequenceInterval.start, coordinate: location.coordinate, timezone: tz) {
                 start = Daylight(
-                    asr: solar.astronomicalSunrise,
-                    sr: solar.sunrise,
-                    ss: solar.sunset,
-                    ass: solar.astronomicalSunset)
+                    asr: solar.astronomicalSunrise?.addingTimeInterval(off),
+                    sr: solar.sunrise?.addingTimeInterval(off),
+                    ss: solar.sunset?.addingTimeInterval(off),
+                    ass: solar.astronomicalSunset?.addingTimeInterval(off)
+                )
                 start.nullifyIfOutside(sequenceInterval)
             }
 
             if let solar = Solar(for: sequenceInterval.end, coordinate: location.coordinate, timezone: tz) {
                 end = Daylight(
-                    asr: solar.astronomicalSunrise,
-                    sr: solar.sunrise,
-                    ss: solar.sunset,
-                    ass: solar.astronomicalSunset)
+                    asr: solar.astronomicalSunrise?.addingTimeInterval(off),
+                    sr: solar.sunrise?.addingTimeInterval(off),
+                    ss: solar.sunset?.addingTimeInterval(off),
+                    ass: solar.astronomicalSunset?.addingTimeInterval(off)
+                )
                 end.nullifyIfOutside(sequenceInterval)
             }
         }
