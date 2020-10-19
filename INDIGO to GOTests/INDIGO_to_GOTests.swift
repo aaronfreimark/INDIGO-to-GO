@@ -19,8 +19,8 @@ class INDIGO_to_GOTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    /// Load in sample sequences from a JSON file, and make sure we parse the image sequences correctly
     func testSequenceParser() throws {
-
         let path = Bundle.main.path(forResource: "INDIGO_Property_Tests", ofType: "json")!
         let jsonString = try? String(contentsOfFile: path, encoding: String.Encoding.utf8)
         let json = JSON(parseJSON: jsonString!)
@@ -28,7 +28,7 @@ class INDIGO_to_GOTests: XCTestCase {
         for (index,testJson):(String, JSON) in json {
             print("Test #\(index)")
             
-            var client = IndigoClient()
+            let client = IndigoClient()
             
             for (_, propJson):(String, JSON) in testJson["properties"] {
                 client.setValue(key: propJson["key"].string!, toValue: propJson["value"].string!, toState: propJson["State"].string!)
@@ -40,16 +40,24 @@ class INDIGO_to_GOTests: XCTestCase {
             XCTAssertEqual(client.imagerTotalTime, testJson["totalTime"].float)
             XCTAssertEqual(client.imagerElapsedTime , testJson["elapsedTime"].float)
         }
-
-
-
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    
+    func testProperties() throws {
+        let client = IndigoClient()
+        
+        let keycountBefore = client.getKeys().count
+        XCTAssertEqual(keycountBefore, 0)
+        
+        let count = 1000
+        for _ in 1...1000 {
+            client.setValue(key: UUID().uuidString, toValue: UUID().uuidString, toState: "Ok")
         }
+        let keycountDuring = client.getKeys().count
+        XCTAssertEqual(keycountDuring, count)
+        
+        client.removeAll()
+        let keycountAfter = client.getKeys().count
+        XCTAssertEqual(keycountAfter, 0)
     }
 
 }

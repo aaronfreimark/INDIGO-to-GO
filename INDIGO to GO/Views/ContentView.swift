@@ -85,7 +85,7 @@ struct ContentView: View {
                             }
                         }) {
 
-                Button(action: { client.printProperties() } ) { Text("Properties") }
+//                Button(action: { client.printProperties() } ) { Text("Properties") }
 
                 /// Park & Warm Button
                 if client.isMountConnected || client.isImagerConnected {

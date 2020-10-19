@@ -13,6 +13,7 @@ import Solar
 class LocationFeatures: NSObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     var location: CLLocation?
+    var nextSunrise: Date?
 
     var isPreview: Bool
     @Published var hasLocation: Bool = false
@@ -45,8 +46,8 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
         print("Failed to find user's location: \(error.localizedDescription)")
         self.hasLocation = false
     }
-        
-    func daylight(sequenceInterval: DateInterval) -> (start: Daylight, end: Daylight) {
+            
+    func calculateDaylight(sequenceInterval: DateInterval) -> (start: Daylight, end: Daylight) {
         let tz = TimeZone.current
         var start = Daylight()
         var end = Daylight()
@@ -66,6 +67,7 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
                     ss: solar.sunset,
                     ass: solar.astronomicalSunset
                 )
+                self.nextSunrise = solar.sunrise
                 start.nullifyIfOutside(sequenceInterval)
             }
 
@@ -76,6 +78,13 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
                     ss: solar.sunset,
                     ass: solar.astronomicalSunset
                 )
+                if let sunrise = solar.sunrise {
+                    if let nextSunrise = self.nextSunrise {
+                        self.nextSunrise = max(nextSunrise, sunrise)
+                    } else {
+                        self.nextSunrise = sunrise
+                    }
+                }
                 end.nullifyIfOutside(sequenceInterval)
             }
         }

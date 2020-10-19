@@ -96,7 +96,7 @@ class LocationFeaturesTests: XCTestCase {
         for (index ,test) in tests.enumerated() {
             print("Test #\(index)...")
 
-            let daylight = loc.daylight(sequenceInterval: test.seq)
+            let daylight = loc.calculateDaylight(sequenceInterval: test.seq)
 
             if test.start.dawn == nil {
                 XCTAssertNil(daylight.start.dawn)

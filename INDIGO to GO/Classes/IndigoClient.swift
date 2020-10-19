@@ -297,7 +297,6 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
 
     /// =============================================================================================
 
-    
     private func updateProperties() {
                         
         let keys = self.getKeys()
@@ -628,6 +627,8 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         // Sunrise, Sunset
         
         if self.isPreview {
+            /// Special stuff for the preview...
+
             self.daylight = (
                 start: Daylight(
                     asr: nil,
@@ -643,22 +644,30 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
                 )
             )
             self.location.hasLocation = true
+            
         } else if let start = self.imagerStart, let end = self.imagerFinish {
+            /// Normal Flow. The "daylight" structure is used to store sunrise, sunset, etc. times for the start and end of the sequence. Items that fall outside the image sequence are set to nil
+            
             let sequenceInterval = DateInterval(start: start, end: end)
-            self.daylight = self.location.daylight(sequenceInterval: sequenceInterval)
+            self.daylight = self.location.calculateDaylight(sequenceInterval: sequenceInterval)
+            
         } else {
+            /// Sometimes we don't have an image sequence
+
             self.daylight = nil
         }
         
         self.srSunrise = StatusRow(
             isSet: self.location.hasLocation,
             text: "Sunrise",
-            value: self.daylight?.end.dawn?.end.timeString() ?? self.daylight?.start.dawn?.end.timeString() ?? "Unknown",
+            value: self.location.nextSunrise?.timeString() ?? "Unknown",
             status: .custom("sun.max")
         )
 
-
     }
+
+    /// =============================================================================================
+
     
     func setUpPreview() {
         
@@ -715,6 +724,19 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
 
     }
 
+    
+    /// Shifts times for Meridian & HA Limit over if sequence is running, so these count from start of sequence instead of now()
+    func elapsedTimeIfSequencing() -> Int {
+        if self.imagerState != .Stopped {
+            return Int(self.imagerElapsedTime)
+        } else {
+            return 0
+        }
+    }
+
+    
+    /// =============================================================================================
+
 
     func getKeys() -> [String] {
         return self.queue.sync {
@@ -765,18 +787,22 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     }
 
     
-    /// Shifts times for Meridian & HA Limit over if sequence is running, so these count from start of sequence instead of now()
-    func elapsedTimeIfSequencing() -> Int {
-        if self.imagerState != .Stopped {
-            return Int(self.imagerElapsedTime)
-        } else {
-            return 0
+    func printProperties() {
+        let sortedKeys = Array(self.getKeys()).sorted(by: <)
+        for k in sortedKeys {
+            print("\(k): \(self.getValue(k) ?? "nil") - \(String(describing: self.getState(k)))")
+        }
+    }
+    
+    func removeAll() {
+        self.queue.async {
+            self.properties.removeAll()
         }
     }
 
     
-    
-    
+    /// =============================================================================================
+
     
     
     func injest(json: JSON, source: IndigoConnection) {
@@ -830,24 +856,8 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
                 }
             }
         }
+    }
         
-    }
-    
-    func printProperties() {
-        let sortedKeys = Array(self.getKeys()).sorted(by: <)
-        for k in sortedKeys {
-            print("\(k): \(self.getValue(k) ?? "nil") - \(String(describing: self.getState(k)))")
-        }
-    }
-    
-    func removeAll() {
-        self.queue.async {
-            self.properties.removeAll()
-        }
-    }
-
-    
-    
 
 }
 
