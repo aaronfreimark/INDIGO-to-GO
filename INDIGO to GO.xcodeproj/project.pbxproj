@@ -14,6 +14,8 @@
 		930C34B32533BCAD0014A186 /* 1x1.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C34B22533BCAD0014A186 /* 1x1.png */; };
 		930C34B82533DBAE0014A186 /* ImagerProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930C34B72533DBAE0014A186 /* ImagerProgressView.swift */; };
 		9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9311AC9125129C2200725CB9 /* SettingsView.swift */; };
+		9315A9DD253E7F4E003A4062 /* INDIGO_Property_Tests.json in Resources */ = {isa = PBXBuildFile; fileRef = 93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */; };
+		9315A9DF253E7F6C003A4062 /* INDIGO_Property_Tests.json in Resources */ = {isa = PBXBuildFile; fileRef = 93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */; };
 		931AF6372509B96F00EE6300 /* IndigoToGo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6362509B96F00EE6300 /* IndigoToGo.swift */; };
 		931AF6392509B96F00EE6300 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF6382509B96F00EE6300 /* ContentView.swift */; };
 		931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931AF63D2509B97000EE6300 /* Preview Assets.xcassets */; };
@@ -26,8 +28,6 @@
 		9364A3C7253546E200489AC0 /* Solar in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 9364A3C5253546E200489AC0 /* Solar */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93729243253723E5000DF0A6 /* StatusRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93729242253723E5000DF0A6 /* StatusRow.swift */; };
 		9372924725373D36000DF0A6 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9372924625373D36000DF0A6 /* Utilities.swift */; };
-		93793FFD253CC7F600149847 /* INDIGO_Property_Tests.json in Resources */ = {isa = PBXBuildFile; fileRef = 93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */; };
-		93794000253CCA3C00149847 /* INDIGO_Property_Tests.json in Resources */ = {isa = PBXBuildFile; fileRef = 93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */; };
 		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
 		939BC329253B29800087F325 /* INDIGO_to_GOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */; };
@@ -315,7 +315,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93794000253CCA3C00149847 /* INDIGO_Property_Tests.json in Resources */,
+				9315A9DF253E7F6C003A4062 /* INDIGO_Property_Tests.json in Resources */,
 				930C34A325339F320014A186 /* Andromeda-RGB.png in Resources */,
 				930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */,
 				930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */,
@@ -332,7 +332,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93793FFD253CC7F600149847 /* INDIGO_Property_Tests.json in Resources */,
+				9315A9DD253E7F4E003A4062 /* INDIGO_Property_Tests.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,7 +584,7 @@
 				DEVELOPMENT_TEAM = QLSSS38HN8;
 				ENABLE_TESTING_SEARCH_PATHS = YES;
 				INFOPLIST_FILE = "INDIGO to GOTests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -605,7 +605,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QLSSS38HN8;
 				INFOPLIST_FILE = "INDIGO to GOTests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
