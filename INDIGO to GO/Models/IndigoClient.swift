@@ -83,6 +83,8 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     
     /// Properties for the image preview
     @Published var imagerLatestImageURL: URL?
+    @Published var hasImageURL = false
+
 
     /// Properties for sunrise & sunset
     let secondsInDay: Int = 24 * 60 * 60
@@ -240,8 +242,10 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         
         switch state {
         case .ready:
-            self.queue.asyncAfter(deadline: .now() + 1.0) {
+            self.queue.asyncAfter(deadline: .now() + 0.25) {
                 connection.hello()
+            }
+            self.queue.asyncAfter(deadline: .now() + 2.0) {
                 connection.enablePreviews()
             }
         case .setup:
@@ -838,7 +842,10 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
                                 if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
                                     if let urlprefix = source.url {
                                         let url = URL(string: "\(urlprefix)\(itemValue)?nonce=\(UUID())")!
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { self.imagerLatestImageURL = url }
+                                        DispatchQueue.main.async() {
+                                            self.imagerLatestImageURL = url
+                                            self.hasImageURL = true
+                                        }
                                         print("imagerLatestImageURL: \(url)")
                                     }
                                 }

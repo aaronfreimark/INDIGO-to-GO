@@ -19,4 +19,4 @@ Monitor services using the INDIGO astronomy protocol from iOS &amp; Mac Catalyst
 
 INDIGO to GO runs on any iPhone or iPad running iOS 14, and also any Mac running macOS 11 "Big Sur".
 
-For more information, see https://github.com/indigo-astronomy/indigo and http://indigo-astronomy.org. For unrelated commercial clients for macOS, see http://www.cloudmakers.eu.
+For more information, see https://github.com/indigo-astronomy/indigo and http://indigo-astronomy.org. For unrelated but fansastic commercial clients for macOS, see http://www.cloudmakers.eu.

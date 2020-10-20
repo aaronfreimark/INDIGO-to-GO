@@ -112,6 +112,21 @@ struct ContentView: View {
             DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
                 client.bonjourBrowser.seek()
             })
+            
+            /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                if client.connectedServers().count == 0 {
+                    client.reinitSavedServers()
+                }
+            }
+
+            /// after 2 seconds search again
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if client.connectedServers().count == 0 {
+                    client.reinitSavedServers()
+                }
+            }
+
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             
@@ -123,7 +138,15 @@ struct ContentView: View {
             
             /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                client.reinitSavedServers()
+                if client.connectedServers().count == 0 {
+                    client.reinitSavedServers()
+                }
+            }
+            /// after 2 seconds search again
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if client.connectedServers().count == 0 {
+                    client.reinitSavedServers()
+                }
             }
         }
 

@@ -154,7 +154,7 @@
 			children = (
 				930C34B22533BCAD0014A186 /* 1x1.png */,
 				93D4E14425122A160085E1D9 /* INDIGO to GO.entitlements */,
-				93BF080F2513EA320018DEC0 /* Classes */,
+				93BF080F2513EA320018DEC0 /* Models */,
 				931AF6362509B96F00EE6300 /* IndigoToGo.swift */,
 				93BF080B2513EA160018DEC0 /* Views */,
 				931AF63F2509B97000EE6300 /* Info.plist */,
@@ -197,7 +197,7 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		93BF080F2513EA320018DEC0 /* Classes */ = {
+		93BF080F2513EA320018DEC0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				939F157D250AAB63004A09D7 /* IndigoClient.swift */,
@@ -211,7 +211,7 @@
 				9372924625373D36000DF0A6 /* Utilities.swift */,
 				93A9CB2D253BCA34004FF29A /* Daylight.swift */,
 			);
-			path = Classes;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		93EC17012534E2F700392AC9 /* Documentation */ = {

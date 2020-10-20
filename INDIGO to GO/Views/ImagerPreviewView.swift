@@ -16,34 +16,30 @@ struct ImagerPreviewView: View {
     var body: some View {
         DisclosureGroup(
             isExpanded: $isPreviewShowing,
-            content:
-                {
-                    if let url = client.imagerLatestImageURL {
-                        URLImage(url, delay: 0.5, placeholder: { _ in
-                            Text("Loading...")
-                        }, content: {
-                            $0.image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .clipped()
-                        })
-                    } else {
-                        Image(systemName: "square.split.diagonal.2x2")
-                    }
-                }, label:
-                    {
-                        HStack
-                        {
-                            Text("Preview")
-                                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture { isPreviewShowing = !isPreviewShowing }
+            content: {
+                if let url = client.imagerLatestImageURL {
+                    URLImage(url, delay: 0.5, placeholder: { _ in
+                        Text("Loading...")
+                    }, content: {
+                        $0.image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipped()
                     })
-            .onAppear {
-                URLImageService.shared.setDefaultExpiryTime(0.0)
-            }
+                } else {
+                    Image(systemName: "square.split.diagonal.2x2")
+                }
+            }, label: {
+                HStack
+                {
+                    Text("Preview")
+                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+                .onTapGesture { isPreviewShowing = !isPreviewShowing }
+            })
+            .disabled(!client.hasImageURL)
     }
 }
 
