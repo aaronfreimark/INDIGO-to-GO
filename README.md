@@ -1,6 +1,8 @@
 # INDIGO to GO
 Monitor services using the INDIGO astronomy protocol from iOS &amp; Mac Catalyst 
 
+<a href="https://apps.apple.com/us/app/indigo-to-go/id1533616268?itsct=apps_box&amp;itscg=30200" style="display: inline-block; overflow: hidden; border-top-left-radius: 13px; border-top-right-radius: 13px; border-bottom-right-radius: 13px; border-bottom-left-radius: 13px; width: 250px; height: 83px;"><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-US?size=250x83&amp;releaseDate=1603238400&h=7cc02d1c7fb2179180dc59b2dcb1a331" alt="Download on the App Store" style="border-top-left-radius: 13px; border-top-right-radius: 13px; border-bottom-right-radius: 13px; border-bottom-left-radius: 13px; width: 250px; height: 83px;"></a>
+
 ![Main Screen](Documentation/screen-main.png)
 
 * Uses Bonjour to discover agents on the network
