@@ -13,6 +13,7 @@
 		930C34AF2533AC160014A186 /* URLImage in Frameworks */ = {isa = PBXBuildFile; productRef = 930C34AE2533AC160014A186 /* URLImage */; };
 		930C34B32533BCAD0014A186 /* 1x1.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C34B22533BCAD0014A186 /* 1x1.png */; };
 		930C34B82533DBAE0014A186 /* ImagerProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930C34B72533DBAE0014A186 /* ImagerProgressView.swift */; };
+		930CA117254126AF00CFD5C7 /* TabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 930CA116254126AF00CFD5C7 /* TabView.swift */; };
 		9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9311AC9125129C2200725CB9 /* SettingsView.swift */; };
 		9315A9DD253E7F4E003A4062 /* INDIGO_Property_Tests.json in Resources */ = {isa = PBXBuildFile; fileRef = 93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */; };
 		9315A9DF253E7F6C003A4062 /* INDIGO_Property_Tests.json in Resources */ = {isa = PBXBuildFile; fileRef = 93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */; };
@@ -73,6 +74,7 @@
 		930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@3x.png"; sourceTree = "<group>"; };
 		930C34B22533BCAD0014A186 /* 1x1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1x1.png; sourceTree = "<group>"; };
 		930C34B72533DBAE0014A186 /* ImagerProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagerProgressView.swift; sourceTree = "<group>"; };
+		930CA116254126AF00CFD5C7 /* TabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabView.swift; sourceTree = "<group>"; };
 		9311AC9125129C2200725CB9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		931AF6332509B96F00EE6300 /* INDIGO to GO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "INDIGO to GO.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		931AF6362509B96F00EE6300 /* IndigoToGo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoToGo.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				930C34B72533DBAE0014A186 /* ImagerProgressView.swift */,
 				93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */,
 				935431FC253C0D7D008D3F17 /* DaylightView.swift */,
+				930CA116254126AF00CFD5C7 /* TabView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -379,6 +382,7 @@
 				938F010725114B2D00599096 /* IndigoItem.swift in Sources */,
 				931AF6372509B96F00EE6300 /* IndigoToGo.swift in Sources */,
 				93729243253723E5000DF0A6 /* StatusRow.swift in Sources */,
+				930CA117254126AF00CFD5C7 /* TabView.swift in Sources */,
 				93A9CB2E253BCA34004FF29A /* Daylight.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
