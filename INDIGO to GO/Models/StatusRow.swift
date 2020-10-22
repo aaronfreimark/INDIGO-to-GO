@@ -19,3 +19,7 @@ struct StatusRow {
     }
 
 }
+
+struct StatusRowTime: StatusRow {
+    
+}

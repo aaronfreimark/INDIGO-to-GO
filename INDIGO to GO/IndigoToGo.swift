@@ -13,7 +13,7 @@ struct INDIGO_to_GO: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
                 .environmentObject(client)
         }
     }

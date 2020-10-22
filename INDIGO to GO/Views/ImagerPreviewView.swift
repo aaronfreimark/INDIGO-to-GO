@@ -12,11 +12,19 @@ struct ImagerPreviewView: View {
 
     @EnvironmentObject var client: IndigoClient
     @State private var isPreviewShowing: Bool = false
-
+    
     var body: some View {
-        DisclosureGroup(
-            isExpanded: $isPreviewShowing,
-            content: {
+        
+        List {
+            Section {
+                Picker(selection: /*@START_MENU_TOKEN@*/.constant(1)/*@END_MENU_TOKEN@*/, label: /*@START_MENU_TOKEN@*/Text("Picker")/*@END_MENU_TOKEN@*/) {
+                    Text("Imager").tag(1)
+                    Text("Guider").tag(2)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
+            Section {
+                
                 if let url = client.imagerLatestImageURL {
                     URLImage(url, delay: 0.5, placeholder: { _ in
                         Text("Loading...")
@@ -29,17 +37,9 @@ struct ImagerPreviewView: View {
                 } else {
                     Image(systemName: "square.split.diagonal.2x2")
                 }
-            }, label: {
-                HStack
-                {
-                    Text("Preview")
-                        .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-                .onTapGesture { isPreviewShowing = !isPreviewShowing }
-            })
-            .disabled(!client.hasImageURL)
+            }
+        }
+        .listStyle(GroupedListStyle())
     }
 }
 

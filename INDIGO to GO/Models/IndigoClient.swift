@@ -12,6 +12,9 @@ import Combine
 import Network
 
 class IndigoClient: ObservableObject, IndigoConnectionDelegate {
+
+    // MARK: Properties
+    
     var id = UUID()
     var isPreview: Bool
     let queue = DispatchQueue(label: "Client connection Q")
@@ -91,6 +94,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     @Published var daylight: (start: Daylight, end: Daylight)?
     var hasDaylight: Bool { daylight != nil }
     
+    // MARK: - Init & Re-Init
     
     init(isPreview: Bool = false) {
         
@@ -148,7 +152,8 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         }
     }
 
-    // =============================================================================================
+    
+    // MARK: - Connection Collections
 
     func allServers() -> [String] {
             return Array(self.connections.keys)
@@ -161,15 +166,8 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         }
         return connectedServers
     }
-
-    func updateUI() {
-        self.updateProperties()
-        //self.location.updateUI(start: self.imagerStart, finish: self.imagerFinish)
-    }
     
-    
-    
-    // =============================================================================================
+    // MARK: - Server Commands
 
 
     func emergencyStopAll() {
@@ -189,13 +187,13 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         }
     }
 
-    // =============================================================================================
 
+    // MARK: - Connection Management
     
     func connectAll() {
         print("Connecting to servers: \(self.serversToConnect)")
         for server in self.serversToConnect {
-            // Make sure each agent is unique. We don't need multiple connections to an endpoint!
+            // Make sure each agent is unique. We don't need multiple connections to an endpoint!xwxx
             if server != "None" && !self.connectedServers().contains(server)  {
                 if let endpoint = self.bonjourBrowser.endpoint(name: server) {
                     self.queue.async {
@@ -211,7 +209,22 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         self.serversToConnect = []
     }
 
-    // =============================================================================================
+    func disconnect(connection: IndigoConnection) {
+        print("\(connection.name): Disconnecting client...")
+        connection.stop()
+    }
+    
+    func disconnectAll() {
+        print("Disconnecting \(self.serversToDisconnect)...")
+        for name in self.serversToDisconnect {
+            self.queue.async {
+                if let connection = self.connections[name] {
+                    self.disconnect(connection: connection)
+                }
+            }
+        }
+    }
+
 
     func receiveMessage(data: Data?, context: NWConnection.ContentContext?, isComplete: Bool, error: NWError?, source: IndigoConnection) {
         if let data = data, !data.isEmpty {
@@ -230,8 +243,6 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
             }
         }
     }
-
-    // =============================================================================================
 
 
     func connectionStateHasChanged(_ name: String, _ state: NWConnection.State) {
@@ -280,27 +291,72 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
             break
         }
     }
-
-    // =============================================================================================
-
-    func disconnect(connection: IndigoConnection) {
-        print("\(connection.name): Disconnecting client...")
-        connection.stop()
-    }
     
-    func disconnectAll() {
-        print("Disconnecting \(self.serversToDisconnect)...")
-        for name in self.serversToDisconnect {
-            self.queue.async {
-                if let connection = self.connections[name] {
-                    self.disconnect(connection: connection)
+    func injest(json: JSON, source: IndigoConnection) {
+        // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
+
+        for (type, subJson):(String, JSON) in json {
+            
+            // Is the is "def" or "set" Indigo types?
+            if (type.prefix(3) == "def") || (type.prefix(3) == "set") || type.prefix(3) == "del" {
+                let device = subJson["device"].stringValue
+                //let group = subJson["group"].stringValue
+                let name = subJson["name"].stringValue
+                let state = subJson["state"].stringValue
+                
+                // make sure we records only the devices we care about
+                if ["Imager Agent", "Guider Agent", "Mount Agent", "Server"].contains(device) {
+                    if subJson["items"].exists() {
+                        for (_, itemJson):(String, JSON) in subJson["items"] {
+                            
+                            let itemName = itemJson["name"].stringValue
+                            let key = "\(device) | \(name) | \(itemName)"
+
+                            let itemValue = itemJson["value"].stringValue
+                            let itemTarget = itemJson["target"].stringValue
+
+                            switch type.prefix(3) {
+                            case "def", "set":
+                                if !itemName.isEmpty && itemJson["value"].exists() {
+                                    self.setValue(key: key, toValue: itemValue, toState: state, toTarget: itemTarget)
+                                }
+                                
+                                // handle special cases
+                                if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
+                                    if let urlprefix = source.url {
+                                        let url = URL(string: "\(urlprefix)\(itemValue)?nonce=\(UUID())")!
+                                        DispatchQueue.main.async() {
+                                            self.imagerLatestImageURL = url
+                                            self.hasImageURL = true
+                                        }
+                                        print("imagerLatestImageURL: \(url)")
+                                    }
+                                }
+                                
+                                break
+                            case "del":
+                                self.delValue(key)
+                                break
+                            default:
+                                break
+                            }
+                        }
+                    }
+                    self.lastUpdate = Date()
                 }
             }
         }
     }
 
-    /// =============================================================================================
 
+    // MARK: - Update UI / MVVM
+    
+    func updateUI() {
+        self.updateProperties()
+        //self.location.updateUI(start: self.imagerStart, finish: self.imagerFinish)
+    }
+    
+    
     private func updateProperties() {
                         
         let keys = self.getKeys()
@@ -739,8 +795,7 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
     }
 
     
-    /// =============================================================================================
-
+    // MARK: - Low level thread safe funcs
 
     func getKeys() -> [String] {
         return self.queue.sync {
@@ -804,66 +859,6 @@ class IndigoClient: ObservableObject, IndigoConnectionDelegate {
         }
     }
 
-    
-    /// =============================================================================================
-
-    
-    
-    func injest(json: JSON, source: IndigoConnection) {
-        // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
-
-        for (type, subJson):(String, JSON) in json {
-            
-            // Is the is "def" or "set" Indigo types?
-            if (type.prefix(3) == "def") || (type.prefix(3) == "set") || type.prefix(3) == "del" {
-                let device = subJson["device"].stringValue
-                //let group = subJson["group"].stringValue
-                let name = subJson["name"].stringValue
-                let state = subJson["state"].stringValue
-                
-                // make sure we records only the devices we care about
-                if ["Imager Agent", "Guider Agent", "Mount Agent", "Server"].contains(device) {
-                    if subJson["items"].exists() {
-                        for (_, itemJson):(String, JSON) in subJson["items"] {
-                            
-                            let itemName = itemJson["name"].stringValue
-                            let key = "\(device) | \(name) | \(itemName)"
-
-                            let itemValue = itemJson["value"].stringValue
-                            let itemTarget = itemJson["target"].stringValue
-
-                            switch type.prefix(3) {
-                            case "def", "set":
-                                if !itemName.isEmpty && itemJson["value"].exists() {
-                                    self.setValue(key: key, toValue: itemValue, toState: state, toTarget: itemTarget)
-                                }
-                                
-                                // handle special cases
-                                if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
-                                    if let urlprefix = source.url {
-                                        let url = URL(string: "\(urlprefix)\(itemValue)?nonce=\(UUID())")!
-                                        DispatchQueue.main.async() {
-                                            self.imagerLatestImageURL = url
-                                            self.hasImageURL = true
-                                        }
-                                        print("imagerLatestImageURL: \(url)")
-                                    }
-                                }
-                                
-                                break
-                            case "del":
-                                self.delValue(key)
-                                break
-                            default:
-                                break
-                            }
-                        }
-                    }
-                    self.lastUpdate = Date()
-                }
-            }
-        }
-    }
         
 
 }

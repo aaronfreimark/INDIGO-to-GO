@@ -31,7 +31,7 @@ struct ContentView: View {
                     }
                 } else {
                     Section {
-                        Text("No INDIGO agents are connected. Please tap the Server button to find some on your local network.")
+                        Text("No INDIGO agents are connected. Please tap Settings to identify agents on your local network.")
                             .padding(30)
                     }
                 }
@@ -50,9 +50,9 @@ struct ContentView: View {
                 }
             }
 
-            if client.isImagerConnected {
-                ImagerPreviewView().environmentObject(client)
-            }
+//            if client.isImagerConnected {
+//                ImagerPreviewView().environmentObject(client)
+//            }
 
             // =================================================================== GUIDER
 
@@ -93,10 +93,10 @@ struct ContentView: View {
                 }
 
                 /// Servers Button
-                Button(action: serversButton) {
-                    Text("Servers")
-                }
-                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView().environmentObject(client) })
+//                Button(action: serversButton) {
+//                    Text("Servers")
+//                }
+//                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView().environmentObject(client) })
             }
             
         }
