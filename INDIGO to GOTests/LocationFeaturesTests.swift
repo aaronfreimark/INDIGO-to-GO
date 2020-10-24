@@ -37,7 +37,7 @@ class LocationFeaturesTests: XCTestCase {
         let lon = -73.95917
 
         let location = CLLocation(latitude: lat, longitude: lon)
-        let loc = LocationFeatures()
+        let loc = Location()
         loc.location = location
         loc.hasLocation = true
 
@@ -96,7 +96,7 @@ class LocationFeaturesTests: XCTestCase {
         for (index ,test) in tests.enumerated() {
             print("Test #\(index)...")
 
-            let daylight = loc.calculateDaylight(sequenceInterval: test.seq)
+            let daylight = loc.calculateDaylight(interval: test.seq)
 
             if test.start.dawn == nil {
                 XCTAssertNil(daylight.start.dawn)

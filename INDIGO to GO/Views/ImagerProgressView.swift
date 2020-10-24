@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ImagerProgressView: View {
     
-    @EnvironmentObject var client: IndigoClient
+    @EnvironmentObject var client: IndigoClientViewModel
     
     let meridianColor = Color.orange
     let haColor = Color.orange.opacity(0.3)
@@ -20,13 +20,8 @@ struct ImagerProgressView: View {
         let imagerTotalTime = CGFloat(client.imagerTotalTime)
         
         Group {
-            StatusRowView(sr: client.srSequenceStatus)
-            
             ZStack {
-                VStack {
-                    
-                    // Exposure Dots
-                    
+                VStack {    // Exposure Dots
                     GeometryReader { metrics in
                         HStack(alignment: .center, spacing: 0) {
                             ForEach(client.sequences, id: \.self) { sequence in
@@ -62,6 +57,7 @@ struct ImagerProgressView: View {
                                 Rectangle()
                                     .fill(self.haColor)
                                     .frame(width: metrics.size.width * (proportionMeridian - proportionHa))
+                                    .help(Text("Meridian Transit \(client.srMeridianTransit?.value ?? "")"))
                                 Spacer()
                             }
                         }
@@ -76,6 +72,7 @@ struct ImagerProgressView: View {
                             Rectangle()
                                 .fill(self.meridianColor)
                                 .frame(width: 2)
+                                .help(Text("HA Limit \(client.srHALimit?.value ?? "")"))
                             Spacer()
                         }
                     }
@@ -131,14 +128,18 @@ struct ImagerProgressView: View {
 
 struct ProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        List {
-            Section {
-                let client = IndigoClient(isPreview: true)
-                ImagerProgressView()
-                    .environmentObject(client)
-            }
-        }
-        .listStyle(GroupedListStyle())
+        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        ImagerProgressView()
+            .environmentObject(client)
+            .previewLayout(PreviewLayout.fixed(width: 400.0, height: 95.0))
+            .padding()
+
+        ImagerProgressView()
+            .environmentObject(client)
+            .previewLayout(PreviewLayout.fixed(width: 400.0, height: 95.0))
+            .padding()
+            .background(Color(.systemBackground))
+            .environment(\.colorScheme, .dark)
     }
 }
 

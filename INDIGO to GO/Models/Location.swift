@@ -10,10 +10,11 @@ import SwiftUI
 import CoreLocation
 import Solar
 
-class LocationFeatures: NSObject, CLLocationManagerDelegate {
+class Location: NSObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     var location: CLLocation?
     var nextSunrise: Date?
+    var nextSunset: Date?
 
     var isPreview: Bool
     @Published var hasLocation: Bool = false
@@ -47,20 +48,20 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
         self.hasLocation = false
     }
             
-    func calculateDaylight(sequenceInterval: DateInterval) -> (start: Daylight, end: Daylight) {
+    func calculateDaylight(interval: DateInterval) -> (start: Daylight, end: Daylight) {
         let tz = TimeZone.current
         var start = Daylight()
         var end = Daylight()
         let maxDuration: TimeInterval = 60*60*24
 
         // longer than 24 hours not allowed
-        if sequenceInterval.duration > maxDuration { return (start: start, end: end) }
+        if interval.duration > maxDuration { return (start: start, end: end) }
         
-//        print("Seq Start: \(sequenceInterval.start)")
-//        print("Seq End: \(sequenceInterval.end)")
+//        print("Seq Start: \(interval.start)")
+//        print("Seq End: \(interval.end)")
 
         if let location = self.location {
-            if let solar = Solar(for: sequenceInterval.start, coordinate: location.coordinate, timezone: tz) {
+            if let solar = Solar(for: interval.start, coordinate: location.coordinate, timezone: tz) {
                 start = Daylight(
                     asr: solar.astronomicalSunrise,
                     sr: solar.sunrise,
@@ -68,24 +69,30 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
                     ass: solar.astronomicalSunset
                 )
                 self.nextSunrise = solar.sunrise
-                start.nullifyIfOutside(sequenceInterval)
+                self.nextSunset = solar.sunset
+                start.nullifyIfOutside(interval)
             }
 
-            if let solar = Solar(for: sequenceInterval.end, coordinate: location.coordinate, timezone: tz) {
+            if let solar = Solar(for: interval.end, coordinate: location.coordinate, timezone: tz) {
                 end = Daylight(
                     asr: solar.astronomicalSunrise,
                     sr: solar.sunrise,
                     ss: solar.sunset,
                     ass: solar.astronomicalSunset
                 )
-                if let sunrise = solar.sunrise {
-                    if let nextSunrise = self.nextSunrise {
-                        self.nextSunrise = max(nextSunrise, sunrise)
-                    } else {
-                        self.nextSunrise = sunrise
-                    }
+                if let sunrise = solar.sunrise, let nextSunrise = self.nextSunrise {
+                    self.nextSunrise = max(nextSunrise, sunrise)
+                } else if let sunrise = solar.sunrise {
+                    self.nextSunrise = sunrise
                 }
-                end.nullifyIfOutside(sequenceInterval)
+
+                if let sunset = solar.sunset, let nextSunset = self.nextSunset {
+                    self.nextSunrise = max(nextSunset, sunset)
+                } else if let sunset = solar.sunset {
+                    self.nextSunset = sunset
+                }
+
+                end.nullifyIfOutside(interval)
             }
         }
         
@@ -104,8 +111,8 @@ class LocationFeatures: NSObject, CLLocationManagerDelegate {
 
 struct LocationProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClient(isPreview: true)
-        ContentView()
+        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        MonitorView()
             .environmentObject(client)
     }
 }

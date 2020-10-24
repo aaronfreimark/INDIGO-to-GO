@@ -10,18 +10,18 @@ import SwiftUI
 
 struct StatusRowView: View {
     var sr: StatusRow?
-    let width: CGFloat = 20
         
     var body: some View {
         if sr != nil && sr!.isSet {
             
             HStack {
-                iconView
-                    .frame(width: width, alignment: .leading)
-                Text(sr!.text)
+                Label(
+                    title: { Text(sr!.text) },
+                    icon: { iconView }
+                )
                 Spacer()
                 Text(sr!.value)
-                    .font(.callout).foregroundColor(.gray)
+                    .foregroundColor(.gray)
             }
 
         } else { EmptyView() }
@@ -53,7 +53,21 @@ struct StatusRowView: View {
 
 struct StatusRowView_Previews: PreviewProvider {
     static var previews: some View {
-        let sr = StatusRow(text: "Description", value: "Value", status: .ok)
+        let sr = StatusRowText(text: "Description", value: "Value", status: .ok)
         StatusRowView(sr: sr)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
+
+        let sr2 = StatusRowText(text: "Description", value: "Alert", status: .alert)
+        StatusRowView(sr: sr2)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
+            .background(Color(.systemBackground))
+            .environment(\.colorScheme, .dark)
+
+        let sr3 = StatusRowTime(text: "Description", status: .custom("star.fill"), date: Date())
+        StatusRowView(sr: sr3)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
     }
 }

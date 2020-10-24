@@ -41,6 +41,8 @@ struct IndigoSequence: Hashable {
         
     }
     
+    // FIXME: This shold be a View in its own file
+    
     func progressView(imagerTotalTime: CGFloat, enclosingWidth: CGFloat) -> some View {
         let proportion: CGFloat = CGFloat(self.totalTime) / imagerTotalTime
         let widthPx =  proportion * CGFloat(enclosingWidth)
@@ -65,5 +67,4 @@ struct IndigoSequence: Hashable {
         }.frame(width: widthPx)
 
     }
-    
 }

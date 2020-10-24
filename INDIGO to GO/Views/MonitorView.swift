@@ -7,46 +7,57 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct MonitorView: View {
+    
     /// The interesting stuff is in this object!
-    @EnvironmentObject var client: IndigoClient
+    @EnvironmentObject var client: IndigoClientViewModel
         
-    /// Set up a timer for periodic refresh
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State var isShowingSpinner = true
     
     /// Keep track of whether a sheet is showing or not.
     @State private var isSettingsSheetShowing: Bool = false
     @State private var isAlertShowing: Bool = false
+    @State private var isTimesShowing: Bool = false
     
     var body: some View {
         
         List {
             if !client.isAnythingConnected {
-                if self.isShowingSpinner {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                } else {
-                    Section {
-                        Text("No INDIGO agents are connected. Please tap Settings to identify agents on your local network.")
-                            .padding(30)
-                    }
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .font(.largeTitle)
+                        .padding(30)
+                    Text("No INDIGO agents are connected. Please tap Settings to identify agents on your local network.")
                 }
+                .font(.footnote)
+                
+                #if DEBUG
+                Text("Connected: \(client.isAnythingConnected ? "Y" : "N")")
+                Text("Imager: \(client.isImagerConnected ? "Y" : "N")")
+                Text("Guider: \(client.isGuiderConnected ? "Y" : "N")")
+                Text("Mount: \(client.isMountConnected ? "Y" : "N")")
+                #endif
             }
 
             // =================================================================== SEQUENCE
 
             if client.isImagerConnected || client.isMountConnected {
-                Section(header: Text("Sequence")) {
-                    if client.isImagerConnected  { ImagerProgressView().environmentObject(client) }
+                Section {
+                    if client.isImagerConnected  {
+                        ImagerProgressView()
+                            .environmentObject(client)
+                    }
+                }
 
-                    StatusRowView(sr: client.srEstimatedCompletion)
-                    StatusRowView(sr: client.srHALimit)
-                    StatusRowView(sr: client.srMeridianTransit)
-                    StatusRowView(sr: client.srSunrise)
+
+                Section(header: Text("Sequence")) {
+                    StatusRowView(sr: client.srSequenceStatus)
+                    DisclosureGroup("Timing") {
+                        ForEach(client.timeStatusRows) { sr in
+                            StatusRowView(sr: sr)
+                        }
+                    }
                 }
             }
 
@@ -101,55 +112,6 @@ struct ContentView: View {
             
         }
         .listStyle(GroupedListStyle())
-        .onReceive(timer) { input in
-            if !isSettingsSheetShowing {
-                client.updateUI()
-            }
-        }
-        .onAppear(perform: {
-            /// Start up Bonjour, let stuff populate
-            self.showSpinner()
-            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                client.bonjourBrowser.seek()
-            })
-            
-            /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
-                }
-            }
-
-            /// after 2 seconds search again
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
-                }
-            }
-
-        })
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-            
-            /// Start up Bonjour, let stuff populate
-            self.showSpinner()
-            DispatchQueue.main.asyncAfter(deadline: .now(), execute: {
-                client.bonjourBrowser.seek()
-            })
-            
-            /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
-                }
-            }
-            /// after 2 seconds search again
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
-                }
-            }
-        }
-
     }
     
     private var ParkAndWarmButton: some View {
@@ -191,10 +153,10 @@ struct ContentView: View {
 
 
 
-struct ContentView_Previews: PreviewProvider {
+struct MonitorView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClient(isPreview: true)
-        ContentView()
+        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        MonitorView()
             .environmentObject(client)
     }
 }

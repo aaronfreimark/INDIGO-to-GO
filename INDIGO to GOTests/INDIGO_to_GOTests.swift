@@ -33,12 +33,15 @@ class INDIGO_to_GOTests: XCTestCase {
             for (_, propJson):(String, JSON) in testJson["properties"] {
                 client.setValue(key: propJson["key"].string!, toValue: propJson["value"].string!, toState: propJson["State"].string!)
             }
+            XCTAssertEqual(client.getKeys().count, Int(testJson["properties"].count))
 
-            client.updateUI()
+            let clientVM = IndigoClientViewModel(client: client)
+            clientVM.update()
             
-            XCTAssertEqual(client.srSequenceStatus?.value , "\(testJson["currentImage"]) / \(testJson["totalImages"])")
-            XCTAssertEqual(client.imagerTotalTime, testJson["totalTime"].float)
-            XCTAssertEqual(client.imagerElapsedTime , testJson["elapsedTime"].float)
+            XCTAssertEqual(clientVM.client.getKeys().count, Int(testJson["properties"].count))
+            XCTAssertEqual(clientVM.srSequenceStatus?.value , "\(testJson["currentImage"]) / \(testJson["totalImages"])")
+            XCTAssertEqual(clientVM.imagerTotalTime, testJson["totalTime"].float)
+            XCTAssertEqual(clientVM.imagerElapsedTime , testJson["elapsedTime"].float)
         }
     }
     
@@ -48,8 +51,8 @@ class INDIGO_to_GOTests: XCTestCase {
         let keycountBefore = client.getKeys().count
         XCTAssertEqual(keycountBefore, 0)
         
-        let count = 1000
-        for _ in 1...1000 {
+        let count = 10000
+        for _ in 1...10000 {
             client.setValue(key: UUID().uuidString, toValue: UUID().uuidString, toState: "Ok")
         }
         let keycountDuring = client.getKeys().count

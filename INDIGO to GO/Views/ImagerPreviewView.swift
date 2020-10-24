@@ -10,21 +10,21 @@ import URLImage
 
 struct ImagerPreviewView: View {
 
-    @EnvironmentObject var client: IndigoClient
-    @State private var isPreviewShowing: Bool = false
-    
+    @EnvironmentObject var client: IndigoClientViewModel
+    @State private var camera: String = "Imager" // Guider
+        
     var body: some View {
         
-        List {
-            Section {
-                Picker(selection: /*@START_MENU_TOKEN@*/.constant(1)/*@END_MENU_TOKEN@*/, label: /*@START_MENU_TOKEN@*/Text("Picker")/*@END_MENU_TOKEN@*/) {
-                    Text("Imager").tag(1)
-                    Text("Guider").tag(2)
+            VStack {
+                Picker(selection: $camera, label: Text("Camera")) {
+                    Text("Imager").tag("Imager")
+                    Text("Guider").tag("Guider")
                 }
                 .pickerStyle(SegmentedPickerStyle())
-            }
-            Section {
-                
+                .padding()
+
+                Spacer().frame(maxWidth: .infinity)
+
                 if let url = client.imagerLatestImageURL {
                     URLImage(url, delay: 0.5, placeholder: { _ in
                         Text("Loading...")
@@ -35,23 +35,24 @@ struct ImagerPreviewView: View {
                             .clipped()
                     })
                 } else {
-                    Image(systemName: "square.split.diagonal.2x2")
+                    Image(systemName: "photo")
+                        .font(.largeTitle)
+                        .imageScale(.large)
                 }
+                
+                Spacer().frame(maxWidth: .infinity)
+                
+
             }
-        }
-        .listStyle(GroupedListStyle())
+            .frame(maxHeight: .infinity)
+            .background(Color(.secondarySystemBackground))
     }
 }
 
 struct ImagerPreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        List {
-            Section {
-                let client = IndigoClient(isPreview: true)
-                ImagerPreviewView()
-                    .environmentObject(client)
-            }
-        }
-        .listStyle(GroupedListStyle())
+        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        ImagerPreviewView()
+            .environmentObject(client)
     }
 }
