@@ -236,7 +236,7 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
     
     func injest(json: JSON, source: IndigoConnection) {
         #if DEBUG
-        if json.rawString()!.contains("CCD_PREVIEW") { print(json.rawString()!) }
+//        if json.rawString()!.contains("CCD_PREVIEW") { print(json.rawString()!) }
         #endif
         
         for (type, subJson):(String, JSON) in json {
