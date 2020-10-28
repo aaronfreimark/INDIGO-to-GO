@@ -32,12 +32,6 @@ struct MonitorView: View {
                 }
                 .font(.footnote)
                 
-                #if DEBUG
-                Text("Connected: \(client.isAnythingConnected ? "Y" : "N")")
-                Text("Imager: \(client.isImagerConnected ? "Y" : "N")")
-                Text("Guider: \(client.isGuiderConnected ? "Y" : "N")")
-                Text("Mount: \(client.isMountConnected ? "Y" : "N")")
-                #endif
             }
 
             // =================================================================== SEQUENCE
@@ -51,13 +45,18 @@ struct MonitorView: View {
                 }
 
 
-                Section(header: Text("Sequence")) {
+                Section {
                     StatusRowView(sr: client.srSequenceStatus)
-                    DisclosureGroup("Timing") {
-                        ForEach(client.timeStatusRows) { sr in
-                            StatusRowView(sr: sr)
-                        }
-                    }
+                    StatusRowView(sr: client.srCoolingStatus)
+                    StatusRowView(sr: client.srMountStatus)
+//                    DisclosureGroup("Timing") {
+//                            ForEach(client.timeStatusRows) { sr in
+//                                StatusRowView(sr: sr)
+//                                    .padding(.vertical, 1)
+//                                    .padding(.horizontal, 30)
+//                            }
+//                        .font(.system(size: 13))
+//                    }
                 }
             }
 
@@ -77,14 +76,6 @@ struct MonitorView: View {
                 EmptyView()
             }
 
-            // =================================================================== HARDWARE
-
-            if client.isMountConnected || client.isImagerConnected {
-                Section(header: Text("Hardware")) {
-                    StatusRowView(sr: client.srCoolingStatus)
-                    StatusRowView(sr: client.srMountStatus)
-                }
-            }
             
             Section(footer:
                         VStack(alignment: .leading) {

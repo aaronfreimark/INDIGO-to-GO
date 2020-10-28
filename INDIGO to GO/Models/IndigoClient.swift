@@ -267,14 +267,14 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
                                 
                                 /// enable previews if offered
                                 if key == "Imager Agent | CCD_PREVIEW | ENABLED" && type == "defSwitchVector" {
-                                    self.queue.asyncAfter(deadline: .now() + 1.0) {
+                                    self.queue.asyncAfter(deadline: .now() + 2.0) {
                                         source.enablePreviews()
                                     }
                                 }
                                 
                                 /// enable previews if offered
                                 if key == "Guider Agent | CCD_PREVIEW | ENABLED" && type == "defSwitchVector" {
-                                    self.queue.asyncAfter(deadline: .now() + 1.0) {
+                                    self.queue.asyncAfter(deadline: .now() + 2.0) {
                                         source.enablePreviews()
                                     }
                                 }

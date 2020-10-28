@@ -22,14 +22,16 @@ struct DaylightView: View {
     private var filledRectangle: some View {
         switch type {
         case .dawn:
-            return AnyView(Rectangle()
+            return AnyView(
+                Rectangle()
                 .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor.opacity(0.0), self.sunColor]), startPoint: .leading, endPoint: .trailing)))
         case .day:
             return AnyView(
                 Rectangle()
                 .fill(sunColor))
         case .twilight:
-            return AnyView(Rectangle()
+            return AnyView(
+                Rectangle()
                 .fill(LinearGradient(gradient: Gradient(colors: [self.sunColor, self.sunColor.opacity(0.0)]), startPoint: .leading, endPoint: .trailing)))
         }
     }
@@ -65,9 +67,27 @@ struct DaylightView: View {
     }
 }
 
-//struct SwiftUIView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        SwiftUIView()
-//    }
-//}
+struct DaylightView_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        let time: CGFloat = 60*60*3
+        let span = DateInterval(start: Date(), end: Date().addingTimeInterval(30*60))
+
+        DaylightView(span: span, time: time, type: .dawn)
+            .previewDisplayName("Dawn")
+            .previewLayout(PreviewLayout.fixed(width: 400.0, height: 95.0))
+            .padding()
+
+        DaylightView(span: span, time: time, type: .day)
+            .previewDisplayName("Day")
+            .previewLayout(PreviewLayout.fixed(width: 400.0, height: 95.0))
+            .padding()
+
+        DaylightView(span: span, time: time, type: .twilight)
+            .previewDisplayName("Twilight")
+            .previewLayout(PreviewLayout.fixed(width: 400.0, height: 95.0))
+            .padding()
+
+    }
+}
 

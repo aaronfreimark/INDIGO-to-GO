@@ -12,10 +12,6 @@ struct Daylight: Equatable {
     var day: DateInterval?
     var twilight: DateInterval?
     
-    var hasDawn: Bool { dawn != nil }
-    var hasDay: Bool { day != nil }
-    var hasTwilight: Bool { twilight != nil }
-    
     init() { }
     
     init(dawn: DateInterval?, day: DateInterval?, twilight: DateInterval?) {

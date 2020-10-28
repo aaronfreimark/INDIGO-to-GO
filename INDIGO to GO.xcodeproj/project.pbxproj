@@ -209,8 +209,8 @@
 			children = (
 				930CA116254126AF00CFD5C7 /* MainTabView.swift */,
 				931AF6382509B96F00EE6300 /* MonitorView.swift */,
-				930C34B72533DBAE0014A186 /* ImagerProgressView.swift */,
 				93BFF7D72524F3C300B733CE /* StatusRowView.swift */,
+				930C34B72533DBAE0014A186 /* ImagerProgressView.swift */,
 				935431FC253C0D7D008D3F17 /* DaylightView.swift */,
 				93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */,
 				9311AC9125129C2200725CB9 /* SettingsView.swift */,
