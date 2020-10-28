@@ -12,10 +12,11 @@ protocol StatusRow {
     var text: String { get }
     var value: String { get }
     var status: StatusRowStatus { get }
+    var date: Date? { get }
 }
 
 enum StatusRowStatus {
-    case ok, warn, alert, unknown, blank
+    case ok, warn, alert, unknown, blank, clock, start, end
     case custom(String)
 }
 
@@ -24,6 +25,7 @@ struct StatusRowText: StatusRow, Identifiable {
     var text: String
     var value: String = ""
     var status: StatusRowStatus = .blank
+    var date: Date?
     let id = UUID()
 
 }

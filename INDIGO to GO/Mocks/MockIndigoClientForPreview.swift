@@ -12,7 +12,8 @@ import Combine
 
 class MockIndigoClientForPreview: IndigoPropertyService {
     var imagerLatestImageURL: URL?
-    
+    var guiderLatestImageURL: URL?
+
     var bonjourBrowser = BonjourBrowser()
     
     var defaultImager = "Mock Imager"
@@ -73,6 +74,7 @@ class MockIndigoClientForPreview: IndigoPropertyService {
         self.setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
         
         self.imagerLatestImageURL = URL(string: "https://indigotogo.app/512.png")
+        self.guiderLatestImageURL = URL(string: "https://indigotogo.app/512.png")
     }
     
     

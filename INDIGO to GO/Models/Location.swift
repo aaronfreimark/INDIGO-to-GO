@@ -13,10 +13,8 @@ import Solar
 class Location: NSObject, CLLocationManagerDelegate {
     let manager = CLLocationManager()
     var location: CLLocation?
-    var nextSunrise: Date?
-    var nextSunset: Date?
+    let tz = TimeZone.current
 
-    var isPreview: Bool
     @Published var hasLocation: Bool = false
     
     
@@ -26,8 +24,7 @@ class Location: NSObject, CLLocationManagerDelegate {
      
      */
     
-    init(isPreview: Bool = false) {
-        self.isPreview = isPreview
+    override init() {
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyKilometer
@@ -49,7 +46,6 @@ class Location: NSObject, CLLocationManagerDelegate {
     }
             
     func calculateDaylight(interval: DateInterval) -> (start: Daylight, end: Daylight) {
-        let tz = TimeZone.current
         var start = Daylight()
         var end = Daylight()
         let maxDuration: TimeInterval = 60*60*24
@@ -61,37 +57,24 @@ class Location: NSObject, CLLocationManagerDelegate {
 //        print("Seq End: \(interval.end)")
 
         if let location = self.location {
-            if let solar = Solar(for: interval.start, coordinate: location.coordinate, timezone: tz) {
+            if let solar = Solar(for: interval.start, coordinate: location.coordinate, timezone: self.tz) {
                 start = Daylight(
                     asr: solar.astronomicalSunrise,
                     sr: solar.sunrise,
                     ss: solar.sunset,
                     ass: solar.astronomicalSunset
                 )
-                self.nextSunrise = solar.sunrise
-                self.nextSunset = solar.sunset
                 start.nullifyIfOutside(interval)
             }
 
-            if let solar = Solar(for: interval.end, coordinate: location.coordinate, timezone: tz) {
+            if let solar = Solar(for: interval.end, coordinate: location.coordinate, timezone: self.tz) {
                 end = Daylight(
                     asr: solar.astronomicalSunrise,
                     sr: solar.sunrise,
                     ss: solar.sunset,
                     ass: solar.astronomicalSunset
                 )
-                if let sunrise = solar.sunrise, let nextSunrise = self.nextSunrise {
-                    self.nextSunrise = max(nextSunrise, sunrise)
-                } else if let sunrise = solar.sunrise {
-                    self.nextSunrise = sunrise
-                }
-
-                if let sunset = solar.sunset, let nextSunset = self.nextSunset {
-                    self.nextSunrise = max(nextSunset, sunset)
-                } else if let sunset = solar.sunset {
-                    self.nextSunset = sunset
-                }
-
+                
                 end.nullifyIfOutside(interval)
             }
         }
@@ -105,7 +88,50 @@ class Location: NSObject, CLLocationManagerDelegate {
         return (start: start, end: end)
     }
     
+    func nextSunrise(from: Date? = Date()) -> Date? {
+        let dateToCheck = from ?? Date()
+        
+        if let location = self.location {
+            let solar = Solar(for: dateToCheck, coordinate: location.coordinate, timezone: self.tz)
+            
+            if let sunrise = solar?.sunrise {
+                if sunrise > dateToCheck {
+                    return sunrise
+                }
+            }
+            
+            let secondDateToCheck = dateToCheck.addingTimeInterval(24*60*60)
+            let secondSolar = Solar(for: secondDateToCheck, coordinate: location.coordinate, timezone: self.tz)
+            
+            if let sunrise = secondSolar?.sunrise {
+                return sunrise
+            }
+        }
+        return nil
+    }
     
+    func nextSunset(from: Date? = Date()) -> Date? {
+        let dateToCheck = from ?? Date()
+        
+        if let location = self.location {
+            let solar = Solar(for: dateToCheck, coordinate: location.coordinate, timezone: self.tz)
+            
+            if let sunset = solar?.sunset {
+                if sunset > dateToCheck {
+                    return sunset
+                }
+            }
+            
+            let secondDateToCheck = dateToCheck.addingTimeInterval(24*60*60)
+            let secondSolar = Solar(for: secondDateToCheck, coordinate: location.coordinate, timezone: self.tz)
+            
+            if let sunset = secondSolar?.sunset {
+                return sunset
+            }
+        }
+        return nil
+    }
+
 }
 
 

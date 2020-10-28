@@ -33,7 +33,7 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
 
     /// Properties for the image preview
     @Published var imagerLatestImageURL: URL?
-    @Published var hasImageURL = false
+    @Published var guiderLatestImageURL: URL?
 
     /// Properties for Bonjour
     @Published var bonjourBrowser: BonjourBrowser = BonjourBrowser()
@@ -201,9 +201,6 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
             self.queue.asyncAfter(deadline: .now() + 0.25) {
                 connection.hello()
             }
-            self.queue.asyncAfter(deadline: .now() + 2.0) {
-                connection.enablePreviews()
-            }
         case .setup:
             break
         case .waiting:
@@ -238,8 +235,10 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
     }
     
     func injest(json: JSON, source: IndigoConnection) {
-        // if json.rawString()!.contains("RMSE") { print(json.rawString()) }
-
+        #if DEBUG
+        if json.rawString()!.contains("CCD_PREVIEW") { print(json.rawString()!) }
+        #endif
+        
         for (type, subJson):(String, JSON) in json {
             
             // Is the is "def" or "set" Indigo types?
@@ -266,18 +265,42 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
                                     self.setValue(key: key, toValue: itemValue, toState: state, toTarget: itemTarget)
                                 }
                                 
+                                /// enable previews if offered
+                                if key == "Imager Agent | CCD_PREVIEW | ENABLED" && type == "defSwitchVector" {
+                                    self.queue.asyncAfter(deadline: .now() + 1.0) {
+                                        source.enablePreviews()
+                                    }
+                                }
+                                
+                                /// enable previews if offered
+                                if key == "Guider Agent | CCD_PREVIEW | ENABLED" && type == "defSwitchVector" {
+                                    self.queue.asyncAfter(deadline: .now() + 1.0) {
+                                        source.enablePreviews()
+                                    }
+                                }
+                                
                                 // handle special cases
                                 if key == "Imager Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
                                     if let urlprefix = source.url {
                                         let url = URL(string: "\(urlprefix)\(itemValue)?nonce=\(UUID())")!
                                         DispatchQueue.main.async() {
                                             self.imagerLatestImageURL = url
-                                            self.hasImageURL = true
                                         }
                                         print("imagerLatestImageURL: \(url)")
                                     }
                                 }
+
+                                if key == "Guider Agent | CCD_PREVIEW_IMAGE | IMAGE" && state == "Ok" && itemValue.count > 0 {
+                                    if let urlprefix = source.url {
+                                        let url = URL(string: "\(urlprefix)\(itemValue)?nonce=\(UUID())")!
+                                        DispatchQueue.main.async() {
+                                            self.guiderLatestImageURL = url
+                                        }
+                                        print("guiderLatestImageURL: \(url)")
+                                    }
+                                }
                                 
+
                                 break
                             case "del":
                                 self.delValue(key)

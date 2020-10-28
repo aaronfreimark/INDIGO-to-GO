@@ -12,43 +12,72 @@ struct StatusRowView: View {
     var sr: StatusRow?
         
     var body: some View {
-        if sr != nil && sr!.isSet {
-            
+        if let sr = self.sr, sr.isSet {
             HStack {
                 Label(
-                    title: { Text(sr!.text) },
+                    title: { Text(sr.text) },
                     icon: { iconView }
                 )
                 Spacer()
-                Text(sr!.value)
+                Text(sr.value)
                     .foregroundColor(.gray)
             }
-
-        } else { EmptyView() }
+        }
     }
     
     private var iconView: some View {
-        switch sr!.status {
-        case .ok:
-            return AnyView(Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green))
-        case .warn:
-            return AnyView(Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.yellow))
-        case .alert:
-            return AnyView(Image(systemName: "stop.fill")
-                            .foregroundColor(.red))
-        case .unknown:
-            return AnyView(Image(systemName:"questionmark.circle")
-                            .foregroundColor(.gray))
-        case .blank:
+        if let sr = self.sr {
+            switch sr.status {
+            
+            case .ok:
+                return AnyView(Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green))
+                
+            case .warn:
+                return AnyView(Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.yellow))
+                
+            case .alert:
+                return AnyView(Image(systemName: "stop.fill")
+                                .foregroundColor(.red))
+                
+            case .unknown:
+                return AnyView(Image(systemName:"questionmark.circle")
+                                .foregroundColor(.gray))
+                
+            case .start:
+                return AnyView(Image(systemName:"square.and.arrow.up")
+                                .rotationEffect(Angle(degrees: 90.0))
+                                .foregroundColor(.gray))
+                
+            case .end:
+                return AnyView(Image(systemName:"square.and.arrow.down")
+                                .rotationEffect(Angle(degrees: -90.0))
+                                .foregroundColor(.gray))
+                
+            case .blank:
+                return AnyView(EmptyView())
+                
+            case .clock:
+                if let date = sr.date {
+                    return AnyView(
+                        ClockView(date)
+                            .frame(width: 16, height: 16)
+                    )
+                   
+                } else {
+                    return AnyView(EmptyView())
+                }
+                
+            case let .custom(systemImage):
+                return AnyView(Image(systemName: systemImage)
+                                .foregroundColor(.gray))
+            }
+        } else {
             return AnyView(EmptyView())
-        case let .custom(systemImage):
-            return AnyView(Image(systemName: systemImage)
-                        .foregroundColor(.gray))
         }
     }
-
+    
 }
 
 struct StatusRowView_Previews: PreviewProvider {
@@ -69,5 +98,21 @@ struct StatusRowView_Previews: PreviewProvider {
         StatusRowView(sr: sr3)
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding()
+
+        let sr4 = StatusRowTime(text: "Clock", status: .clock, date: Date())
+        StatusRowView(sr: sr4)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
+
+        let sr5 = StatusRowTime(text: "Start", status: .start, date: Date())
+        StatusRowView(sr: sr5)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
+
+        let sr6 = StatusRowTime(text: "End", status: .end, date: Date())
+        StatusRowView(sr: sr6)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
+
     }
 }

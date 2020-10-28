@@ -62,7 +62,9 @@ class IndigoClientViewModel: ObservableObject {
             self.srMeridianTransit,
             self.srSunrise,
             self.srSunset
-        ].compactMap { $0 }.sorted()
+        ]
+        .compactMap { $0 }
+        .sorted()
     }
     
     /// properties for button
@@ -73,8 +75,8 @@ class IndigoClientViewModel: ObservableObject {
     
     /// Properties for the image preview
     @Published var imagerLatestImageURL: URL?
-    @Published var hasImageURL = false
-    
+    @Published var guiderLatestImageURL: URL?
+
     
     /// Properties for sunrise & sunset
     let secondsInDay: Int = 24 * 60 * 60
@@ -85,7 +87,7 @@ class IndigoClientViewModel: ObservableObject {
     init(client: IndigoPropertyService, isPreview: Bool = false) {
         self.isPreview = isPreview
         self.client = client
-        self.location = Location(isPreview: isPreview)
+        self.location = Location()
         
         self.anyCancellable = self.client.objectWillChange.sink { [weak self] (_) in
             self?.objectWillChange.send()
@@ -266,14 +268,14 @@ class IndigoClientViewModel: ObservableObject {
         self.srStart = StatusRowTime(
             isSet: self.isImagerConnected,
             text: "Sequence Start",
-            status: .custom("clock"),
+            status: .custom("rectangle.leftthird.inset.fill"),
             date: self.imagerStart
         )
 
         self.srEstimatedCompletion = StatusRowTime(
             isSet: self.isImagerConnected,
             text: "Estimated Completion",
-            status: .custom("clock"),
+            status: .custom("rectangle.rightthird.inset.fill"),
             date: self.imagerFinish
         )
     }
@@ -386,11 +388,10 @@ class IndigoClientViewModel: ObservableObject {
         self.mountSecondsUntilMeridian = secondsUntilMeridian
         
         self.srMeridianTransit = StatusRowTime(
-            isSet: self.isMountConnected,
+            isSet: isMountTracking,
             text: "Meridian Transit",
-            status: .custom("ellipsis.circle"),
-            date: isMountTracking ? mountMeridianTime : nil,
-            textIfNil: "Not tracking"
+            status: .custom("togglepower"),
+            date: mountMeridianTime
         )
         
         
@@ -412,11 +413,10 @@ class IndigoClientViewModel: ObservableObject {
         self.mountSecondsUntilHALimit = secondsUntilHALimit
         
         self.srHALimit = StatusRowTime(
-            isSet: isMountHALimitEnabled,
+            isSet: isMountTracking,
             text: "HA Limit",
             status: .custom("exclamationmark.arrow.circlepath"),
-            date: isMountTracking ? mountHALimitTime : nil,
-            textIfNil: "Not tracking"
+            date: mountHALimitTime
         )
         
     }
@@ -477,26 +477,30 @@ class IndigoClientViewModel: ObservableObject {
             let sequenceInterval = DateInterval(start: start, end: end)
             self.daylight = self.location.calculateDaylight(interval: sequenceInterval)
             
+            if let nextSunrise = self.location.nextSunrise(from: self.imagerStart), sequenceInterval.contains(nextSunrise) {
+                self.srSunrise = StatusRowTime(
+                    isSet: location.hasLocation,
+                    text: "Sunrise",
+                    status: .custom("sunrise"),
+                    date: nextSunrise
+                )
+            }
+        
+            if let nextSunset = self.location.nextSunset(from: self.imagerStart), sequenceInterval.contains(nextSunset) {
+                self.srSunset = StatusRowTime(
+                    isSet: location.hasLocation,
+                    text: "Sunset",
+                    status: .custom("sunset"),
+                    date: self.location.nextSunset(from: self.imagerStart)
+                )
+            }
+
         } else {
             /// Sometimes we don't have an image sequence
             self.daylight = nil
         }
         
-        self.srSunrise = StatusRowTime(
-            isSet: location.hasLocation,
-            text: "Sunrise",
-            status: .custom("sun.max"),
-            date: self.location.nextSunrise
-        )
-
-        if let start = self.imagerStart, let end = self.imagerFinish, let sunset = self.location.nextSunset {
-            self.srSunset = StatusRowTime(
-                isSet: location.hasLocation && DateInterval(start: start, end: end).contains(sunset),
-                text: "Sunset",
-                status: .custom("sun.max.fill"),
-                date: self.location.nextSunset
-            )
-        }
+        
 
     }
     
@@ -514,6 +518,7 @@ class IndigoClientViewModel: ObservableObject {
     
     private func updateImages() {
         self.imagerLatestImageURL = client.imagerLatestImageURL
+        self.guiderLatestImageURL = client.guiderLatestImageURL
     }
          
 }

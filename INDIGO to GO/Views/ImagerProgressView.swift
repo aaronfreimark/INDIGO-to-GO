@@ -57,7 +57,7 @@ struct ImagerProgressView: View {
                                 Rectangle()
                                     .fill(self.haColor)
                                     .frame(width: metrics.size.width * (proportionMeridian - proportionHa))
-                                    .help(Text("Meridian Transit \(client.srMeridianTransit?.value ?? "")"))
+                                    .help(Text("HA Limit \(client.srHALimit?.value ?? "")"))
                                 Spacer()
                             }
                         }
@@ -72,7 +72,7 @@ struct ImagerProgressView: View {
                             Rectangle()
                                 .fill(self.meridianColor)
                                 .frame(width: 2)
-                                .help(Text("HA Limit \(client.srHALimit?.value ?? "")"))
+                                .help(Text("Meridian Transit \(client.srMeridianTransit?.value ?? "")"))
                             Spacer()
                         }
                     }

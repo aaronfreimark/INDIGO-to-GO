@@ -25,6 +25,7 @@ protocol IndigoPropertyService {
 
     // FIXME: Move to its own model
     var imagerLatestImageURL: URL? { get }
+    var guiderLatestImageURL: URL? { get }
     var bonjourBrowser: BonjourBrowser { get set }
     
     // FIXME: Move to ViewModel

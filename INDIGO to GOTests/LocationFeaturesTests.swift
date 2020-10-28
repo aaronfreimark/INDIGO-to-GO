@@ -13,7 +13,6 @@ import CoreLocation
 class LocationFeaturesTests: XCTestCase {
 
     private let testAccuracy: TimeInterval = 60 * 2
-
     
 //    override func setUpWithError() throws {
 //        // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -163,8 +162,26 @@ class LocationFeaturesTests: XCTestCase {
                     XCTFail("daylight.start.twilight is unexpectedly nil")
                 }
             }
-
-
+            
         }
+        
+        /// Test nextSunrise & nextSunset: 2020-10-17 02:31:00
+        XCTAssertEqual(loc.nextSunrise(from: f.date(from: "2020-10-17 02:31:00")!)!.timeIntervalSince1970, day1SR.timeIntervalSince1970, accuracy: testAccuracy)
+        XCTAssertEqual(loc.nextSunset(from: f.date(from: "2020-10-17 02:31:00")!)!.timeIntervalSince1970, day1SS.timeIntervalSince1970, accuracy: testAccuracy)
+
+        /// Test nextSunrise & nextSunset: 2020-10-17 12:00:00
+        XCTAssertEqual(loc.nextSunrise(from: f.date(from: "2020-10-17 12:00:00")!)!.timeIntervalSince1970, day2SR.timeIntervalSince1970, accuracy: testAccuracy)
+        XCTAssertEqual(loc.nextSunset(from: f.date(from: "2020-10-17 12:00:00")!)!.timeIntervalSince1970, day1SS.timeIntervalSince1970, accuracy: testAccuracy)
+
+        /// Test nextSunrise & nextSunset: 2020-10-17 22:31:00
+        XCTAssertEqual(loc.nextSunrise(from: f.date(from: "2020-10-17 22:31:00")!)!.timeIntervalSince1970, day2SR.timeIntervalSince1970, accuracy: testAccuracy)
+        XCTAssertEqual(loc.nextSunset(from: f.date(from: "2020-10-17 22:31:00")!)!.timeIntervalSince1970, day2SS.timeIntervalSince1970, accuracy: testAccuracy)
+        
+        /// Test nextSunrise & nextSunset: 2020-10-18 02:31:00
+        XCTAssertEqual(loc.nextSunrise(from: f.date(from: "2020-10-18 02:31:00")!)!.timeIntervalSince1970, day2SR.timeIntervalSince1970, accuracy: testAccuracy)
+        XCTAssertEqual(loc.nextSunset(from: f.date(from: "2020-10-18 02:31:00")!)!.timeIntervalSince1970, day2SS.timeIntervalSince1970, accuracy: testAccuracy)
+
+
+
     }
 }

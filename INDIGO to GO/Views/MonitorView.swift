@@ -95,9 +95,8 @@ struct MonitorView: View {
                                 }
                             }
                         }) {
-
-//                Button(action: { client.printProperties() } ) { Text("Properties") }
-
+                
+                
                 /// Park & Warm Button
                 if client.isMountConnected || client.isImagerConnected {
                     ParkAndWarmButton
