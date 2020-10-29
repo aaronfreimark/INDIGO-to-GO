@@ -31,7 +31,7 @@ struct MonitorView: View {
                         ProgressView()
                             .font(.largeTitle)
                             .padding(30)
-                        Text("No INDIGO agents are connected. Please tap Settings to identify agents on your local network.")
+                        Text("No INDIGO agents are connected. Please tap above to identify agents on your local network.")
                     }
                     .font(.footnote)
                     
