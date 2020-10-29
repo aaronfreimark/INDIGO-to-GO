@@ -126,6 +126,9 @@ class IndigoClientViewModel: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.reinitSavedServers()
         }
+        
+        // Assists with Previews
+        update()
 
     }
     

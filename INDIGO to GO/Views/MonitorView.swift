@@ -44,6 +44,18 @@ struct MonitorView: View {
                         if client.isImagerConnected  {
                             ImagerProgressView()
                                 .environmentObject(client)
+                                .onTapGesture(perform: {
+                                    withAnimation {
+                                        self.isTimesShowing.toggle()
+                                    }
+                                })
+
+                            if self.isTimesShowing {
+                                ForEach(client.timeStatusRows) { sr in
+                                    StatusRowView(sr: sr)
+                                }
+                            }
+
                         }
                     }
                     
@@ -52,14 +64,6 @@ struct MonitorView: View {
                         StatusRowView(sr: client.srSequenceStatus)
                         StatusRowView(sr: client.srCoolingStatus)
                         StatusRowView(sr: client.srMountStatus)
-                        //                    DisclosureGroup("Timing") {
-                        //                            ForEach(client.timeStatusRows) { sr in
-                        //                                StatusRowView(sr: sr)
-                        //                                    .padding(.vertical, 1)
-                        //                                    .padding(.horizontal, 30)
-                        //                            }
-                        //                        .font(.system(size: 13))
-                        //                    }
                     }
                 }
                 
