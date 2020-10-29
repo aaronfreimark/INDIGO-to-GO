@@ -8,16 +8,29 @@
 import Foundation
 import Combine
 import SwiftUI
+import Network
 
 class IndigoClientViewModel: ObservableObject {
     
     var client: IndigoPropertyService
     var location: Location
     var bonjourBrowser = BonjourBrowser()
+    var endpoints: [String: NWEndpoint] = [:]
     
     var isPreview: Bool
     var anyCancellable: AnyCancellable? = nil
-    
+
+    var defaultImager: String {
+        didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") }
+    }
+    var defaultGuider: String {
+        didSet { UserDefaults.standard.set(defaultGuider, forKey: "guider") }
+    }
+    var defaultMount: String {
+        didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") }
+    }
+
+
     /// Generally useful properties
     @Published var isImagerConnected = false
     @Published var isGuiderConnected = false
@@ -86,10 +99,16 @@ class IndigoClientViewModel: ObservableObject {
     var hasDaylight: Bool { daylight != nil }
     
     
+    // MARK: - Init
+    
     init(client: IndigoPropertyService, isPreview: Bool = false) {
         self.isPreview = isPreview
         self.client = client
         self.location = Location()
+
+        self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
+        self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
+        self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
 
         // Combine publishers into the main thread.
         // https://stackoverflow.com/questions/58437861/
@@ -98,13 +117,16 @@ class IndigoClientViewModel: ObservableObject {
             .sink { endpoints in
                 self.client.endpoints.removeAll()
                 for endpoint in endpoints {
-                    self.client.endpoints[endpoint.name] = endpoint.endpoint
+                    self.endpoints[endpoint.name] = endpoint.endpoint
                 }
+                self.client.endpoints = self.endpoints
                 self.objectWillChange.send()
             }
 
-        // Update quicker; helpful for SwiftUI previews!
-        update()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.reinitSavedServers()
+        }
+
     }
     
     /// Shifts times for Meridian & HA Limit over if sequence is running, so these count from start of sequence instead of now()
@@ -115,6 +137,8 @@ class IndigoClientViewModel: ObservableObject {
             return 0
         }
     }
+    
+    // MARK: - Update Properties
     
     func update() {
         updateGeneralProperties()
@@ -506,35 +530,96 @@ class IndigoClientViewModel: ObservableObject {
             self.daylight = nil
         }
         
-        
+    }
 
+    private func updateImages() {
+        self.imagerLatestImageURL = client.imagerLatestImageURL
+        self.guiderLatestImageURL = client.guiderLatestImageURL
     }
     
+
     func emergencyStopAll() {
         client.emergencyStopAll()
     }
+    
+    
+    // MARK: - Connection Management
     
     func connectedServers() -> [String] {
         return client.connectedServers()
     }
     
     func reinitSavedServers() {
+        self.reset()
+        self.client = IndigoClient()
+        self.client.endpoints = self.endpoints
         self.isPreview = false
-        client.reinitSavedServers()
+        self.client.reinit(servers: [self.defaultImager, self.defaultGuider, self.defaultMount])
     }
     
     func reinitSimulatedServer() {
+        self.reset()
         self.isPreview = true
         self.client = MockIndigoClientForPreview()
     }
     
     func isSimulatedServer() -> Bool {
-        return client.connectedServers()[0] == "Simulated"
+        let connected = client.connectedServers()
+        if connected.count == 0 { return false }
+        return connected[0] == "Simulator"
     }
     
-    private func updateImages() {
-        self.imagerLatestImageURL = client.imagerLatestImageURL
-        self.guiderLatestImageURL = client.guiderLatestImageURL
+    private func reset() {
+//        self.endpoints = [:]
+        
+        self.isImagerConnected = false
+        self.isGuiderConnected = false
+        self.isMountConnected = false
+        self.isAnythingConnected = false
+        self.isMountTracking = false
+        self.isMountHALimitEnabled = false
+        self.isMountParked = false
+        self.isCoolerOn = false
+        self.lastUpdate = nil
+        
+        /// properties for the progress display
+        self.imagerState = ImagerState.Stopped
+        self.imagerStart = nil
+        self.imagerFinish = nil
+        self.sequences = []
+        self.imagerTotalTime = 0
+        self.imagerElapsedTime = 0
+        self.mountSecondsUntilMeridian  = 0
+        self.mountSecondsUntilHALimit = 0
+        
+        /// properties for the Status Rows
+        self.srSequenceStatus = nil
+        self.srStart = nil
+        self.srEstimatedCompletion = nil
+        self.srHALimit = nil
+        self.srMeridianTransit = nil
+        self.srSunrise = nil
+        self.srSunset = nil
+
+        self.srGuidingStatus = nil
+        self.srRAError = nil
+        self.srDecError = nil
+        self.srCoolingStatus = nil
+        self.srMountStatus = nil
+        
+        /// properties for button
+        self.parkButtonTitle = "Park and Warm"
+        self.parkButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
+        self.parkButtonOK = "Park"
+        self.isParkButtonEnabled = false
+        
+        /// Properties for the image preview
+        self.imagerLatestImageURL = nil
+        self.guiderLatestImageURL = nil
+        
+        /// Properties for sunrise & sunset
+        self.daylight = nil
+
     }
          
 }

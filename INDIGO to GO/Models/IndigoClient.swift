@@ -21,16 +21,6 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
 
     private var properties: [String: IndigoItem] = [:]
 
-    var defaultImager: String {
-        didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") }
-    }
-    var defaultGuider: String {
-        didSet { UserDefaults.standard.set(defaultGuider, forKey: "guider") }
-    }
-    var defaultMount: String {
-        didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") }
-    }
-
     /// Properties for the image preview
     var imagerLatestImageURL: URL?
     var guiderLatestImageURL: URL?
@@ -51,20 +41,11 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
     
     init() {
         
-        self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
-        self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
-        self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
-
-
         // after 1 second search for whatever is in serverSettings.servers to try to reconnect
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.reinitSavedServers()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//            self.reinitSavedServers()
+//        }
 
-    }
-    
-    func reinitSavedServers() {
-        self.reinit(servers: [self.defaultImager, self.defaultGuider, self.defaultMount])
     }
     
     func reinit(servers: [String]) {

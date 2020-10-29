@@ -15,12 +15,6 @@ class MockIndigoClientForPreview: IndigoPropertyService {
 
     var endpoints: [String: NWEndpoint] = [:]
 
-    var defaultImager = "Simulator"
-    var defaultGuider = "Simulator"
-    var defaultMount = "Simulator"
-    
-    var objectWillChange = ObservableObjectPublisher()
-    
     private var properties: [String: IndigoItem] = [:]
     let queue = DispatchQueue(label: "Client connection Q")
 
@@ -117,7 +111,7 @@ class MockIndigoClientForPreview: IndigoPropertyService {
         return ["Simulator"]
     }
     
-    func reinitSavedServers() {
+    func reinit(servers: [String]) {
         return
     }
 

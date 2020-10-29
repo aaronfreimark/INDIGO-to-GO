@@ -83,9 +83,9 @@ struct SettingsView: View {
         .background(Color(.secondarySystemBackground))
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                if !client.bonjourBrowser.names().contains(client.client.defaultImager) { self.imager = "None" } else {self.imager = client.client.defaultImager }
-                if !client.bonjourBrowser.names().contains(client.client.defaultGuider) { self.guider = "None" } else {self.guider = client.client.defaultGuider }
-                if !client.bonjourBrowser.names().contains(client.client.defaultMount) { self.mount = "None" } else {self.mount = client.client.defaultMount }
+                if !client.bonjourBrowser.names().contains(client.defaultImager) { self.imager = "None" } else {self.imager = client.defaultImager }
+                if !client.bonjourBrowser.names().contains(client.defaultGuider) { self.guider = "None" } else {self.guider = client.defaultGuider }
+                if !client.bonjourBrowser.names().contains(client.defaultMount) { self.mount = "None" } else {self.mount = client.defaultMount }
             }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
@@ -97,11 +97,10 @@ struct SettingsView: View {
     }
     
     func saveServers() {
-        self.client.client.defaultImager = imager
-        self.client.client.defaultGuider = guider
-        self.client.client.defaultMount = mount
+        self.client.defaultImager = imager
+        self.client.defaultGuider = guider
+        self.client.defaultMount = mount
         self.client.reinitSavedServers()
-        
         self.presentationMode.wrappedValue.dismiss()
     }
 

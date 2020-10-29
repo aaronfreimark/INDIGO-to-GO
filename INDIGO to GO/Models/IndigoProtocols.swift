@@ -23,16 +23,12 @@ protocol IndigoPropertyService {
     // Connections
     var endpoints: [String: NWEndpoint] { get set }
     func connectedServers() -> [String]
-    func reinitSavedServers()
+    func reinit(servers: [String])
 
     // FIXME: Move to its own model
     var imagerLatestImageURL: URL? { get }
     var guiderLatestImageURL: URL? { get }
-    
-    // FIXME: Move to ViewModel
-    var defaultImager: String { get set }
-    var defaultGuider: String { get set }
-    var defaultMount: String { get set }
+
 }
 
 
