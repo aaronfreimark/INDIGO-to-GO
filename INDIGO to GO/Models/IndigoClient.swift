@@ -35,8 +35,8 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
     var imagerLatestImageURL: URL?
     var guiderLatestImageURL: URL?
 
-    /// Properties for Bonjour
-    @Published var bonjourBrowser: BonjourBrowser = BonjourBrowser()
+    /// Properties for connections
+    var endpoints: [String: NWEndpoint] = [:]
     var connections: [String: IndigoConnection] = [:]
     var serversToDisconnect: [String] = []
     var serversToConnect: [String] = []
@@ -55,12 +55,6 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
         self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
         self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
 
-        // Combine publishers into the main thread.
-        // https://stackoverflow.com/questions/58437861/
-        // https://stackoverflow.com/questions/58406287
-        anyCancellable = bonjourBrowser.objectWillChange.sink { [weak self] (_) in
-            self?.objectWillChange.send()
-        }
 
         // after 1 second search for whatever is in serverSettings.servers to try to reconnect
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -140,7 +134,7 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
         for server in self.serversToConnect {
             // Make sure each agent is unique. We don't need multiple connections to an endpoint!xwxx
             if server != "None" && !self.connectedServers().contains(server)  {
-                if let endpoint = self.bonjourBrowser.endpoint(name: server) {
+                if let endpoint = self.endpoints[server] {
                     self.queue.async {
                         let connection = IndigoConnection(name: server, endpoint: endpoint, queue: self.queue, delegate: self)
                         print("\(connection.name): Setting Up...")

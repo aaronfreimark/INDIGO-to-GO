@@ -35,7 +35,7 @@ struct MainTabView: View {
             /// Start up Bonjour, let stuff populate
 //            self.showSpinner()
             DispatchQueue.main.async() {
-                client.client.bonjourBrowser.seek()
+                client.bonjourBrowser.seek()
             }
             
             /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
@@ -58,7 +58,7 @@ struct MainTabView: View {
             /// Start up Bonjour, let stuff populate
 //            self.showSpinner()
             DispatchQueue.main.async() {
-                client.client.bonjourBrowser.seek()
+                client.bonjourBrowser.seek()
             }
             
             /// after 1 second search for whatever is in serverSettings.servers to try to reconnect

@@ -13,6 +13,8 @@ class IndigoClientViewModel: ObservableObject {
     
     var client: IndigoPropertyService
     var location: Location
+    var bonjourBrowser = BonjourBrowser()
+    
     var isPreview: Bool
     var anyCancellable: AnyCancellable? = nil
     
@@ -88,11 +90,19 @@ class IndigoClientViewModel: ObservableObject {
         self.isPreview = isPreview
         self.client = client
         self.location = Location()
-        
-        self.anyCancellable = self.client.objectWillChange.sink { [weak self] (_) in
-            self?.objectWillChange.send()
-        }
-        
+
+        // Combine publishers into the main thread.
+        // https://stackoverflow.com/questions/58437861/
+        // https://stackoverflow.com/questions/58406287
+        anyCancellable = self.bonjourBrowser.publisher
+            .sink { endpoints in
+                self.client.endpoints.removeAll()
+                for endpoint in endpoints {
+                    self.client.endpoints[endpoint.name] = endpoint.endpoint
+                }
+                self.objectWillChange.send()
+            }
+
         // Update quicker; helpful for SwiftUI previews!
         update()
     }
@@ -516,6 +526,10 @@ class IndigoClientViewModel: ObservableObject {
     func reinitSimulatedServer() {
         self.isPreview = true
         self.client = MockIndigoClientForPreview()
+    }
+    
+    func isSimulatedServer() -> Bool {
+        return client.connectedServers()[0] == "Simulated"
     }
     
     private func updateImages() {

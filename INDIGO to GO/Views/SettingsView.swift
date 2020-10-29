@@ -37,7 +37,7 @@ struct SettingsView: View {
 
                 Section(header: Text("Imager: \(imager)")) {
                     Picker(selection: $imager, label: Text("Imager Agent")) {
-                        ForEach(client.client.bonjourBrowser.discovered.filter {
+                        ForEach(client.bonjourBrowser.discovered.filter {
                             $0.name != "AstroTelescope" && $0.name != "AstroGuider"
                         }, id: \.name) { endpoint in
                             Text(endpoint.name)
@@ -47,7 +47,7 @@ struct SettingsView: View {
 
                 Section(header: Text("Mount: \(mount)")) {
                     Picker(selection: $mount, label: Text("Mount Agent")) {
-                        ForEach(client.client.bonjourBrowser.discovered.filter {
+                        ForEach(client.bonjourBrowser.discovered.filter {
                                     $0.name != "AstroGuider" && $0.name != "AstroImager"
                         }, id: \.name) { endpoint in
                             Text(endpoint.name)
@@ -57,7 +57,7 @@ struct SettingsView: View {
 
                 Section(header: Text("Guider: \(guider)")) {
                     Picker(selection: $guider, label: Text("Guider Agent")) {
-                        ForEach(client.client.bonjourBrowser.discovered.filter {
+                        ForEach(client.bonjourBrowser.discovered.filter {
                                     $0.name != "AstroTelescope" && $0.name != "AstroImager"
                         }, id: \.name) { endpoint in
                             Text(endpoint.name)
@@ -83,14 +83,14 @@ struct SettingsView: View {
         .background(Color(.secondarySystemBackground))
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                if !client.client.bonjourBrowser.names().contains(client.client.defaultImager) { self.imager = "None" } else {self.imager = client.client.defaultImager }
-                if !client.client.bonjourBrowser.names().contains(client.client.defaultGuider) { self.guider = "None" } else {self.guider = client.client.defaultGuider }
-                if !client.client.bonjourBrowser.names().contains(client.client.defaultMount) { self.mount = "None" } else {self.mount = client.client.defaultMount }
+                if !client.bonjourBrowser.names().contains(client.client.defaultImager) { self.imager = "None" } else {self.imager = client.client.defaultImager }
+                if !client.bonjourBrowser.names().contains(client.client.defaultGuider) { self.guider = "None" } else {self.guider = client.client.defaultGuider }
+                if !client.bonjourBrowser.names().contains(client.client.defaultMount) { self.mount = "None" } else {self.mount = client.client.defaultMount }
             }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             DispatchQueue.main.asyncAfter(deadline: .now()) {
-                client.client.bonjourBrowser.seek()
+                client.bonjourBrowser.seek()
             }
         }
         

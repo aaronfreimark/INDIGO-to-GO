@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Network
 
 protocol IndigoPropertyService {
     
@@ -20,20 +21,18 @@ protocol IndigoPropertyService {
     func emergencyStopAll()
 
     // Connections
+    var endpoints: [String: NWEndpoint] { get set }
     func connectedServers() -> [String]
     func reinitSavedServers()
 
     // FIXME: Move to its own model
     var imagerLatestImageURL: URL? { get }
     var guiderLatestImageURL: URL? { get }
-    var bonjourBrowser: BonjourBrowser { get set }
     
     // FIXME: Move to ViewModel
     var defaultImager: String { get set }
     var defaultGuider: String { get set }
     var defaultMount: String { get set }
-
-    var objectWillChange: ObservableObjectPublisher { get }
 }
 
 

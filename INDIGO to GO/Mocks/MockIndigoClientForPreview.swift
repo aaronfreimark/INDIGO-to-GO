@@ -7,15 +7,14 @@
 
 import Foundation
 import Combine
-
-#if DEBUG
+import Network
 
 class MockIndigoClientForPreview: IndigoPropertyService {
     var imagerLatestImageURL: URL?
     var guiderLatestImageURL: URL?
 
-    var bonjourBrowser = BonjourBrowser()
-    
+    var endpoints: [String: NWEndpoint] = [:]
+
     var defaultImager = "Simulator"
     var defaultGuider = "Simulator"
     var defaultMount = "Simulator"
@@ -124,5 +123,3 @@ class MockIndigoClientForPreview: IndigoPropertyService {
 
     
 }
-
-#endif

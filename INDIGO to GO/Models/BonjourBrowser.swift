@@ -10,8 +10,10 @@ import Network
 final class BonjourBrowser: NSObject, ObservableObject, Identifiable {
     
     var browser: NWBrowser!
-    
-    @Published var discovered: [BonjourEndpoint] = [BonjourEndpoint()]
+    var discovered: [BonjourEndpoint] = [BonjourEndpoint()] {
+        didSet { publisher.send(discovered) }
+    }
+    let publisher = PassthroughSubject<[BonjourEndpoint], Never>()
         
     func endpoint(name: String) -> NWEndpoint? {
         for endpoint in self.discovered {
