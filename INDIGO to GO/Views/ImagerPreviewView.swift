@@ -16,6 +16,9 @@ struct ImagerPreviewView: View {
     var body: some View {
         
             VStack {
+                ServerHeaderView()
+                    .environmentObject(client)
+
                 Picker(selection: $camera, label: Text("Camera")) {
                     if client.isImagerConnected { Text("Imager").tag("Imager") }
                     if client.isGuiderConnected { Text("Guider").tag("Guider") }

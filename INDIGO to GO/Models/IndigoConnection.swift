@@ -227,6 +227,11 @@ class IndigoConnection {
         self.send(data: json.rawString()!.data(using: .ascii)!)
     }
 
+    func enableGuiderPreviews() {
+        let json: JSON = [ "newSwitchVector": [ "device": "Guider Agent", "name": "CCD_PREVIEW", "items": [ [ "name": "ENABLED", "value": true ]  ]  ] ]
+        self.send(data: json.rawString()!.data(using: .ascii)!)
+    }
+
     func hello() {
         let json: JSON = [ "getProperties": [ "version": 512 ] ]
         self.send(data: json.rawString()!.data(using: .ascii)!)

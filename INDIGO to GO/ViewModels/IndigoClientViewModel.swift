@@ -424,23 +424,19 @@ class IndigoClientViewModel: ObservableObject {
     private func updateButtonProperties() {
         
         if self.isMountConnected && self.isImagerConnected {
-            self.parkButtonTitle = "Park and Warm"
             self.parkButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
             self.isParkButtonEnabled = !self.isMountParked || self.isCoolerOn
             
         } else if self.isMountConnected && !self.isImagerConnected {
-            self.parkButtonTitle = "Park Mount"
             self.parkButtonDescription = "Immediately park the mount, if possible."
             self.isParkButtonEnabled = !isMountParked
             
         } else if !self.isMountConnected && self.isImagerConnected {
-            self.parkButtonTitle = "Warm Cooler"
             self.parkButtonDescription = "Immediately turn off imager cooling, if possible."
             self.parkButtonOK = "Warm"
             self.isParkButtonEnabled = self.isCoolerOn
             
         } else {
-            self.parkButtonTitle = "Park and Warm"
             self.parkButtonDescription = "Immediately park the mount and turn off imager cooling, if possible."
             self.isParkButtonEnabled = false
         }
@@ -513,7 +509,13 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     func reinitSavedServers() {
+        self.isPreview = false
         client.reinitSavedServers()
+    }
+    
+    func reinitSimulatedServer() {
+        self.isPreview = true
+        self.client = MockIndigoClientForPreview()
     }
     
     private func updateImages() {

@@ -18,17 +18,14 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $currentTab) {
             MonitorView()
-                .tabItem { Label("Monitor", systemImage: "list.bullet.below.rectangle") }
+                .tabItem { Label("Monitor", systemImage: "gauge") }
                 .tag(1)
             ImagerPreviewView()
-                .tabItem { Label("Preview", systemImage: "camera.metering.matrix") }
+                .tabItem { Label("Preview", systemImage: "sparkles.rectangle.stack") }
                 .tag(2)
 //            Text("Sequence")
 //                .tabItem { Label("Sequence", systemImage: "list.bullet.rectangle") }
 //                .tag(3)
-            SettingsView()
-                .tabItem { Label("Settings", systemImage: "gear") }
-                .tag(4)
         }
         .environmentObject(client)
         .onReceive(timer) { input in

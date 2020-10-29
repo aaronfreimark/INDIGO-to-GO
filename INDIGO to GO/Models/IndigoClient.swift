@@ -32,8 +32,8 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
     }
 
     /// Properties for the image preview
-    @Published var imagerLatestImageURL: URL?
-    @Published var guiderLatestImageURL: URL?
+    var imagerLatestImageURL: URL?
+    var guiderLatestImageURL: URL?
 
     /// Properties for Bonjour
     @Published var bonjourBrowser: BonjourBrowser = BonjourBrowser()
@@ -275,7 +275,7 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
                                 /// enable previews if offered
                                 if key == "Guider Agent | CCD_PREVIEW | ENABLED" && type == "defSwitchVector" {
                                     self.queue.asyncAfter(deadline: .now() + 2.0) {
-                                        source.enablePreviews()
+                                        source.enableGuiderPreviews()
                                     }
                                 }
                                 

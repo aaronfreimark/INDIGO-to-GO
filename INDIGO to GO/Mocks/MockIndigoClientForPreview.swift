@@ -16,9 +16,9 @@ class MockIndigoClientForPreview: IndigoPropertyService {
 
     var bonjourBrowser = BonjourBrowser()
     
-    var defaultImager = "Mock Imager"
-    var defaultGuider = "Mock Guider"
-    var defaultMount = "Mock Mount"
+    var defaultImager = "Simulator"
+    var defaultGuider = "Simulator"
+    var defaultMount = "Simulator"
     
     var objectWillChange = ObservableObjectPublisher()
     
@@ -73,8 +73,8 @@ class MockIndigoClientForPreview: IndigoPropertyService {
         
         self.setValue(key: "Guider Agent | AGENT_START_PROCESS | GUIDING", toValue: "true", toState: "Ok")
         
-        self.imagerLatestImageURL = URL(string: "https://indigotogo.app/512.png")
-        self.guiderLatestImageURL = URL(string: "https://indigotogo.app/512.png")
+        self.imagerLatestImageURL = URL(string: "https://indigotogo.app/Andromeda-RGB-2048.jpg")
+        self.guiderLatestImageURL = URL(string: "https://indigotogo.app/SquidStars.jpg")
     }
     
     
@@ -115,7 +115,7 @@ class MockIndigoClientForPreview: IndigoPropertyService {
     }
     
     func connectedServers() -> [String] {
-        return ["Mock"]
+        return ["Simulator"]
     }
     
     func reinitSavedServers() {

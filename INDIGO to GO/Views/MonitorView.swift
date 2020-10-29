@@ -20,98 +20,96 @@ struct MonitorView: View {
     @State private var isTimesShowing: Bool = false
     
     var body: some View {
-        
-        List {
-            if !client.isAnythingConnected {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .font(.largeTitle)
-                        .padding(30)
-                    Text("No INDIGO agents are connected. Please tap Settings to identify agents on your local network.")
+        VStack(spacing: 0) {
+            ServerHeaderView()
+                .environmentObject(client)
+
+            List {
+                if !client.isAnythingConnected {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .font(.largeTitle)
+                            .padding(30)
+                        Text("No INDIGO agents are connected. Please tap Settings to identify agents on your local network.")
+                    }
+                    .font(.footnote)
+                    
                 }
-                .font(.footnote)
                 
-            }
-
-            // =================================================================== SEQUENCE
-
-            if client.isImagerConnected || client.isMountConnected {
-                Section {
-                    if client.isImagerConnected  {
-                        ImagerProgressView()
-                            .environmentObject(client)
+                // =================================================================== SEQUENCE
+                
+                if client.isImagerConnected || client.isMountConnected {
+                    Section {
+                        if client.isImagerConnected  {
+                            ImagerProgressView()
+                                .environmentObject(client)
+                        }
+                    }
+                    
+                    
+                    Section {
+                        StatusRowView(sr: client.srSequenceStatus)
+                        StatusRowView(sr: client.srCoolingStatus)
+                        StatusRowView(sr: client.srMountStatus)
+                        //                    DisclosureGroup("Timing") {
+                        //                            ForEach(client.timeStatusRows) { sr in
+                        //                                StatusRowView(sr: sr)
+                        //                                    .padding(.vertical, 1)
+                        //                                    .padding(.horizontal, 30)
+                        //                            }
+                        //                        .font(.system(size: 13))
+                        //                    }
                     }
                 }
-
-
+                
+                //            if client.isImagerConnected {
+                //                ImagerPreviewView().environmentObject(client)
+                //            }
+                
+                // =================================================================== GUIDER
+                
+                if client.isGuiderConnected {
+                    Section(header: Text("Guider")) {
+                        StatusRowView(sr: client.srGuidingStatus)
+                        StatusRowView(sr: client.srRAError)
+                        StatusRowView(sr: client.srDecError)
+                    }
+                } else {
+                    EmptyView()
+                }
+                
+                
                 Section {
-                    StatusRowView(sr: client.srSequenceStatus)
-                    StatusRowView(sr: client.srCoolingStatus)
-                    StatusRowView(sr: client.srMountStatus)
-//                    DisclosureGroup("Timing") {
-//                            ForEach(client.timeStatusRows) { sr in
-//                                StatusRowView(sr: sr)
-//                                    .padding(.vertical, 1)
-//                                    .padding(.horizontal, 30)
-//                            }
-//                        .font(.system(size: 13))
-//                    }
+                    
+                    
+                    /// Park & Warm Button
+                    if client.isMountConnected || client.isImagerConnected {
+                        ParkAndWarmButton
+                    }
+                    
+                    /// Servers Button
+                    //                Button(action: serversButton) {
+                    //                    Text("Servers")
+                    //                }
+                    //                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView().environmentObject(client) })
                 }
-            }
-
-//            if client.isImagerConnected {
-//                ImagerPreviewView().environmentObject(client)
-//            }
-
-            // =================================================================== GUIDER
-
-            if client.isGuiderConnected {
-                Section(header: Text("Guider")) {
-                    StatusRowView(sr: client.srGuidingStatus)
-                    StatusRowView(sr: client.srRAError)
-                    StatusRowView(sr: client.srDecError)
-                }
-            } else {
-                EmptyView()
-            }
-
-            
-            Section(footer:
-                        VStack(alignment: .leading) {
-                            ForEach(client.connectedServers(), id: \.self ) { name in
-                                HStack {
-                                    Image(systemName: "checkmark.circle")
-                                    Text(name)
-                                }
-                            }
-                        }) {
                 
-                
-                /// Park & Warm Button
-                if client.isMountConnected || client.isImagerConnected {
-                    ParkAndWarmButton
-                }
-
-                /// Servers Button
-//                Button(action: serversButton) {
-//                    Text("Servers")
-//                }
-//                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView().environmentObject(client) })
             }
-            
+            .listStyle(GroupedListStyle())
         }
-        .listStyle(GroupedListStyle())
+        .background(Color(.secondarySystemBackground))
     }
     
     private var ParkAndWarmButton: some View {
         Button(action: { self.isAlertShowing = true }) {
-            Text(client.parkButtonTitle)
+            Label("Emergency Stop", systemImage: "octagon.fill")
+                .foregroundColor(.red)
         }
         .disabled(!client.isParkButtonEnabled)
         .alert(isPresented: $isAlertShowing, content: {
             Alert(
-                title: Text(client.parkButtonTitle),
+                title: Text("Emergency Stop"),
                 message: Text(client.parkButtonDescription),
                 primaryButton: .destructive(Text(client.parkButtonOK), action: {
                     isAlertShowing = false
@@ -148,6 +146,8 @@ struct MonitorView_Previews: PreviewProvider {
         let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
         MonitorView()
             .environmentObject(client)
+            .background(Color(.systemBackground))
+            .environment(\.colorScheme, .dark)
     }
 }
 
