@@ -504,6 +504,19 @@ class IndigoClientViewModel: ObservableObject {
             )
             location.hasLocation = true
             
+            self.srSunrise = StatusRowTime(
+                isSet: true,
+                text: "Sunrise",
+                status: .custom("sunrise"),
+                date: self.daylight?.end.day?.start
+            )
+            self.srSunset = StatusRowTime(
+                isSet: true,
+                text: "Sunset",
+                status: .custom("sunset"),
+                date: self.daylight?.start.day?.end
+            )
+
         } else if let start = self.imagerStart, let end = self.imagerFinish {
             /// Normal Flow. The "daylight" structure is used to store sunrise, sunset, etc. times for the start and end of the sequence. Items that fall outside the image sequence are set to nil
             
