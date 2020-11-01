@@ -17,7 +17,7 @@ struct ServerHeaderView: View {
             Button(action: { self.isExpanded = !self.isExpanded }) {
                 Label("\(client.connectedServers().count == 1 ? "Server" : "Servers"):  \(client.connectedServers().count > 0 ? client.connectedServers().joined(separator: ", ") : "None")", systemImage: "bonjour")
             }
-            .font(.system(size: 13))
+            .font(.system(size: 16))
             .padding(5)
             .sheet(isPresented: $isExpanded, content: {
                 SettingsView()
