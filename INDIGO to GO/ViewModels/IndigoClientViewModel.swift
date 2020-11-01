@@ -425,7 +425,7 @@ class IndigoClientViewModel: ObservableObject {
         self.mountSecondsUntilMeridian = secondsUntilMeridian
         
         self.srMeridianTransit = StatusRowTime(
-            isSet: isMountTracking,
+            isSet: isMountTracking && mountMeridianTime <= self.imagerFinish ?? Date.distantFuture,
             text: "Meridian Transit",
             status: .custom("togglepower"),
             date: mountMeridianTime
@@ -450,7 +450,7 @@ class IndigoClientViewModel: ObservableObject {
         self.mountSecondsUntilHALimit = secondsUntilHALimit
         
         self.srHALimit = StatusRowTime(
-            isSet: isMountTracking,
+            isSet: isMountTracking  && mountHALimitTime <= self.imagerFinish ?? Date.distantFuture,
             text: "HA Limit",
             status: .custom("exclamationmark.arrow.circlepath"),
             date: mountHALimitTime
