@@ -115,21 +115,17 @@ struct ImagerProgressView: View {
             
             HStack {
                 Text("Start: \(client.srStart?.value ?? "")")
-                    .font(.system(size: 10))
-                    .padding(.leading, 4.0)
                 Spacer()
                 if let meridian = client.srMeridianTransit, meridian.isSet {
                     Text("Meridian: \(meridian.value)")
                         .foregroundColor(self.meridianColor)
-                        .font(.system(size: 10))
-                        .padding(.leading, 4.0)
                     Spacer()
                 }
-                Text("~End: \(client.srEstimatedCompletion?.value ?? "")")
-                    .font(.system(size: 10))
-                    .padding(.leading, 4.0)
+                Text("End: ~\(client.srEstimatedCompletion?.value ?? "")")
                 
             }
+            .font(.system(size: 12))
+            .padding(.leading, 4.0)
         }
         
     }
