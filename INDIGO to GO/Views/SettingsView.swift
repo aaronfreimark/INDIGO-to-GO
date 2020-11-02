@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Combine
+import AuthenticationServices
+import CryptoKit
 
 struct SettingsView: View {
 
@@ -15,27 +17,34 @@ struct SettingsView: View {
     @State var imager: String = "None"
     @State var guider: String = "None"
     @State var mount: String = "None"
+    @State var agents = AgentSelection.local
+    @State var publish = false
 
+    enum AgentSelection {
+        case local, remote, simulator
+    }
+    
     @Environment(\.presentationMode)
     var presentationMode: Binding<PresentationMode>
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Spacer()
-                Label("Servers", systemImage: "bonjour")
-                    .font(.largeTitle)
-                Spacer()
-            }
-            .padding()
-
-            Text("Please select your INDIGO server or agents. Agents are discovered on your local network using Bonjour.")
-                .font(.footnote)
+            Label("Connections", systemImage: "bonjour")
+                .font(.title)
                 .padding()
 
             Form {
 
-                Section(header: Text("Imager: \(imager)")) {
+                HStack {
+                    Picker(selection: $agents, label: Text("Agent Setup")) {
+                        Text("Local").tag(AgentSelection.local)
+                        Text("Remote").tag(AgentSelection.remote)
+                        Text("Simulator").tag(AgentSelection.simulator)
+                    }
+                }
+                
+                if self.agents == .local {
+                    Text("Imager: \(imager)").font(.footnote).baselineOffset(-20)
                     Picker(selection: $imager, label: Text("Imager Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
                             $0.name != "AstroTelescope" && $0.name != "AstroGuider"
@@ -43,44 +52,66 @@ struct SettingsView: View {
                             Text(endpoint.name)
                         }
                     }
-                }
-
-                Section(header: Text("Mount: \(mount)")) {
+                    
+                    Text("Mount: \(mount)").font(.footnote).baselineOffset(-20)
                     Picker(selection: $mount, label: Text("Mount Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
-                                    $0.name != "AstroGuider" && $0.name != "AstroImager"
+                            $0.name != "AstroGuider" && $0.name != "AstroImager"
                         }, id: \.name) { endpoint in
                             Text(endpoint.name)
                         }
                     }
-                }
-
-                Section(header: Text("Guider: \(guider)")) {
+                    
+                    Text("Guider: \(guider)").font(.footnote).baselineOffset(-20)
                     Picker(selection: $guider, label: Text("Guider Agent")) {
                         ForEach(client.bonjourBrowser.discovered.filter {
-                                    $0.name != "AstroTelescope" && $0.name != "AstroImager"
+                            $0.name != "AstroTelescope" && $0.name != "AstroImager"
                         }, id: \.name) { endpoint in
                             Text(endpoint.name)
                         }
                     }
+                    Text("")
+                    Toggle(isOn: $publish) {
+                        Text("Publish to remote clients")
+                    }
+                    if self.publish {
+                        HStack {
+                            Spacer()
+                            SignInWithAppleButtonView()
+                            Spacer()
+                        }
+                        .padding(.vertical)
+                        
+
+                        Text("Use INDIGO to GO for iOS to remotely monitor your system. An anonymous identitifer, INDIGO data, and nothing else will be published.")
+                            .font(.caption)
+                            .padding(.vertical)
+                    }
+                } else if self.agents == .remote {
+                    Text("Run INDIGO to GO for Mac on your local network, and you may monitor your equipment from anywhere.")
+                        .font(.caption)
+                        .padding(.vertical)
+
+                    SignInWithAppleButtonView()
+
+                } else {
+                    
+                    Text("The simulator allows you to demo INDIGO to GO without real astrophotography equipment.")
+                        .font(.caption)
+                        .padding(.vertical)
+
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
-            .padding(.top, 30)
 
             Button(action: self.saveServers) { Text("Save") }
-                .frame(width: 200.0)
+                .frame(width: 280, height: 50)
                 .foregroundColor(Color.white)
-                .padding()
                 .background(Color.blue)
                 .cornerRadius(9)
                 .padding()
             
-            Button(action: self.simulatedServer) { Text("Use a simulated server")}
-                .padding()
-
         }
-        .background(Color(.secondarySystemBackground))
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                 if !client.bonjourBrowser.names().contains(client.defaultImager) { self.imager = "None" } else {self.imager = client.defaultImager }
@@ -97,17 +128,24 @@ struct SettingsView: View {
     }
     
     func saveServers() {
-        self.client.defaultImager = imager
-        self.client.defaultGuider = guider
-        self.client.defaultMount = mount
-        self.client.reinitSavedServers()
-        self.presentationMode.wrappedValue.dismiss()
-    }
+        switch self.agents {
+        case .local:
+            self.client.defaultImager = imager
+            self.client.defaultGuider = guider
+            self.client.defaultMount = mount
+            self.client.reinitSavedServers()
+            break
+        case .remote:
+            break
+            
+        case .simulator:
+            self.client.reinitSimulatedServer()
+            break
+        }
 
-    func simulatedServer() {
-        self.client.reinitSimulatedServer()
         self.presentationMode.wrappedValue.dismiss()
     }
+   
 }
 
 

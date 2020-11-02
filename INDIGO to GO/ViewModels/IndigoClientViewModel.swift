@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import SwiftUI
 import Network
+import Firebase
 
 class IndigoClientViewModel: ObservableObject {
     
@@ -110,9 +111,6 @@ class IndigoClientViewModel: ObservableObject {
         self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
         self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
 
-        // Combine publishers into the main thread.
-        // https://stackoverflow.com/questions/58437861/
-        // https://stackoverflow.com/questions/58406287
         anyCancellable = self.bonjourBrowser.publisher
             .sink { endpoints in
                 self.client.endpoints.removeAll()
@@ -123,6 +121,9 @@ class IndigoClientViewModel: ObservableObject {
                 self.objectWillChange.send()
             }
 
+        // Load Firebase
+        FirebaseApp.configure()
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.reinitSavedServers()
         }

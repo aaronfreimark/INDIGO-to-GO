@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9309A3C7254F735100B1562E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9309A3C6254F735100B1562E /* GoogleService-Info.plist */; };
+		9309A3CB254F741D00B1562E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 9309A3CA254F741D00B1562E /* FirebaseAuth */; };
+		9309A3CD254F741D00B1562E /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 9309A3CC254F741D00B1562E /* FirebaseDatabase */; };
 		930C34A325339F320014A186 /* Andromeda-RGB.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349B25339ED70014A186 /* Andromeda-RGB.png */; };
 		930C34A425339F320014A186 /* Andromeda-RGB@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */; };
 		930C34A525339F320014A186 /* Andromeda-RGB@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */; };
@@ -46,6 +49,7 @@
 		93EC17052534E2F700392AC9 /* screen-servers.png in Resources */ = {isa = PBXBuildFile; fileRef = 93EC17032534E2F700392AC9 /* screen-servers.png */; };
 		93EE4CB92541EC3D0051DD51 /* IndigoProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EE4CB82541EC3D0051DD51 /* IndigoProtocols.swift */; };
 		93EE4CC32541FC070051DD51 /* IndigoClientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EE4CC22541FC070051DD51 /* IndigoClientViewModel.swift */; };
+		93F7D26225503F8C00403D56 /* SignInWithAppleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F7D26125503F8C00403D56 /* SignInWithAppleButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +77,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9309A3C6254F735100B1562E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		930C349B25339ED70014A186 /* Andromeda-RGB.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB.png"; sourceTree = "<group>"; };
 		930C349C25339ED70014A186 /* Andromeda-RGB@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@2x.png"; sourceTree = "<group>"; };
 		930C349D25339ED80014A186 /* Andromeda-RGB@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Andromeda-RGB@3x.png"; sourceTree = "<group>"; };
@@ -113,6 +118,7 @@
 		93EC17032534E2F700392AC9 /* screen-servers.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "screen-servers.png"; sourceTree = "<group>"; };
 		93EE4CB82541EC3D0051DD51 /* IndigoProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoProtocols.swift; sourceTree = "<group>"; };
 		93EE4CC22541FC070051DD51 /* IndigoClientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClientViewModel.swift; sourceTree = "<group>"; };
+		93F7D26125503F8C00403D56 /* SignInWithAppleButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,9 +126,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9309A3CD254F741D00B1562E /* FirebaseDatabase in Frameworks */,
 				9364A3C6253546E200489AC0 /* Solar in Frameworks */,
 				930C34AF2533AC160014A186 /* URLImage in Frameworks */,
 				931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */,
+				9309A3CB254F741D00B1562E /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +178,7 @@
 				933ACBBA2544A1FB00FD0AC7 /* Mocks */,
 				931AF63F2509B97000EE6300 /* Info.plist */,
 				93A6047A250D361600E93EA4 /* indigo-response.json */,
+				9309A3C6254F735100B1562E /* GoogleService-Info.plist */,
 				931E89D5252472B800FCFAB7 /* Assets.xcassets */,
 				931AF63C2509B97000EE6300 /* Preview Content */,
 			);
@@ -214,6 +223,7 @@
 				93EC16F02534903A00392AC9 /* ImagerPreviewView.swift */,
 				938FF2C22549F2480057F9BB /* ServerHeaderView.swift */,
 				9311AC9125129C2200725CB9 /* SettingsView.swift */,
+				93F7D26125503F8C00403D56 /* SignInWithAppleButtonView.swift */,
 				933ACBC02544BD9E00FD0AC7 /* ClockView.swift */,
 			);
 			path = Views;
@@ -276,6 +286,8 @@
 				931D1E0C250C01AF00BFFA6B /* SwiftyJSON */,
 				930C34AE2533AC160014A186 /* URLImage */,
 				9364A3C5253546E200489AC0 /* Solar */,
+				9309A3CA254F741D00B1562E /* FirebaseAuth */,
+				9309A3CC254F741D00B1562E /* FirebaseDatabase */,
 			);
 			productName = "INDIGO Status";
 			productReference = 931AF6332509B96F00EE6300 /* INDIGO to GO.app */;
@@ -330,6 +342,7 @@
 				931D1E0B250C01AF00BFFA6B /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 				930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */,
 				9364A3C4253546E200489AC0 /* XCRemoteSwiftPackageReference "Solar" */,
+				9309A3C9254F741D00B1562E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 931AF6342509B96F00EE6300 /* Products */;
 			projectDirPath = "";
@@ -353,6 +366,7 @@
 				93EC17042534E2F700392AC9 /* screen-main.png in Resources */,
 				931AF63E2509B97000EE6300 /* Preview Assets.xcassets in Resources */,
 				93EC17052534E2F700392AC9 /* screen-servers.png in Resources */,
+				9309A3C7254F735100B1562E /* GoogleService-Info.plist in Resources */,
 				93EC16FF2534DCA500392AC9 /* README.md in Resources */,
 				931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */,
 			);
@@ -411,6 +425,7 @@
 				931AF6392509B96F00EE6300 /* MonitorView.swift in Sources */,
 				938F010725114B2D00599096 /* IndigoItem.swift in Sources */,
 				931AF6372509B96F00EE6300 /* IndigoToGo.swift in Sources */,
+				93F7D26225503F8C00403D56 /* SignInWithAppleButtonView.swift in Sources */,
 				93EE4CC32541FC070051DD51 /* IndigoClientViewModel.swift in Sources */,
 				93729243253723E5000DF0A6 /* StatusRowViewModel.swift in Sources */,
 				930CA117254126AF00CFD5C7 /* MainTabView.swift in Sources */,
@@ -688,6 +703,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		9309A3C9254F741D00B1562E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 		930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/dmytro-anokhin/url-image.git";
@@ -715,6 +738,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9309A3CA254F741D00B1562E /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9309A3C9254F741D00B1562E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		9309A3CC254F741D00B1562E /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9309A3C9254F741D00B1562E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
 		930C34AE2533AC160014A186 /* URLImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 930C34AD2533AC160014A186 /* XCRemoteSwiftPackageReference "url-image" */;
