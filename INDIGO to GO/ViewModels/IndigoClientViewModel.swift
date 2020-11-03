@@ -583,7 +583,14 @@ class IndigoClientViewModel: ObservableObject {
         self.isPreview = true
         self.client = MockIndigoClientForPreview()
     }
-    
+
+    func reinitRemoteServer() {
+        print("Reinit with Remote Server")
+        self.reset()
+        self.isPreview = false
+        self.client = RemoteIndigoClient()
+    }
+
     func isSimulatedServer() -> Bool {
         let connected = client.connectedServers()
         if connected.count == 0 { return false }

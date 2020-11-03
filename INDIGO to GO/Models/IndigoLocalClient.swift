@@ -387,7 +387,12 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
         }
         
         guard let fb = firebasePrefix(), let keyHash = self.keyHash(key) else { return }
-        let value = ["key": key, "value": value, "state": state, "target": target]
+        let value = [
+            "key": key,
+            "value": value,
+            "state": state,
+            "target": target
+        ]
         fb.child(keyHash).setValue(value)
     }
     

@@ -152,6 +152,7 @@ struct SettingsView: View {
             
             break
         case .remote:
+            self.client.reinitRemoteServer()
             break
             
         case .simulator:
