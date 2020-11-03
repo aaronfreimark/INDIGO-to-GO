@@ -15,7 +15,7 @@ struct ServerHeaderView: View {
     var body: some View {
         VStack {
             Button(action: { self.isExpanded = !self.isExpanded }) {
-                Label("\(client.connectedServers().count == 1 ? "Connection" : "Connections"):  \(client.connectedServers().count > 0 ? client.connectedServers().joined(separator: ", ") : "None")", systemImage: "bonjour")
+                Label("\(client.connectedServers().count > 0 ? client.connectedServers().joined(separator: ", ") : "None")", systemImage: "bonjour")
             }
             .font(.system(size: 16))
             .padding(5)

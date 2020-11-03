@@ -25,7 +25,7 @@
 		931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 931AF663250A564900EE6300 /* BonjourBrowser.swift */; };
 		931D1E0D250C01AF00BFFA6B /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 931D1E0C250C01AF00BFFA6B /* SwiftyJSON */; };
 		931E89D6252472B800FCFAB7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 931E89D5252472B800FCFAB7 /* Assets.xcassets */; };
-		933ACBBC2544A22100FD0AC7 /* MockIndigoClientForPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933ACBBB2544A22100FD0AC7 /* MockIndigoClientForPreview.swift */; };
+		933ACBBC2544A22100FD0AC7 /* SimulatorClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933ACBBB2544A22100FD0AC7 /* SimulatorClient.swift */; };
 		933ACBC12544BD9E00FD0AC7 /* ClockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933ACBC02544BD9E00FD0AC7 /* ClockView.swift */; };
 		935431FD253C0D7D008D3F17 /* DaylightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935431FC253C0D7D008D3F17 /* DaylightView.swift */; };
 		93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93577355252A526E005670B3 /* BonjourEndpoint.swift */; };
@@ -92,7 +92,7 @@
 		931AF63F2509B97000EE6300 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		931AF663250A564900EE6300 /* BonjourBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BonjourBrowser.swift; sourceTree = "<group>"; };
 		931E89D5252472B800FCFAB7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		933ACBBB2544A22100FD0AC7 /* MockIndigoClientForPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockIndigoClientForPreview.swift; sourceTree = "<group>"; };
+		933ACBBB2544A22100FD0AC7 /* SimulatorClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorClient.swift; sourceTree = "<group>"; };
 		933ACBC02544BD9E00FD0AC7 /* ClockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockView.swift; sourceTree = "<group>"; };
 		935431FC253C0D7D008D3F17 /* DaylightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaylightView.swift; sourceTree = "<group>"; };
 		93577355252A526E005670B3 /* BonjourEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonjourEndpoint.swift; sourceTree = "<group>"; };
@@ -177,7 +177,6 @@
 				93BF080F2513EA320018DEC0 /* Models */,
 				93EE4CBC2541FB360051DD51 /* ViewModels */,
 				93BF080B2513EA160018DEC0 /* Views */,
-				933ACBBA2544A1FB00FD0AC7 /* Mocks */,
 				931AF63F2509B97000EE6300 /* Info.plist */,
 				93A6047A250D361600E93EA4 /* indigo-response.json */,
 				9309A3C6254F735100B1562E /* GoogleService-Info.plist */,
@@ -193,14 +192,6 @@
 				931AF63D2509B97000EE6300 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		933ACBBA2544A1FB00FD0AC7 /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				933ACBBB2544A22100FD0AC7 /* MockIndigoClientForPreview.swift */,
-			);
-			path = Mocks;
 			sourceTree = "<group>";
 		};
 		939BC327253B29800087F325 /* INDIGO to GOTests */ = {
@@ -234,6 +225,7 @@
 		93BF080F2513EA320018DEC0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				933ACBBB2544A22100FD0AC7 /* SimulatorClient.swift */,
 				939F157D250AAB63004A09D7 /* LocalClient.swift */,
 				938F010625114B2D00599096 /* IndigoItem.swift */,
 				93E4107D2514E5050027A62D /* IndigoConnection.swift */,
@@ -421,7 +413,7 @@
 				9372924725373D36000DF0A6 /* Extensions.swift in Sources */,
 				9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */,
 				930C34B82533DBAE0014A186 /* ImagerProgressView.swift in Sources */,
-				933ACBBC2544A22100FD0AC7 /* MockIndigoClientForPreview.swift in Sources */,
+				933ACBBC2544A22100FD0AC7 /* SimulatorClient.swift in Sources */,
 				939F157E250AAB63004A09D7 /* LocalClient.swift in Sources */,
 				93F7D2682550B92C00403D56 /* AppDelegate.swift in Sources */,
 				93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */,

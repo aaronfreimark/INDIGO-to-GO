@@ -23,6 +23,7 @@ protocol IndigoPropertyService {
     // Connections
     var endpoints: [String: NWEndpoint] { get set }
     func connectedServers() -> [String]
+    var systemIcon: String { get }
     func reinit(servers: [String])
 
     // FIXME: Move to its own model

@@ -10,6 +10,8 @@ import Combine
 import Network
 
 class MockIndigoClientForPreview: IndigoPropertyService {
+
+    var systemIcon = "ladybug"
     var imagerLatestImageURL: URL?
     var guiderLatestImageURL: URL?
 

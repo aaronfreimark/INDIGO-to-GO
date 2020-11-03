@@ -17,6 +17,7 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
 
     // MARK: Properties
     
+    var systemIcon = "bonjour"
     var id = UUID()
     let queue = DispatchQueue(label: "Client connection Q")
     var lastUpdate: Date?
@@ -41,11 +42,55 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
     /// Properties for Firebase syncing
     var firebase: DatabaseReference?
     var firebaseUID: String?
+    
+    let permittedProperties = [
+        "Imager Agent | AGENT_START_PROCESS | SEQUENCE",
+        "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE",
+        "Imager Agent | CCD_TEMPERATURE | TEMPERATURE",
+        "Imager Agent | CCD_COOLER | ON",
+        "Imager Agent | CCD_TEMPERATURE | TEMPERATURE",
+        "Imager Agent | AGENT_IMAGER_STATS | BATCH",
+        "Imager Agent | AGENT_IMAGER_STATS | FRAME",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 00",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 01",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 02",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 03",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 04",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 05",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 06",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 07",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 08",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 09",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 10",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 11",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 12",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 13",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 14",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 15",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | 16",
+        "Imager Agent | AGENT_IMAGER_SEQUENCE | SEQUENCE",
+        "Imager Agent | AGENT_IMAGER_STATS | EXPOSURE",
+        "Guider Agent | AGENT_START_PROCESS | GUIDING",
+        "Guider Agent | AGENT_GUIDER_STATS | DITHERING",
+        "Guider Agent | AGENT_START_PROCESS | CALIBRATION",
+        "Guider Agent | AGENT_GUIDER_STATS | DRIFT_X",
+        "Guider Agent | AGENT_GUIDER_STATS | DRIFT_Y",
+        "Guider Agent | AGENT_GUIDER_STATS | RMSE_RA",
+        "Guider Agent | AGENT_GUIDER_STATS | RMSE_DEC",
+        "Mount Agent | MOUNT_PARK | PARKED",
+        "Mount Agent | MOUNT_TRACKING | ON",
+        "Mount Agent | MOUNT_TRACKING | OFF",
+        "Mount Agent | AGENT_LIMITS | HA_TRACKING"
+    ]
 
     // MARK: - Init & Re-Init
     
     init() {
 
+        if let user = Auth.auth().currentUser {
+            self.firebase = Database.database().reference()
+            self.firebaseUID = user.uid
+        }
         _ = Auth.auth().addStateDidChangeListener { (_, user) in
             if let user = user {
                 self.firebase = Database.database().reference()
@@ -316,30 +361,22 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
     
     func getValue(_ key: String) -> String? {
         return self.queue.sync {
-            if let item = self.properties[key] {
-                return item.value
-            }
-            return nil
+            guard let item = self.properties[key] else { return nil }
+            return item.value
         }
     }
     
     func getTarget(_ key: String) -> String? {
         return self.queue.sync {
-            if let item = self.properties[key] {
-                return item.target
-            }
-            return nil
+            guard let item = self.properties[key] else { return nil }
+            return item.target
         }
     }
 
     func getState(_ key: String) -> StateValue? {
         return self.queue.sync {
-            if let item = properties[key] {
-                if let state = item.state {
-                    return state
-                }
-            }
-            return nil
+            guard let item = properties[key], let state = item.state else { return nil }
+            return state
         }
     }
 
@@ -349,9 +386,8 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
             self.properties[key] = newItem
         }
         
-        guard let fb = firebasePrefix() else { return }
+        guard let fb = firebasePrefix(), let keyHash = self.keyHash(key) else { return }
         let value = ["key": key, "value": value, "state": state, "target": target]
-        let keyHash = self.keyHash(key)
         fb.child(keyHash).setValue(value)
     }
     
@@ -360,10 +396,8 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
             self.properties.removeValue(forKey: key)
         }
 
-        guard let fb = firebasePrefix() else { return }
-        let keyHash = self.keyHash(key)
+        guard let fb = firebasePrefix(), let keyHash = self.keyHash(key) else { return }
         fb.child(keyHash).removeValue()
-
     }
 
     
@@ -380,12 +414,24 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
         }
 
         guard let fb = firebasePrefix() else { return }
-        fb.setValue(nil)
+        fb.removeValue()
     }
     
-    func keyHash(_ key: String) -> String {
-        let keyData = Data(key.utf8)
-        let keyHash: String = SHA256.hash(data: keyData).compactMap { String(format: "%02x", $0) }.joined()
+    func keyHash(_ key: String) -> String? {
+//        let keyData = Data(key.utf8)
+//        let keyHash: String = SHA256.hash(data: keyData).compactMap { String(format: "%02x", $0) }.joined()
+
+        // We will send only permitted properties, in order to protect user privacy
+        guard self.permittedProperties.contains(key) else { return nil }
+
+        let keyHash: String = key
+            .replacingOccurrences(of: ".", with: "_")
+            .replacingOccurrences(of: "#", with: "")
+            .replacingOccurrences(of: "$", with: "")
+            .replacingOccurrences(of: "[", with: "")
+            .replacingOccurrences(of: "]", with: "")
+            .replacingOccurrences(of: "/", with: "_")
+        
         return keyHash
     }
     
