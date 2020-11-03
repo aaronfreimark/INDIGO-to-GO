@@ -21,16 +21,12 @@ class IndigoClientViewModel: ObservableObject {
     var isPreview: Bool
     var anyCancellable: AnyCancellable? = nil
 
-    var defaultImager: String {
-        didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") }
-    }
-    var defaultGuider: String {
-        didSet { UserDefaults.standard.set(defaultGuider, forKey: "guider") }
-    }
-    var defaultMount: String {
-        didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") }
-    }
-
+    /// Saved Prefs
+    var agentSelection: String { didSet { UserDefaults.standard.set(defaultImager, forKey: "agentSelection") } }
+    var defaultImager: String { didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") } }
+    var defaultGuider: String { didSet { UserDefaults.standard.set(defaultGuider, forKey: "guider") } }
+    var defaultMount: String { didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") } }
+    var isPublishedToRemote: Bool { didSet { UserDefaults.standard.set(defaultImager, forKey: "isPublishedToRemote") } }
 
     /// Generally useful properties
     @Published var isImagerConnected = false
@@ -99,6 +95,9 @@ class IndigoClientViewModel: ObservableObject {
     @Published var daylight: (start: Daylight, end: Daylight)?
     var hasDaylight: Bool { daylight != nil }
     
+    /// Firebase
+    @Published var isFirebaseSignedIn = false
+    
     
     // MARK: - Init
     
@@ -107,9 +106,11 @@ class IndigoClientViewModel: ObservableObject {
         self.client = client
         self.location = Location()
 
+        self.agentSelection = UserDefaults.standard.object(forKey: "agentSelection") as? String ?? "local"
         self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
         self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
         self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
+        self.isPublishedToRemote = UserDefaults.standard.bool(forKey: "isPublishedToRemote")
 
         anyCancellable = self.bonjourBrowser.publisher
             .sink { endpoints in
@@ -121,12 +122,15 @@ class IndigoClientViewModel: ObservableObject {
                 self.objectWillChange.send()
             }
 
-        // Load Firebase
-        FirebaseApp.configure()
-        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.reinitSavedServers()
         }
+
+        // Firebase
+        _ = Auth.auth().addStateDidChangeListener { (_, user) in
+            self.isFirebaseSignedIn = user != nil
+        }
+
         
         // Assists with Previews
         update()
@@ -568,7 +572,7 @@ class IndigoClientViewModel: ObservableObject {
     
     func reinitSavedServers() {
         self.reset()
-        self.client = IndigoClient()
+        self.client = LocalIndigoClient()
         self.client.endpoints = self.endpoints
         self.isPreview = false
         self.client.reinit(servers: [self.defaultImager, self.defaultGuider, self.defaultMount])

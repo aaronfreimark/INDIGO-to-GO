@@ -17,7 +17,7 @@ class MockIndigoClientForPreview: IndigoPropertyService {
 
     private var properties: [String: IndigoItem] = [:]
     let queue = DispatchQueue(label: "Client connection Q")
-
+    
     init() {
 
         /*

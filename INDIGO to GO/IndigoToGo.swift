@@ -9,8 +9,9 @@ import SwiftUI
 
 @main
 struct INDIGO_to_GO: App {
-    @StateObject private var client = IndigoClientViewModel(client: IndigoClient())
-    
+    @StateObject private var client = IndigoClientViewModel(client: LocalIndigoClient())
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
         WindowGroup {
             MainTabView()

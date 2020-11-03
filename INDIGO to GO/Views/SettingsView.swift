@@ -18,9 +18,9 @@ struct SettingsView: View {
     @State var guider: String = "None"
     @State var mount: String = "None"
     @State var agents = AgentSelection.local
-    @State var publish = false
+    @State var isPublishedToRemote = false
 
-    enum AgentSelection {
+    enum AgentSelection: String {
         case local, remote, simulator
     }
     
@@ -32,17 +32,17 @@ struct SettingsView: View {
             Label("Connections", systemImage: "bonjour")
                 .font(.title)
                 .padding()
-
+            
+            Picker(selection: $agents, label: Text("Agent Setup")) {
+                Text("Local").tag(AgentSelection.local)
+                Text("Remote").tag(AgentSelection.remote)
+                Text("Simulator").tag(AgentSelection.simulator)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding()
+            
             Form {
 
-                HStack {
-                    Picker(selection: $agents, label: Text("Agent Setup")) {
-                        Text("Local").tag(AgentSelection.local)
-                        Text("Remote").tag(AgentSelection.remote)
-                        Text("Simulator").tag(AgentSelection.simulator)
-                    }
-                }
-                
                 if self.agents == .local {
                     Text("Imager: \(imager)").font(.footnote).baselineOffset(-20)
                     Picker(selection: $imager, label: Text("Imager Agent")) {
@@ -71,13 +71,14 @@ struct SettingsView: View {
                         }
                     }
                     Text("")
-                    Toggle(isOn: $publish) {
+                    Toggle(isOn: $isPublishedToRemote) {
                         Text("Publish to remote clients")
                     }
-                    if self.publish {
+                    if self.isPublishedToRemote {
                         HStack {
                             Spacer()
                             SignInWithAppleButtonView()
+                                .environmentObject(client)
                             Spacer()
                         }
                         .padding(.vertical)
@@ -92,7 +93,12 @@ struct SettingsView: View {
                         .font(.caption)
                         .padding(.vertical)
 
-                    SignInWithAppleButtonView()
+                    HStack {
+                        Spacer()
+                        SignInWithAppleButtonView()
+                            .environmentObject(client)
+                        Spacer()
+                    }
 
                 } else {
                     
@@ -114,6 +120,8 @@ struct SettingsView: View {
         }
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                self.agents = AgentSelection(rawValue: client.agentSelection) ?? .local
+                self.isPublishedToRemote = client.isPublishedToRemote && client.isFirebaseSignedIn
                 if !client.bonjourBrowser.names().contains(client.defaultImager) { self.imager = "None" } else {self.imager = client.defaultImager }
                 if !client.bonjourBrowser.names().contains(client.defaultGuider) { self.guider = "None" } else {self.guider = client.defaultGuider }
                 if !client.bonjourBrowser.names().contains(client.defaultMount) { self.mount = "None" } else {self.mount = client.defaultMount }
@@ -128,12 +136,20 @@ struct SettingsView: View {
     }
     
     func saveServers() {
+        self.client.agentSelection = self.agents.rawValue
+
         switch self.agents {
         case .local:
+            self.client.isPublishedToRemote = self.isPublishedToRemote
+            if !self.isPublishedToRemote {
+                SignInWithAppleButtonView().firebaseSignOut()
+            }
+
             self.client.defaultImager = imager
             self.client.defaultGuider = guider
             self.client.defaultMount = mount
             self.client.reinitSavedServers()
+            
             break
         case .remote:
             break

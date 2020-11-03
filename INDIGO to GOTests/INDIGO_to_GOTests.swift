@@ -28,7 +28,7 @@ class INDIGO_to_GOTests: XCTestCase {
         for (index,testJson):(String, JSON) in json {
             print("Test #\(index)")
             
-            let client = IndigoClient()
+            let client = LocalIndigoClient()
             
             for (_, propJson):(String, JSON) in testJson["properties"] {
                 client.setValue(key: propJson["key"].string!, toValue: propJson["value"].string!, toState: propJson["State"].string!)
@@ -46,7 +46,7 @@ class INDIGO_to_GOTests: XCTestCase {
     }
     
     func testProperties() throws {
-        let client = IndigoClient()
+        let client = LocalIndigoClient()
         
         let keycountBefore = client.getKeys().count
         XCTAssertEqual(keycountBefore, 0)

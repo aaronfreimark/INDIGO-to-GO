@@ -14,10 +14,10 @@ import CryptoKit
 struct SignInWithAppleButtonView: View {
 
     @State private var nonce: String?
-    @ObservedObject private var firebaseHelper = FirebaseHelper()
-    
+    @EnvironmentObject var client: IndigoClientViewModel
+
     var body: some View {
-        if self.firebaseHelper.isSignedIn {
+        if self.client.isFirebaseSignedIn {
                       
             // Someone is signed in.
             
@@ -122,20 +122,9 @@ struct SignInWithAppleButtonView: View {
 
 enum SignInState: String {
     case signIn
-//    case link
     case reauth
 }
 
-
-class FirebaseHelper: ObservableObject {
-    @Published var isSignedIn = false
-    
-    init() {
-        _ = Auth.auth().addStateDidChangeListener { (_, user) in
-            self.isSignedIn = (user != nil)
-        }
-    }
-}
 
 // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
 private func randomNonceString(length: Int = 32) -> String {

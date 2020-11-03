@@ -38,7 +38,7 @@
 		938FF2C32549F2480057F9BB /* ServerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938FF2C22549F2480057F9BB /* ServerHeaderView.swift */; };
 		939BC329253B29800087F325 /* INDIGO_to_GOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */; };
 		939BC331253B29950087F325 /* LocationFeaturesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BC320253B1F8A0087F325 /* LocationFeaturesTests.swift */; };
-		939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* IndigoClient.swift */; };
+		939F157E250AAB63004A09D7 /* LocalClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939F157D250AAB63004A09D7 /* LocalClient.swift */; };
 		93A9CB2E253BCA34004FF29A /* Daylight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A9CB2D253BCA34004FF29A /* Daylight.swift */; };
 		93BFF7D82524F3C300B733CE /* StatusRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BFF7D72524F3C300B733CE /* StatusRowView.swift */; };
 		93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E4107D2514E5050027A62D /* IndigoConnection.swift */; };
@@ -50,6 +50,7 @@
 		93EE4CB92541EC3D0051DD51 /* IndigoProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EE4CB82541EC3D0051DD51 /* IndigoProtocols.swift */; };
 		93EE4CC32541FC070051DD51 /* IndigoClientViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93EE4CC22541FC070051DD51 /* IndigoClientViewModel.swift */; };
 		93F7D26225503F8C00403D56 /* SignInWithAppleButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F7D26125503F8C00403D56 /* SignInWithAppleButtonView.swift */; };
+		93F7D2682550B92C00403D56 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F7D2672550B92C00403D56 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,7 +106,7 @@
 		939BC326253B29800087F325 /* INDIGO to GOTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "INDIGO to GOTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = INDIGO_to_GOTests.swift; sourceTree = "<group>"; };
 		939BC32A253B29800087F325 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		939F157D250AAB63004A09D7 /* IndigoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClient.swift; sourceTree = "<group>"; };
+		939F157D250AAB63004A09D7 /* LocalClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalClient.swift; sourceTree = "<group>"; };
 		93A6047A250D361600E93EA4 /* indigo-response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "indigo-response.json"; sourceTree = "<group>"; };
 		93A9CB2D253BCA34004FF29A /* Daylight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daylight.swift; sourceTree = "<group>"; };
 		93BFF7D72524F3C300B733CE /* StatusRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusRowView.swift; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 		93EE4CB82541EC3D0051DD51 /* IndigoProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoProtocols.swift; sourceTree = "<group>"; };
 		93EE4CC22541FC070051DD51 /* IndigoClientViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoClientViewModel.swift; sourceTree = "<group>"; };
 		93F7D26125503F8C00403D56 /* SignInWithAppleButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleButtonView.swift; sourceTree = "<group>"; };
+		93F7D2672550B92C00403D56 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,7 +234,7 @@
 		93BF080F2513EA320018DEC0 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				939F157D250AAB63004A09D7 /* IndigoClient.swift */,
+				939F157D250AAB63004A09D7 /* LocalClient.swift */,
 				938F010625114B2D00599096 /* IndigoItem.swift */,
 				93E4107D2514E5050027A62D /* IndigoConnection.swift */,
 				931AF663250A564900EE6300 /* BonjourBrowser.swift */,
@@ -241,6 +243,7 @@
 				93A9CB2D253BCA34004FF29A /* Daylight.swift */,
 				93EE4CB82541EC3D0051DD51 /* IndigoProtocols.swift */,
 				9372924625373D36000DF0A6 /* Extensions.swift */,
+				93F7D2672550B92C00403D56 /* AppDelegate.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -419,7 +422,8 @@
 				9311AC9225129C2200725CB9 /* SettingsView.swift in Sources */,
 				930C34B82533DBAE0014A186 /* ImagerProgressView.swift in Sources */,
 				933ACBBC2544A22100FD0AC7 /* MockIndigoClientForPreview.swift in Sources */,
-				939F157E250AAB63004A09D7 /* IndigoClient.swift in Sources */,
+				939F157E250AAB63004A09D7 /* LocalClient.swift in Sources */,
+				93F7D2682550B92C00403D56 /* AppDelegate.swift in Sources */,
 				93E4107E2514E5050027A62D /* IndigoConnection.swift in Sources */,
 				931AF664250A564900EE6300 /* BonjourBrowser.swift in Sources */,
 				931AF6392509B96F00EE6300 /* MonitorView.swift in Sources */,

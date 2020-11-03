@@ -10,8 +10,10 @@ import SwiftyJSON
 import SwiftUI
 import Combine
 import Network
+import Firebase
+import CryptoKit
 
-class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionService,  IndigoConnectionDelegate {
+class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionService,  IndigoConnectionDelegate {
 
     // MARK: Properties
     
@@ -36,16 +38,25 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
     
     var anyCancellable: AnyCancellable? = nil
 
-    
+    /// Properties for Firebase syncing
+    var firebase: DatabaseReference?
+    var firebaseUID: String?
+
     // MARK: - Init & Re-Init
     
     init() {
-        
-        // after 1 second search for whatever is in serverSettings.servers to try to reconnect
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//            self.reinitSavedServers()
-//        }
 
+        _ = Auth.auth().addStateDidChangeListener { (_, user) in
+            if let user = user {
+                self.firebase = Database.database().reference()
+                self.firebaseUID = user.uid
+            } else {
+                if let firebase = self.firebase {
+                    firebase.database.goOffline()
+                }
+                self.firebaseUID = nil
+            }
+        }
     }
     
     func reinit(servers: [String]) {
@@ -59,7 +70,7 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
         self.serversToConnect = servers.removingDuplicates()
         
         // clear out all properties!
-        self.properties.removeAll()
+        self.removeAll()
 
         self.serversToDisconnect = self.allServers()
         
@@ -337,12 +348,22 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
         self.queue.async {
             self.properties[key] = newItem
         }
+        
+        guard let fb = firebasePrefix() else { return }
+        let value = ["key": key, "value": value, "state": state, "target": target]
+        let keyHash = self.keyHash(key)
+        fb.child(keyHash).setValue(value)
     }
     
     func delValue(_ key: String) {
         self.queue.async {
             self.properties.removeValue(forKey: key)
         }
+
+        guard let fb = firebasePrefix() else { return }
+        let keyHash = self.keyHash(key)
+        fb.child(keyHash).removeValue()
+
     }
 
     
@@ -357,16 +378,28 @@ class IndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionSer
         self.queue.async {
             self.properties.removeAll()
         }
-    }
 
-        
+        guard let fb = firebasePrefix() else { return }
+        fb.setValue(nil)
+    }
+    
+    func keyHash(_ key: String) -> String {
+        let keyData = Data(key.utf8)
+        let keyHash: String = SHA256.hash(data: keyData).compactMap { String(format: "%02x", $0) }.joined()
+        return keyHash
+    }
+    
+    func firebasePrefix() -> DatabaseReference? {
+        guard let uid = self.firebaseUID, let firebase = self.firebase else { return nil }
+        return firebase.child("users/\(uid)/properties")
+    }
 
 }
 
 
 struct IndigoClient_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClient()
+        let client = LocalIndigoClient()
         MonitorView()
             .environmentObject(client)
     }
