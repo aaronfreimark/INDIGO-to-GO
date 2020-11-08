@@ -13,20 +13,22 @@ import Firebase
 
 class IndigoClientViewModel: ObservableObject {
     
-    var client: IndigoPropertyService
+    var client: IndigoPropertyService?
     var location: Location
-    var bonjourBrowser = BonjourBrowser()
-    var endpoints: [String: NWEndpoint] = [:]
-    
-    var isPreview: Bool
+    var name: String { return client?.name ?? "None" }
+    var systemIcon: String { return client?.systemIcon ?? "Bonjour" }
+
     var anyCancellable: AnyCancellable? = nil
 
     /// Saved Prefs
-    var agentSelection: String { didSet { UserDefaults.standard.set(defaultImager, forKey: "agentSelection") } }
-    var defaultImager: String { didSet { UserDefaults.standard.set(defaultImager, forKey: "imager") } }
-    var defaultGuider: String { didSet { UserDefaults.standard.set(defaultGuider, forKey: "guider") } }
-    var defaultMount: String { didSet { UserDefaults.standard.set(defaultMount, forKey: "mount") } }
-    var isPublishedToRemote: Bool { didSet { UserDefaults.standard.set(defaultImager, forKey: "isPublishedToRemote") } }
+    var agentSelection: SettingsView.AgentSelection {
+        let defaultAgentSelection = UserDefaults.standard.object(forKey: "agentSelection") as? String ?? "local"
+        return SettingsView.AgentSelection(rawValue: defaultAgentSelection) ?? .local
+    }
+
+    /// Firebase
+    var isPublishedToRemote: Bool { didSet { UserDefaults.standard.set(isPublishedToRemote, forKey: "isPublishedToRemote") } }
+    @Published var isFirebaseSignedIn = false
 
     /// Generally useful properties
     @Published var isImagerConnected = false
@@ -95,48 +97,68 @@ class IndigoClientViewModel: ObservableObject {
     @Published var daylight: (start: Daylight, end: Daylight)?
     var hasDaylight: Bool { daylight != nil }
     
-    /// Firebase
-    @Published var isFirebaseSignedIn = false
     
+    // Bonjour
+    let bonjourBrowser = BonjourBrowser()
+    var endpoints: [String: NWEndpoint] = [:]
     
+
     // MARK: - Init
     
-    init(client: IndigoPropertyService, isPreview: Bool = false) {
-        self.isPreview = isPreview
-        self.client = client
+    init(client: IndigoPropertyService?) {
+        self.isPublishedToRemote = UserDefaults.standard.bool(forKey: "isPublishedToRemote")
         self.location = Location()
 
-        self.agentSelection = UserDefaults.standard.object(forKey: "agentSelection") as? String ?? "local"
-        self.defaultImager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
-        self.defaultGuider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
-        self.defaultMount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
-        self.isPublishedToRemote = UserDefaults.standard.bool(forKey: "isPublishedToRemote")
-
+        // Bonjour
         anyCancellable = self.bonjourBrowser.publisher
             .sink { endpoints in
-                self.client.endpoints.removeAll()
+                self.endpoints.removeAll()
                 for endpoint in endpoints {
                     self.endpoints[endpoint.name] = endpoint.endpoint
                 }
-                self.client.endpoints = self.endpoints
+                self.client?.endpoints = self.endpoints
                 self.objectWillChange.send()
             }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.reinitSavedServers()
-        }
 
         // Firebase
         _ = Auth.auth().addStateDidChangeListener { (_, user) in
             self.isFirebaseSignedIn = user != nil
         }
 
+        if client != nil {
+            self.client = client
+        } else {
+            self.reinit()
+        }
         
-        // Assists with Previews
-        update()
-
     }
     
+    func reinit() {
+        
+        self.reset()
+
+        switch self.agentSelection {
+        case .local:
+            self.client = LocalIndigoClient()
+            self.client?.endpoints = self.endpoints
+            self.client?.restart()
+
+            break
+
+        case .remote:
+            self.client = RemoteIndigoClient()
+
+            
+        case .simulator:
+            self.reset()
+            self.client = IndigoSimulatorClient()
+            break
+            
+        }
+
+        
+    }
+        
     /// Shifts times for Meridian & HA Limit over if sequence is running, so these count from start of sequence instead of now()
     func elapsedTimeIfSequencing() -> Int {
         if self.imagerState != .Stopped {
@@ -161,6 +183,7 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     private func updateGeneralProperties() {
+        guard let client = self.client else { return }
         let keys = client.getKeys()
         self.isImagerConnected = keys.contains { $0.hasPrefix("Imager Agent") }
         self.isGuiderConnected = keys.contains { $0.hasPrefix("Guider Agent") }
@@ -169,6 +192,8 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     private func updateImagerProperties() {
+        guard let client = self.client else { return }
+
         let sequence = "Imager Agent | AGENT_START_PROCESS | SEQUENCE"
         let pause = "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE"
         
@@ -222,7 +247,8 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     private func updateSequenceProperties() {
-        
+        guard let client = self.client else { return }
+
         /// sequence times
         var imagerBatchInProgress = 0
         if let imagerBatchInProgressString = client.getValue("Imager Agent | AGENT_IMAGER_STATS | BATCH") {
@@ -323,7 +349,8 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     private func updateGuiderProperties() {
-        
+        guard let client = self.client else { return }
+
         let isGuiding = client.getValue("Guider Agent | AGENT_START_PROCESS | GUIDING") == "true"
         let isDithering = Float(client.getValue("Guider Agent | AGENT_GUIDER_STATS | DITHERING") ?? "0") ?? 0 > 0
         let isCalibrating = client.getValue("Guider Agent | AGENT_START_PROCESS | CALIBRATION") == "true"
@@ -379,6 +406,8 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     private func updateMountProperties() {
+        guard let client = self.client else { return }
+
         if client.getValue("Mount Agent | MOUNT_PARK | PARKED") == "true" {
             self.srMountStatus = StatusRowText(
                 text: "Mount Parked",
@@ -412,9 +441,9 @@ class IndigoClientViewModel: ObservableObject {
     }
     
     private func updateMeridianProperties() {
-        
+        guard let client = self.client else { return }
+
         /// Meridian Time
-        
         
         let hourAngle = Float(client.getValue("Mount Agent | AGENT_LIMITS | HA_TRACKING") ?? "0")!
         var secondsUntilMeridian = Int(3600 * (24.0 - hourAngle))
@@ -490,7 +519,7 @@ class IndigoClientViewModel: ObservableObject {
     private func updateLocation() {
         // Sunrise, Sunset
         
-        if self.isPreview {
+        if self.isSimulatedServer() {
             /// Special stuff for the preview...
             
             self.daylight = (
@@ -554,12 +583,15 @@ class IndigoClientViewModel: ObservableObject {
     }
 
     private func updateImages() {
+        guard let client = self.client else { return }
+
         self.imagerLatestImageURL = client.imagerLatestImageURL
         self.guiderLatestImageURL = client.guiderLatestImageURL
     }
     
 
     func emergencyStopAll() {
+        guard let client = self.client else { return }
         client.emergencyStopAll()
     }
     
@@ -567,34 +599,13 @@ class IndigoClientViewModel: ObservableObject {
     // MARK: - Connection Management
     
     func connectedServers() -> [String] {
+        guard let client = self.client else { return [] }
         return client.connectedServers()
-    }
-    
-    func reinitSavedServers() {
-        self.reset()
-        self.client = LocalIndigoClient()
-        self.client.endpoints = self.endpoints
-        self.isPreview = false
-        self.client.reinit(servers: [self.defaultImager, self.defaultGuider, self.defaultMount])
-    }
-    
-    func reinitSimulatedServer() {
-        self.reset()
-        self.isPreview = true
-        self.client = MockIndigoClientForPreview()
-    }
-
-    func reinitRemoteServer() {
-        print("Reinit with Remote Server")
-        self.reset()
-        self.isPreview = false
-        self.client = RemoteIndigoClient()
     }
 
     func isSimulatedServer() -> Bool {
-        let connected = client.connectedServers()
-        if connected.count == 0 { return false }
-        return connected[0] == "Simulator"
+        guard let client = self.client else { return false }
+        return client.name == "Simulator"
     }
     
     private func reset() {
@@ -654,7 +665,7 @@ class IndigoClientViewModel: ObservableObject {
 
 struct IndigoClientViewModel_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         MainTabView()
             .environmentObject(client)
     }

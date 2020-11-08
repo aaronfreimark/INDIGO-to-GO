@@ -11,6 +11,9 @@ import Network
 
 protocol IndigoPropertyService {
     
+    var name: String { get }
+    var systemIcon: String { get }
+
     // Property Management
     func getKeys() -> [String]
     func getValue(_ key: String) -> String?
@@ -21,10 +24,9 @@ protocol IndigoPropertyService {
     func emergencyStopAll()
 
     // Connections
-    var endpoints: [String: NWEndpoint] { get set }
+    func restart()
     func connectedServers() -> [String]
-    var systemIcon: String { get }
-    func reinit(servers: [String])
+    var endpoints: [String: NWEndpoint] { get set }
 
     // FIXME: Move to its own model
     var imagerLatestImageURL: URL? { get }

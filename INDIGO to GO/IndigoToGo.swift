@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct INDIGO_to_GO: App {
-    @StateObject private var client = IndigoClientViewModel(client: LocalIndigoClient())
+    @StateObject private var client = IndigoClientViewModel(client: nil)
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {

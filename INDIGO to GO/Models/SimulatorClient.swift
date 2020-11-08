@@ -9,14 +9,15 @@ import Foundation
 import Combine
 import Network
 
-class MockIndigoClientForPreview: IndigoPropertyService {
+class IndigoSimulatorClient: IndigoPropertyService {
 
+    var name = "Simulator"
     var systemIcon = "ladybug"
     var imagerLatestImageURL: URL?
     var guiderLatestImageURL: URL?
 
     var endpoints: [String: NWEndpoint] = [:]
-
+    
     private var properties: [String: IndigoItem] = [:]
     let queue = DispatchQueue(label: "Client connection Q")
     
@@ -113,7 +114,7 @@ class MockIndigoClientForPreview: IndigoPropertyService {
         return ["Simulator"]
     }
     
-    func reinit(servers: [String]) {
+    func restart() {
         return
     }
 

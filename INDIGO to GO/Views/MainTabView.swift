@@ -23,6 +23,8 @@ struct MainTabView: View {
             ImagerPreviewView()
                 .tabItem { Label("Preview", systemImage: "sparkles.rectangle.stack") }
                 .tag(2)
+                // TODO: Implement previews using Remote
+                .disabled(client.agentSelection == .remote)
 //            Text("Sequence")
 //                .tabItem { Label("Sequence", systemImage: "list.bullet.rectangle") }
 //                .tag(3)
@@ -41,14 +43,14 @@ struct MainTabView: View {
             /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
+                    client.reinit()
                 }
             }
 
             /// after 2 seconds search again
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
+                    client.reinit()
                 }
             }
 
@@ -64,13 +66,13 @@ struct MainTabView: View {
             /// after 1 second search for whatever is in serverSettings.servers to try to reconnect
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
+                    client.reinit()
                 }
             }
             /// after 2 seconds search again
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 if client.connectedServers().count == 0 {
-                    client.reinitSavedServers()
+                    client.reinit()
                 }
             }
         }
@@ -79,7 +81,7 @@ struct MainTabView: View {
 
 struct MainTabView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         MainTabView()
             .environmentObject(client)
     }

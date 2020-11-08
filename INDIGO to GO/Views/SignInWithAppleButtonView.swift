@@ -55,6 +55,10 @@ struct SignInWithAppleButtonView: View {
 
             print("Authorization successful.")
             if let appleIDCredential = authResults.credential as? ASAuthorizationAppleIDCredential {
+
+                // Save authorised user ID for future reference
+                UserDefaults.standard.set(appleIDCredential.user, forKey: "appleAuthorizedUserIdKey")
+
                 guard let nonce = self.nonce else {
                     fatalError("Invalid state: A login callback was received, but no login request was sent.")
                 }
@@ -109,6 +113,7 @@ struct SignInWithAppleButtonView: View {
     }
     
     func firebaseSignOut() {
+        UserDefaults.standard.set(nil, forKey: "appleAuthorizedUserIdKey")
         let firebaseAuth = Auth.auth()
         do {
             try firebaseAuth.signOut()

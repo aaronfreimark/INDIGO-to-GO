@@ -18,6 +18,7 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
     // MARK: Properties
     
     var systemIcon = "bonjour"
+    var name: String { return connectedServers().joined(separator: ", ") }
     var id = UUID()
     let queue = DispatchQueue(label: "Client connection Q")
     var lastUpdate: Date?
@@ -102,22 +103,32 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
                 self.firebaseUID = nil
             }
         }
+        
+    }
+    
+    func restart() {
+        var servers: [String] = []
+        servers.append( UserDefaults.standard.object(forKey: "imager") as? String ?? "None" )
+        servers.append( UserDefaults.standard.object(forKey: "guider") as? String ?? "None" )
+        servers.append( UserDefaults.standard.object(forKey: "mount") as? String ?? "None" )
+
+        self.reinit(servers: servers)
     }
     
     func reinit(servers: [String]) {
-        print("ReInit with servers \(servers)")
+
+        self.serversToConnect = servers.removingDuplicates()
+        print("ReInit with servers \(self.serversToConnect)")
         
         // 1. Disconnect all servers
         // 2. Once disconnected, remove all properties
         // 3. Connect to all servers
         // 4. Profit
         
-        self.serversToConnect = servers.removingDuplicates()
+        self.serversToDisconnect = self.allServers()
         
         // clear out all properties!
         self.removeAll()
-
-        self.serversToDisconnect = self.allServers()
         
         if self.serversToDisconnect.count > 0 {
             self.disconnectAll()
@@ -169,7 +180,7 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
     func connectAll() {
         print("Connecting to servers: \(self.serversToConnect)")
         for server in self.serversToConnect {
-            // Make sure each agent is unique. We don't need multiple connections to an endpoint!xwxx
+            // Make sure each agent is unique. We don't need multiple connections to an endpoint!
             if server != "None" && !self.connectedServers().contains(server)  {
                 if let endpoint = self.endpoints[server] {
                     self.queue.async {
@@ -296,7 +307,7 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
                                     self.setValue(key: key, toValue: itemValue, toState: state, toTarget: itemTarget)
                                 }
                                 
-                                /// enable previews if offered
+                                /// enable previews if offered and have not yet been set!
                                 if key == "Imager Agent | CCD_PREVIEW | ENABLED" && type == "defSwitchVector" {
                                     self.queue.asyncAfter(deadline: .now() + 2.0) {
                                         source.enablePreviews()

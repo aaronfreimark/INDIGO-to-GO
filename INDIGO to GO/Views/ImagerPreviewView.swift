@@ -66,7 +66,7 @@ struct ImagerPreviewView: View {
 
 struct ImagerPreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         ImagerPreviewView()
             .environmentObject(client)
     }

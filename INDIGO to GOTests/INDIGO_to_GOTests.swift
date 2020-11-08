@@ -7,6 +7,7 @@
 
 import XCTest
 import SwiftyJSON
+import Firebase
 @testable import INDIGO_to_GO
 
 class INDIGO_to_GOTests: XCTestCase {
@@ -38,7 +39,7 @@ class INDIGO_to_GOTests: XCTestCase {
             let clientVM = IndigoClientViewModel(client: client)
             clientVM.update()
             
-            XCTAssertEqual(clientVM.client.getKeys().count, Int(testJson["properties"].count))
+            XCTAssertEqual(clientVM.client?.getKeys().count, Int(testJson["properties"].count))
             XCTAssertEqual(clientVM.srSequenceStatus?.value , "\(testJson["currentImage"]) / \(testJson["totalImages"])")
             XCTAssertEqual(clientVM.imagerTotalTime, testJson["totalTime"].float)
             XCTAssertEqual(clientVM.imagerElapsedTime , testJson["elapsedTime"].float)

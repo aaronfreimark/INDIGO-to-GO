@@ -34,7 +34,7 @@
 		93729243253723E5000DF0A6 /* StatusRowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93729242253723E5000DF0A6 /* StatusRowViewModel.swift */; };
 		9372924725373D36000DF0A6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9372924625373D36000DF0A6 /* Extensions.swift */; };
 		937A7FF22551C6F800D6F0D5 /* IndigoRemoteClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937A7FF12551C6F800D6F0D5 /* IndigoRemoteClient.swift */; };
-		937F8347251A5FF200AAA0A5 /* IndigoSequenceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequenceViewModel.swift */; };
+		937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */; };
 		938F010725114B2D00599096 /* IndigoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938F010625114B2D00599096 /* IndigoItem.swift */; };
 		938FF2C32549F2480057F9BB /* ServerHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 938FF2C22549F2480057F9BB /* ServerHeaderView.swift */; };
 		939BC329253B29800087F325 /* INDIGO_to_GOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939BC328253B29800087F325 /* INDIGO_to_GOTests.swift */; };
@@ -101,7 +101,7 @@
 		9372924625373D36000DF0A6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		93793FFC253CC7F500149847 /* INDIGO_Property_Tests.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = INDIGO_Property_Tests.json; sourceTree = "<group>"; };
 		937A7FF12551C6F800D6F0D5 /* IndigoRemoteClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoRemoteClient.swift; sourceTree = "<group>"; };
-		937F8346251A5FF200AAA0A5 /* IndigoSequenceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequenceViewModel.swift; sourceTree = "<group>"; };
+		937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoSequence.swift; sourceTree = "<group>"; };
 		938F010625114B2D00599096 /* IndigoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndigoItem.swift; sourceTree = "<group>"; };
 		938FF2C22549F2480057F9BB /* ServerHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerHeaderView.swift; sourceTree = "<group>"; };
 		939BC320253B1F8A0087F325 /* LocationFeaturesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationFeaturesTests.swift; sourceTree = "<group>"; };
@@ -256,7 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				93EE4CC22541FC070051DD51 /* IndigoClientViewModel.swift */,
-				937F8346251A5FF200AAA0A5 /* IndigoSequenceViewModel.swift */,
+				937F8346251A5FF200AAA0A5 /* IndigoSequence.swift */,
 				93729242253723E5000DF0A6 /* StatusRowViewModel.swift */,
 			);
 			path = ViewModels;
@@ -409,7 +409,7 @@
 				93577356252A526E005670B3 /* BonjourEndpoint.swift in Sources */,
 				935431FD253C0D7D008D3F17 /* DaylightView.swift in Sources */,
 				933ACBC12544BD9E00FD0AC7 /* ClockView.swift in Sources */,
-				937F8347251A5FF200AAA0A5 /* IndigoSequenceViewModel.swift in Sources */,
+				937F8347251A5FF200AAA0A5 /* IndigoSequence.swift in Sources */,
 				93EC16FA2534BCD200392AC9 /* Location.swift in Sources */,
 				938FF2C32549F2480057F9BB /* ServerHeaderView.swift in Sources */,
 				93BFF7D82524F3C300B733CE /* StatusRowView.swift in Sources */,

@@ -35,7 +35,11 @@ struct SettingsView: View {
             
             Picker(selection: $agents, label: Text("Agent Setup")) {
                 Text("Local").tag(AgentSelection.local)
+                
+                #if !targetEnvironment(macCatalyst)
                 Text("Remote").tag(AgentSelection.remote)
+                #endif
+                
                 Text("Simulator").tag(AgentSelection.simulator)
             }
             .pickerStyle(SegmentedPickerStyle())
@@ -70,6 +74,8 @@ struct SettingsView: View {
                             Text(endpoint.name)
                         }
                     }
+
+                    #if targetEnvironment(macCatalyst)
                     Text("")
                     Toggle(isOn: $isPublishedToRemote) {
                         Text("Publish to remote clients")
@@ -88,6 +94,8 @@ struct SettingsView: View {
                             .font(.caption)
                             .padding(.vertical)
                     }
+                    #endif
+                    
                 } else if self.agents == .remote {
                     Text("Run INDIGO to GO for Mac on your local network, and you may monitor your equipment from anywhere.")
                         .font(.caption)
@@ -120,11 +128,13 @@ struct SettingsView: View {
         }
         .onAppear(perform: {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                self.agents = AgentSelection(rawValue: client.agentSelection) ?? .local
+                self.agents = client.agentSelection
                 self.isPublishedToRemote = client.isPublishedToRemote && client.isFirebaseSignedIn
-                if !client.bonjourBrowser.names().contains(client.defaultImager) { self.imager = "None" } else {self.imager = client.defaultImager }
-                if !client.bonjourBrowser.names().contains(client.defaultGuider) { self.guider = "None" } else {self.guider = client.defaultGuider }
-                if !client.bonjourBrowser.names().contains(client.defaultMount) { self.mount = "None" } else {self.mount = client.defaultMount }
+                
+                self.imager = UserDefaults.standard.object(forKey: "imager") as? String ?? "None"
+                self.guider = UserDefaults.standard.object(forKey: "guider") as? String ?? "None"
+                self.mount = UserDefaults.standard.object(forKey: "mount") as? String ?? "None"
+
             }
         })
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
@@ -136,7 +146,11 @@ struct SettingsView: View {
     }
     
     func saveServers() {
-        self.client.agentSelection = self.agents.rawValue
+        UserDefaults.standard.set(self.agents.rawValue, forKey: "agentSelection")
+        UserDefaults.standard.set(isPublishedToRemote, forKey: "isPublishedToRemote")
+        UserDefaults.standard.set(imager, forKey: "imager")
+        UserDefaults.standard.set(guider, forKey: "guider")
+        UserDefaults.standard.set(mount, forKey: "mount")
 
         switch self.agents {
         case .local:
@@ -144,21 +158,13 @@ struct SettingsView: View {
             if !self.isPublishedToRemote {
                 SignInWithAppleButtonView().firebaseSignOut()
             }
+            break
 
-            self.client.defaultImager = imager
-            self.client.defaultGuider = guider
-            self.client.defaultMount = mount
-            self.client.reinitSavedServers()
-            
-            break
-        case .remote:
-            self.client.reinitRemoteServer()
-            break
-            
-        case .simulator:
-            self.client.reinitSimulatedServer()
+        case .remote, .simulator:
             break
         }
+
+        self.client.reinit()
 
         self.presentationMode.wrappedValue.dismiss()
     }
@@ -169,7 +175,7 @@ struct SettingsView: View {
 
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         SettingsView()
             .environmentObject(client)
 //            .background(Color(.systemBackground))

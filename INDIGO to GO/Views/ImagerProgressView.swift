@@ -135,7 +135,7 @@ struct ImagerProgressView: View {
 
 struct ProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         ImagerProgressView()
             .environmentObject(client)
             .previewLayout(PreviewLayout.fixed(width: 400.0, height: 100.0))

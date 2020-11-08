@@ -137,7 +137,7 @@ class Location: NSObject, CLLocationManagerDelegate {
 
 struct LocationProgressView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         MonitorView()
             .environmentObject(client)
     }

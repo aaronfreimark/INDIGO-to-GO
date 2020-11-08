@@ -35,6 +35,16 @@ struct MonitorView: View {
                     }
                     .font(.footnote)
                     
+                    if client.agentSelection == .remote && !client.isFirebaseSignedIn {
+                        HStack {
+                            Spacer()
+                            SignInWithAppleButtonView()
+                                .environmentObject(client)
+                            Spacer()
+                        }
+                        .padding(.vertical)
+                    }
+                    
                 }
                 
                 // =================================================================== SEQUENCE
@@ -147,7 +157,7 @@ struct MonitorView: View {
 
 struct MonitorView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         MonitorView()
             .environmentObject(client)
             .background(Color(.systemBackground))

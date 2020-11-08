@@ -15,7 +15,7 @@ struct ServerHeaderView: View {
     var body: some View {
         VStack {
             Button(action: { self.isExpanded = !self.isExpanded }) {
-                Label("\(client.connectedServers().count > 0 ? client.connectedServers().joined(separator: ", ") : "None")", systemImage: "bonjour")
+                Label(client.name, systemImage: client.systemIcon)
             }
             .font(.system(size: 16))
             .padding(5)
@@ -30,7 +30,7 @@ struct ServerHeaderView: View {
 
 struct ServerHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        let client = IndigoClientViewModel(client: MockIndigoClientForPreview(), isPreview: true)
+        let client = IndigoClientViewModel(client: IndigoSimulatorClient())
         ServerHeaderView()
             .environmentObject(client)
             .previewLayout(PreviewLayout.sizeThatFits)

@@ -18,7 +18,7 @@ class IndigoConnection {
     private var serviceConnection: NWConnection?
     private var websocketConnection: NWConnection?
     private var parameters: NWParameters?
-
+    
     var didStopCallback: ((Error?) -> Void)? = nil
 
     var delegate: IndigoConnectionDelegate?
@@ -225,25 +225,30 @@ class IndigoConnection {
     func enablePreviews() {
         let json: JSON = [ "newSwitchVector": [ "device": "Imager Agent", "name": "CCD_PREVIEW", "items": [ [ "name": "ENABLED", "value": true ]  ]  ] ]
         self.send(data: json.rawString()!.data(using: .ascii)!)
+        print("\(self.name): Enabling Imager Previews")
     }
 
     func enableGuiderPreviews() {
         let json: JSON = [ "newSwitchVector": [ "device": "Guider Agent", "name": "CCD_PREVIEW", "items": [ [ "name": "ENABLED", "value": true ]  ]  ] ]
         self.send(data: json.rawString()!.data(using: .ascii)!)
+        print("\(self.name): Enabling Guider Previews")
     }
 
     func hello() {
         let json: JSON = [ "getProperties": [ "version": 512 ] ]
         self.send(data: json.rawString()!.data(using: .ascii)!)
+        print("\(self.name): Sending HELLO!")
     }
 
     func mountPark() {
         let json: JSON = [ "newSwitchVector": [ "device": "Mount Agent", "name": "MOUNT_PARK", "items": [ [ "name": "PARKED", "value": true ] ] ] ]
         self.send(data: json.rawString()!.data(using: .ascii)!)
+        print("\(self.name): Sending Mount Park")
     }
     func imagerDisableCooler() {
         let json: JSON = [ "newSwitchVector": [ "device": "Imager Agent", "name": "CCD_COOLER", "items": [ [ "name": "OFF", "value": true ] ] ] ]
         self.send(data: json.rawString()!.data(using: .ascii)!)
+        print("\(self.name): Sending Disable Cooler")
     }
 
 }

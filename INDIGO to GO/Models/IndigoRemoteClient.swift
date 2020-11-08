@@ -6,20 +6,15 @@
 //
 
 import Foundation
-import SwiftyJSON
 import SwiftUI
 import Combine
 import Network
 import Firebase
-import CryptoKit
 
 class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnectionService {
 
-    var endpoints: [String: NWEndpoint] = [:]
-
-
     // MARK: Properties
-    
+    var name = "Remote"
     var systemIcon = "antenna.radiowaves.left.and.right"
     var id = UUID()
     let queue = DispatchQueue(label: "Client connection Q")
@@ -37,7 +32,10 @@ class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnect
     var firebase: DatabaseReference?
     var firebaseUID: String?
     var firebaseRefHandle: DatabaseHandle?
-    
+
+    /// Unused really
+    var endpoints: [String: NWEndpoint] = [:]
+
     // MARK: - Init & Re-Init
     
     init() {
@@ -59,11 +57,11 @@ class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnect
             }
         }
         
-        reinit(servers: [])
+        self.restart()
                 
     }
     
-    func reinit(servers: [String]) {
+    func restart() {
         print("ReInit Remote")
         
         // clear out all properties!
@@ -72,6 +70,7 @@ class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnect
 
         if let fb = self.firebasePrefix() {
             self.firebaseRefHandle = fb.observe(.value, with: { (snapshot) in
+                self.removeAll()
                 for child in snapshot.children {
                     let snap = child as! DataSnapshot
                     let dict = snap.value as! [String: Any]
@@ -103,6 +102,7 @@ class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnect
 
     func emergencyStopAll() {
         self.queue.async {
+            // TODO: Implement Emergency Stop through Firebase
 //            for (_, connection) in self.connections {
 //                connection.mountPark()
 //                connection.imagerDisableCooler()
@@ -112,6 +112,7 @@ class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnect
 
     func enableAllPreviews() {
         self.queue.async {
+            // TODO: Implement previews through Firebase
 //            for (_, connection) in self.connections {
 //                connection.enablePreviews()
 //            }
