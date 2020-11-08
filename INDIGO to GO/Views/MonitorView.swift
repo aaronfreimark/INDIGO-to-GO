@@ -15,7 +15,6 @@ struct MonitorView: View {
     @State var isShowingSpinner = true
     
     /// Keep track of whether a sheet is showing or not.
-    @State private var isSettingsSheetShowing: Bool = false
     @State private var isAlertShowing: Bool = false
     @State private var isTimesShowing: Bool = false
     
@@ -34,17 +33,6 @@ struct MonitorView: View {
                         Text("No INDIGO agents are connected. Please tap above to identify agents on your local network.")
                     }
                     .font(.footnote)
-                    
-                    if client.agentSelection == .remote && !client.isFirebaseSignedIn {
-                        HStack {
-                            Spacer()
-                            SignInWithAppleButtonView()
-                                .environmentObject(client)
-                            Spacer()
-                        }
-                        .padding(.vertical)
-                    }
-                    
                 }
                 
                 // =================================================================== SEQUENCE
@@ -76,11 +64,7 @@ struct MonitorView: View {
                         StatusRowView(sr: client.srMountStatus)
                     }
                 }
-                
-                //            if client.isImagerConnected {
-                //                ImagerPreviewView().environmentObject(client)
-                //            }
-                
+                                
                 // =================================================================== GUIDER
                 
                 if client.isGuiderConnected {
@@ -94,19 +78,13 @@ struct MonitorView: View {
                 }
                 
                 
-                Section {
-                    
-                    
-                    /// Park & Warm Button
-                    if client.isMountConnected || client.isImagerConnected {
-                        ParkAndWarmButton
+                /// Park & Warm Button
+                if client.agentSelection != .remote {
+                    Section {
+                        if client.isMountConnected || client.isImagerConnected {
+                            ParkAndWarmButton
+                        }
                     }
-                    
-                    /// Servers Button
-                    //                Button(action: serversButton) {
-                    //                    Text("Servers")
-                    //                }
-                    //                .sheet(isPresented: $isSettingsSheetShowing, content: { SettingsView().environmentObject(client) })
                 }
                 
             }
@@ -143,10 +121,6 @@ struct MonitorView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
             self.isShowingSpinner = false
         }
-    }
-    
-    private func serversButton() {
-        self.isSettingsSheetShowing = true
     }
     
     

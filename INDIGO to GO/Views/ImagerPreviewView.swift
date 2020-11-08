@@ -11,7 +11,7 @@ import URLImage
 struct ImagerPreviewView: View {
 
     @EnvironmentObject var client: IndigoClientViewModel
-    @State private var camera: String = "Imager" // Guider
+    @State private var camera: String = "Imager" // or Guider
     
     var body: some View {
         
@@ -40,6 +40,10 @@ struct ImagerPreviewView: View {
     
     
     func image() -> AnyView {
+        if client.agentSelection == .remote {
+            return AnyView(Text("Preview is not yet supported for remote connections."))
+        }
+        
         if self.camera == "Imager", let url = client.imagerLatestImageURL {
             return AnyView(URLImage(url: url) { image in
                 image

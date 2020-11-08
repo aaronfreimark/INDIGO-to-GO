@@ -155,9 +155,9 @@ struct SettingsView: View {
         switch self.agents {
         case .local:
             self.client.isPublishedToRemote = self.isPublishedToRemote
-            if !self.isPublishedToRemote {
-                SignInWithAppleButtonView().firebaseSignOut()
-            }
+//            if !self.isPublishedToRemote {
+//                SignInWithAppleButtonView().firebaseSignOut()
+//            }
             break
 
         case .remote, .simulator:
