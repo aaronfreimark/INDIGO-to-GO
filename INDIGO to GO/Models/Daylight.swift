@@ -10,14 +10,14 @@ import Foundation
 struct Daylight: Equatable {
     var dawn: DateInterval?
     var day: DateInterval?
-    var twilight: DateInterval?
+    var dusk: DateInterval?
     
     init() { }
     
     init(dawn: DateInterval?, day: DateInterval?, twilight: DateInterval?) {
         self.dawn = dawn
         self.day = day
-        self.twilight = twilight
+        self.dusk = twilight
     }
 
     init(asr: Date?, sr: Date?, ss: Date?, ass: Date?) {
@@ -32,13 +32,17 @@ struct Daylight: Equatable {
         }
         if let ss = ss, let ass = ass {
 //            print("ASS: \(ass)")
-            self.twilight = DateInterval(start: ss, end: ass)
+            self.dusk = DateInterval(start: ss, end: ass)
         }
+    }
+    
+    func isNil() -> Bool {
+        return self.dawn == nil && self.day == nil && self.dusk == nil
     }
     
     mutating func nullifyIfOutside(_ testInterval: DateInterval) {
         if let dawn = self.dawn { if dawn.intersects(testInterval) == false { self.dawn = nil } }
         if let day = self.day { if day.intersects(testInterval) == false { self.day = nil } }
-        if let twilight = self.twilight { if twilight.intersects(testInterval) == false { self.twilight = nil } }
+        if let twilight = self.dusk { if twilight.intersects(testInterval) == false { self.dusk = nil } }
     }
 }

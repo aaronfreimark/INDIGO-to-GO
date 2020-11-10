@@ -57,37 +57,49 @@ class LocationFeaturesTests: XCTestCase {
         let day2Twilight = DateInterval(start: day2SS, end: day2ASS)
 
         let tests: [DaylightTestStruct] = [
-            // 0
+            // 0 -- test evening day 1 to morning, day 2
             DaylightTestStruct(
                 seq: DateInterval(start: f.date(from: "2020-10-17 22:31:00 EDT")!, end: f.date(from: "2020-10-18 08:31:00 EDT")!),
-                start: Daylight(dawn: nil, day: nil, twilight: nil),
-                end: Daylight(dawn: day2Dawn, day: day2Day, twilight: nil)
+                start: Daylight(dawn: day2Dawn, day: day2Day, twilight: nil),
+                end: Daylight(dawn: nil, day: nil, twilight: nil)
             ),
-            // 1
+            // 1 -- test mid-day day 1 to almost midnight, day 1
             DaylightTestStruct(
                 seq: DateInterval(start: f.date(from: "2020-10-17 12:00:00 EDT")!, end: f.date(from: "2020-10-17 23:31:00 EDT")!),
                 start: Daylight(dawn: nil, day: day1Day, twilight: day1Twilight),
                 end: Daylight(dawn: nil, day: nil, twilight: nil)
             ),
-            // 2
+            // 2 -- test mid-day day 1 to twilight, day 1
             DaylightTestStruct(
-                seq: DateInterval(start: f.date(from: "2020-10-18 00:31:00 EDT")!, end: f.date(from: "2020-10-18 08:31:00 EDT")!),
-                start: Daylight(dawn: day2Dawn, day: day2Day, twilight: nil),
+                seq: DateInterval(start: f.date(from: "2020-10-17 12:00:00 EDT")!, end: f.date(from: "2020-10-17 18:31:00 EDT")!),
+                start: Daylight(dawn: nil, day: day1Day, twilight: day1Twilight),
                 end: Daylight(dawn: nil, day: nil, twilight: nil)
             ),
-            // 3
+            // 3 -- test night day 1 to dawn, day 2
+            DaylightTestStruct(
+                seq: DateInterval(start: f.date(from: "2020-10-17 21:31:00 EDT")!, end: f.date(from: "2020-10-18 06:31:00 EDT")!),
+                start: Daylight(dawn: day2Dawn, day: nil, twilight: nil),
+                end: Daylight(dawn: nil, day: nil, twilight: nil)
+            ),
+            // 4 -- test post-midnight day 2 to dawn, day 2
+            DaylightTestStruct(
+                seq: DateInterval(start: f.date(from: "2020-10-18 00:31:00 EDT")!, end: f.date(from: "2020-10-18 06:31:00 EDT")!),
+                start: Daylight(dawn: day2Dawn, day: nil, twilight: nil),
+                end: Daylight(dawn: nil, day: nil, twilight: nil)
+            ),
+            // 5 -- test post-midnight day 2 to morning, day 2
             DaylightTestStruct(
                 seq: DateInterval(start: f.date(from: "2020-10-18 01:31:00 EDT")!, end: f.date(from: "2020-10-18 08:31:00 EDT")!),
                 start: Daylight(dawn: day2Dawn, day: day2Day, twilight: nil),
                 end: Daylight(dawn: nil, day: nil, twilight: nil)
             ),
-            // 4
+            // 6 -- test twilight day 1 to post-midnight, day 2
             DaylightTestStruct(
                 seq: DateInterval(start: f.date(from: "2020-10-17 17:00:00 EDT")!, end: f.date(from: "2020-10-18 12:31:00 EDT")!),
                 start: Daylight(dawn: nil, day: day1Day, twilight: day1Twilight),
                 end: Daylight(dawn: day2Dawn, day: day2Day, twilight: nil)
             ),
-            // 5 -- Longer than 24 hours
+            // 7 -- Longer than 24 hours
             DaylightTestStruct(
                 seq: DateInterval(start: f.date(from: "2020-10-17 17:00:00 EDT")!, end: f.date(from: "2020-10-20 12:31:00 EDT")!),
                 start: Daylight(dawn: nil, day: nil, twilight: nil),
@@ -125,10 +137,10 @@ class LocationFeaturesTests: XCTestCase {
                 }
             }
 
-            if test.start.twilight == nil {
-                XCTAssertNil(daylight.start.twilight)
+            if test.start.dusk == nil {
+                XCTAssertNil(daylight.start.dusk)
             } else {
-                if let tested = daylight.start.twilight, let expected = test.start.twilight {
+                if let tested = daylight.start.dusk, let expected = test.start.dusk {
                     XCTAssertEqual(tested.start.timeIntervalSince1970, expected.start.timeIntervalSince1970, accuracy: testAccuracy)
                     XCTAssertEqual(tested.end.timeIntervalSince1970, expected.end.timeIntervalSince1970, accuracy: testAccuracy)
                 } else {
@@ -158,10 +170,10 @@ class LocationFeaturesTests: XCTestCase {
                 }
             }
 
-            if test.end.twilight == nil {
-                XCTAssertNil(daylight.end.twilight)
+            if test.end.dusk == nil {
+                XCTAssertNil(daylight.end.dusk)
             } else {
-                if let tested = daylight.end.twilight, let expected = test.end.twilight {
+                if let tested = daylight.end.dusk, let expected = test.end.dusk {
                     XCTAssertEqual(tested.start.timeIntervalSince1970, expected.start.timeIntervalSince1970, accuracy: testAccuracy)
                     XCTAssertEqual(tested.end.timeIntervalSince1970, expected.end.timeIntervalSince1970, accuracy: testAccuracy)
                 } else {

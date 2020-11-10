@@ -127,6 +127,7 @@ class IndigoClientViewModel: ObservableObject {
 
         if client != nil {
             self.client = client
+            self.update()
         } else {
             self.reinit()
         }

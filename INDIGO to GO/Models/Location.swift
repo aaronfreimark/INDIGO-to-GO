@@ -79,7 +79,14 @@ class Location: NSObject, CLLocationManagerDelegate {
             }
         }
         
+        // null the end if it's simply a copy of start
         if start == end {
+            end = Daylight()
+        }
+        
+        // if everything is in end, move it to start
+        if start.isNil() && !end.isNil() {
+            start = end
             end = Daylight()
         }
         

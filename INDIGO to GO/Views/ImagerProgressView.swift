@@ -92,7 +92,7 @@ struct ImagerProgressView: View {
                         DaylightView(span: day, time: imagerTotalTime, type: .day, offsetTime: offsetTime)
                     }
                     
-                    if let twilight = daylight.start.twilight {
+                    if let twilight = daylight.start.dusk {
                         DaylightView(span: twilight, time: imagerTotalTime, type: .twilight, offsetTime: offsetTime)
                     }
                     
@@ -104,7 +104,7 @@ struct ImagerProgressView: View {
                         DaylightView(span: day, time: imagerTotalTime, type: .day, offsetTime: offsetTime)
                     }
                     
-                    if let twilight = daylight.end.twilight {
+                    if let twilight = daylight.end.dusk {
                         DaylightView(span: twilight, time: imagerTotalTime, type: .twilight, offsetTime: offsetTime)
                     }
                     
