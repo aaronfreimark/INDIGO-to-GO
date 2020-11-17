@@ -101,28 +101,36 @@ class RemoteIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnect
 
 
     func emergencyStopAll() {
-        self.queue.async {
-            // TODO: Implement Emergency Stop through Firebase
-//            for (_, connection) in self.connections {
-//                connection.mountPark()
-//                connection.imagerDisableCooler()
-//            }
-        }
+        firebaseSendCommand("emergencyStopAll")
     }
 
     func enableAllPreviews() {
-        self.queue.async {
-            // TODO: Implement previews through Firebase
-//            for (_, connection) in self.connections {
-//                connection.enablePreviews()
-//            }
-        }
+        firebaseSendCommand("enablePreviews")
     }
 
+    func firebaseSendCommand(_ command:  String) {
+        guard let fb = firebaseCommandPrefix() else { return }
+        let value = [
+            "command": command,
+            "timestamp": Date().timeIntervalSince1970
+        ] as [String : Any]
+        fb.childByAutoId().setValue(value)
+        firebaseTouch()
+    }
+    
+    func firebaseCommandPrefix() -> DatabaseReference? {
+        guard let uid = self.firebaseUID, let firebase = self.firebase else { return nil }
+        return firebase.child("users/\(uid)/commands")
+    }
+
+    /// Update last access time
+    func firebaseTouch() {
+        guard let uid = self.firebaseUID, let firebase = self.firebase else { return }
+        firebase.child("users/\(uid)/accessed").setValue(Date().timeIntervalSince1970)
+    }
 
     // MARK: - Connection Management
     
-
 
     /// =============================================================================================
 

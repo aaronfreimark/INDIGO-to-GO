@@ -43,7 +43,8 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
     /// Properties for Firebase syncing
     var firebase: DatabaseReference?
     var firebaseUID: String?
-    
+    var firebaseRefHandle: DatabaseHandle?
+
     let permittedProperties = [
         "Imager Agent | AGENT_START_PROCESS | SEQUENCE",
         "Imager Agent | AGENT_PAUSE_PROCESS | PAUSE",
@@ -116,6 +117,37 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
     }
     
     func reinit(servers: [String]) {
+
+        /// listen for Firebase commands
+        // TODO: Move all Firebase commands to a single class (extension?) for easy use
+        if let fb = self.firebaseCommandPrefix() {
+            self.firebaseRefHandle = fb.observe(.value, with: { (snapshot) in
+                for child in snapshot.children {
+                    let snap = child as! DataSnapshot
+                    let dict = snap.value as! [String: Any]
+                    let command = dict["command"] as? String ?? ""
+                    let timestamp = dict["timestamp"] as? Double ?? 0
+                    
+                    let timeNow = Date().timeIntervalSince1970
+                    let timeSince = timeNow - timestamp
+                    
+                    let maxTime: Double = 60*2 // 2 minutes is the oldest we'll accept commands
+                    if timeSince < maxTime {
+
+                        switch command {
+                        case "emergencyStopAll":
+                            self.emergencyStopAll()
+
+                        default:
+                            print("Unknown Firebase Command: \(command)")
+                        }
+                    }
+
+                    /// We've processed this item, so remove it
+                    snap.ref.removeValue()
+                }
+            })
+        }
 
         self.serversToConnect = servers.removingDuplicates()
         print("ReInit with servers \(self.serversToConnect)")
@@ -397,7 +429,7 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
             self.properties[key] = newItem
         }
         
-        guard let fb = firebasePrefix(), let keyHash = self.keyHash(key) else { return }
+        guard let fb = firebasePropertyPrefix(), let keyHash = self.keyHash(key) else { return }
         let value = [
             "key": key,
             "value": value,
@@ -405,6 +437,7 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
             "target": target
         ]
         fb.child(keyHash).setValue(value)
+        firebaseTouch()
     }
     
     func delValue(_ key: String) {
@@ -412,8 +445,9 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
             self.properties.removeValue(forKey: key)
         }
 
-        guard let fb = firebasePrefix(), let keyHash = self.keyHash(key) else { return }
+        guard let fb = firebasePropertyPrefix(), let keyHash = self.keyHash(key) else { return }
         fb.child(keyHash).removeValue()
+        firebaseTouch()
     }
 
     
@@ -429,8 +463,9 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
             self.properties.removeAll()
         }
 
-        guard let fb = firebasePrefix() else { return }
+        guard let fb = firebasePropertyPrefix() else { return }
         fb.removeValue()
+        firebaseTouch()
     }
     
     func keyHash(_ key: String) -> String? {
@@ -451,9 +486,19 @@ class LocalIndigoClient: ObservableObject, IndigoPropertyService, IndigoConnecti
         return keyHash
     }
     
-    func firebasePrefix() -> DatabaseReference? {
+    func firebasePropertyPrefix() -> DatabaseReference? {
         guard let uid = self.firebaseUID, let firebase = self.firebase else { return nil }
         return firebase.child("users/\(uid)/properties")
+    }
+
+    func firebaseCommandPrefix() -> DatabaseReference? {
+        guard let uid = self.firebaseUID, let firebase = self.firebase else { return nil }
+        return firebase.child("users/\(uid)/commands")
+    }
+
+    func firebaseTouch() {
+        guard let uid = self.firebaseUID, let firebase = self.firebase else { return }
+        firebase.child("users/\(uid)/accessed").setValue(Date().timeIntervalSince1970)
     }
 
 }

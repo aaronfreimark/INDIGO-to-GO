@@ -79,13 +79,11 @@ struct MonitorView: View {
                 
                 
                 /// Park & Warm Button
-                if client.agentSelection != .remote {
                     Section {
                         if client.isMountConnected || client.isImagerConnected {
                             ParkAndWarmButton
                         }
                     }
-                }
                 
             }
             .listStyle(GroupedListStyle())
