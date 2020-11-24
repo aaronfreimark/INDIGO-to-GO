@@ -71,7 +71,7 @@ struct DaylightView_Previews: PreviewProvider {
     
     static var previews: some View {
         let time: CGFloat = 60*60*3
-        let span = DateInterval(start: Date(), end: Date().addingTimeInterval(30*60))
+        let span = DateInterval(start: Date().addingTimeInterval(30*60), end: Date().addingTimeInterval(60*60))
 
         DaylightView(span: span, time: time, type: .dawn)
             .previewDisplayName("Dawn")
