@@ -18,6 +18,7 @@ protocol StatusRow {
 enum StatusRowStatus {
     case ok, warn, alert, unknown, blank, clock, start, end
     case custom(String)
+    case pie(Float)
 }
 
 struct StatusRowText: StatusRow, Identifiable {
@@ -29,7 +30,6 @@ struct StatusRowText: StatusRow, Identifiable {
     let id = UUID()
 
 }
-
 
 struct StatusRowTime: StatusRow, Comparable, Identifiable {
     var isSet: Bool = true

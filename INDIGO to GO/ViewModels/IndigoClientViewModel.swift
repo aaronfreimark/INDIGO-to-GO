@@ -266,6 +266,7 @@ class IndigoClientViewModel: ObservableObject {
         var thisBatch = 1
         var imagesTotal = 0
         var imagesTaken = 0
+        var percentCompletedThisImage: Float = 0.0
         
         // Sequences can "Keep" the same exposure and count settings as the prior sequence, so we do not reset then between sequences.
         var exposure: Float = 0;
@@ -309,6 +310,10 @@ class IndigoClientViewModel: ObservableObject {
                         elapsedTime += secondsCompletedThisFrame
                         
                         imagesTaken += Int(imagerFrameInProgress)
+
+                        // used for pie chart
+                        percentCompletedThisImage = secondsCompletedThisFrame / imagePlans[seqNum]!.seconds
+                        self.srSequenceStatus?.status = .pie(percentCompletedThisImage)
                     }
                 }
                 thisBatch += 1

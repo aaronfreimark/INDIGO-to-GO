@@ -10,7 +10,7 @@ import SwiftUI
 
 struct StatusRowView: View {
     var sr: StatusRow?
-        
+
     var body: some View {
         if let sr = self.sr, sr.isSet {
             HStack {
@@ -68,6 +68,15 @@ struct StatusRowView: View {
                 } else {
                     return AnyView(EmptyView())
                 }
+
+            case let .pie(pct):
+                // progress = pct
+                return AnyView(
+                    ProgressView(value: pct)
+                        .progressViewStyle(PiePercentageProgressViewStyle())
+                        .foregroundColor(.green)
+                        .frame(width: 16, height: 16)
+                )
                 
             case let .custom(systemImage):
                 return AnyView(Image(systemName: systemImage)
@@ -79,6 +88,36 @@ struct StatusRowView: View {
     }
     
 }
+
+
+public struct PiePercentageProgressViewStyle : ProgressViewStyle {
+    public func makeBody(configuration: LinearProgressViewStyle.Configuration) -> some View {
+        GeometryReader { geometry in
+            let width: CGFloat = min(geometry.size.width, geometry.size.height)
+            let center = CGPoint(x: width/2, y: width/2)
+
+            ZStack {
+                Path { path in
+                    path.addArc(center: center, radius: width/2, startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 360), clockwise: false)
+                }
+                .stroke(lineWidth: 2.0)
+                
+                if let fraction = configuration.fractionCompleted {
+                    Path { path in
+                        let center = CGPoint(x: width/2, y: width/2)
+                        
+                        path.move(to: center)
+                        path.addArc(center: center, radius: width/2, startAngle: Angle(degrees: -90), endAngle: Angle(degrees: (360 * fraction) - 90), clockwise: false)
+                        path.addLine(to: center)
+                    }
+                    .fill()
+                }
+            }
+        }
+    }
+}
+
+
 
 struct StatusRowView_Previews: PreviewProvider {
     static var previews: some View {
@@ -111,6 +150,11 @@ struct StatusRowView_Previews: PreviewProvider {
 
         let sr6 = StatusRowTime(text: "End", status: .end, date: Date())
         StatusRowView(sr: sr6)
+            .previewLayout(PreviewLayout.sizeThatFits)
+            .padding()
+
+        let sr7 = StatusRowText(text: "Pie Chart", value: "0.3", status: .pie(0.3))
+        StatusRowView(sr: sr7)
             .previewLayout(PreviewLayout.sizeThatFits)
             .padding()
 
