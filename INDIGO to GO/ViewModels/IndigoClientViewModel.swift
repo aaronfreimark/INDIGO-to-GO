@@ -313,7 +313,9 @@ class IndigoClientViewModel: ObservableObject {
 
                         // used for pie chart
                         percentCompletedThisImage = secondsCompletedThisFrame / imagePlans[seqNum]!.seconds
-                        self.srSequenceStatus?.status = .pie(percentCompletedThisImage)
+                        if self.imagerState == .Sequencing {
+                            self.srSequenceStatus?.status = .pie(percentCompletedThisImage)
+                        }
                     }
                 }
                 thisBatch += 1
